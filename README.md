@@ -31,33 +31,6 @@ The app supports two types of accounts:
 ## Deliverables
 
 ### Deliverable 1: Requirements Model, Domain Model, Persistence Layer, and Project Management
-This deliverable consists of the following parts:
-
-#### Requirements Model
-- Identify **15 key requirements** (12 functional, 3 non-functional) using natural language sentences.
-- Prepare **two use case diagrams** documenting these requirements. Each diagram must show a consistent set of use cases (not too small or too large).
-- Each team member must provide a detailed specification of **one use case** (selected from the seven/eight most important use cases) with the main flow and alternative/exceptional flows.
-
-#### Domain Model
-- Create a **domain model** in the form of a UML class diagram.
-- Provide a brief textual rationale for key decisions made while creating the domain model.
-
-#### Persistence Layer
-- Develop a persistence layer using **PostgreSQL** and **Hibernate** (ORM) to persist data.
-- Ensure the persistence layer is compliant with the domain model and can correctly persist data.
-
-#### Testing of Persistence Layer
-- Develop a test suite to demonstrate **read and write operations** for each class in the domain model.
-- Test cases must cover objects, attribute values, and references between objects.
-- Test data must be removed from the database after each test method.
-
-#### Build System
-- Set up a build system to automate compiling, packaging, and running the persistence layer test suite.
-
-#### Project Management and Project Report
-- Use GitHub's issue tracking features to create and manage the project backlog.
-- Provide a **README file** (this file) introducing the team and describing the project scope.
-- Include a brief project report in the project wiki, documenting meeting minutes and key design decisions.
 
 ### Deliverable 2: TBD
 - **Scope**: TBD
