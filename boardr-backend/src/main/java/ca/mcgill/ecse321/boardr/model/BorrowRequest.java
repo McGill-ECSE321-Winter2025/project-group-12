@@ -2,7 +2,6 @@ package ca.mcgill.ecse321.boardr.model;
 
 import jakarta.persistence.*;
 
-import javax.swing.text.SimpleAttributeSet;
 import java.sql.Date;
 
 @Entity
@@ -11,11 +10,11 @@ public class BorrowRequest {
     @GeneratedValue
     private int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "board_game_instance_id")
     private BoardGameInstance boardGameInstance;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "borrower_id")
     private UserAccount userAccount;
 
