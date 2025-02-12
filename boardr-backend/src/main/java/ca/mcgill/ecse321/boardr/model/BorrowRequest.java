@@ -8,7 +8,16 @@ import java.sql.Date;
 public class BorrowRequest {
     @Id
     @GeneratedValue
-    private int id;
+    private int borrowRequestId;
+    private Date requestDate;
+    private Date returnDate;
+    private RequestStatus status;
+
+    public enum RequestStatus {
+        Pending,
+        Accepted,
+        Declined;
+    }
 
     @ManyToOne
     @JoinColumn(name = "board_game_instance_id")
@@ -16,38 +25,29 @@ public class BorrowRequest {
 
     @ManyToOne
     @JoinColumn(name = "borrower_id")
-    private UserAccount userAccount;
+    private User user;
 
-    private Date requestDate;
-    private Date returnDate;
-    private Status status;
-
-    public enum Status {
-        Pending,
-        Accepted,
-        Declined;
-    }
 
     BorrowRequest(){};
 
-    BorrowRequest(BoardGameInstance boardGameInstance, UserAccount userAccount, Date requestDate, Date returnDate) {
+    BorrowRequest(BoardGameInstance boardGameInstance, User user, Date requestDate, Date returnDate) {
         this.boardGameInstance = boardGameInstance;
-        this.userAccount = userAccount;
+        this.user = user;
         this.requestDate = requestDate;
         this.returnDate = returnDate;
-        this.status = Status.Pending;
+        this.status = RequestStatus.Pending;
     }
 
-    public int getId() {
-        return id;
+    public int getBorrowRequestId() {
+        return borrowRequestId;
     }
 
     public BoardGameInstance getBoardGameInstance() {
         return boardGameInstance;
     }
 
-    public UserAccount getUserAccount() {
-        return userAccount;
+    public User getUser() {
+        return user;
     }
 
     public Date getRequestDate() {
@@ -58,7 +58,7 @@ public class BorrowRequest {
         return returnDate;
     }
 
-    public Status getStatus() {
+    public RequestStatus getRequestStatus() {
         return status;
     }
 }

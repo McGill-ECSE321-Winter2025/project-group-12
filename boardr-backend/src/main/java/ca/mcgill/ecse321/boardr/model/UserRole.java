@@ -3,14 +3,16 @@ package ca.mcgill.ecse321.boardr.model;
 import jakarta.persistence.*;
 
 @Entity
-public class UserRole {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role_type", discriminatorType = DiscriminatorType.STRING)
+public abstract class UserRole {
     @Id
     @GeneratedValue
     private int id;
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private UserAccount userAccount;
+    private User user;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -22,8 +24,8 @@ public class UserRole {
 
     public UserRole() {}
 
-    public UserRole(UserAccount userAccount, Role role) {
-        this.userAccount = userAccount;
+    public UserRole(User userAccount, Role role) {
+        this.user = userAccount;
         this.role = role;
     }
 
@@ -31,8 +33,8 @@ public class UserRole {
         return id;
     }
 
-    public UserAccount getUserAccount() {
-        return userAccount;
+    public User getUser() {
+        return user;
     }
 
     public Role getRole() {
