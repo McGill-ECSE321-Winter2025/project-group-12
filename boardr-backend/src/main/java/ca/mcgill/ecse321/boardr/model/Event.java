@@ -2,7 +2,7 @@ package ca.mcgill.ecse321.boardr.model;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
@@ -20,11 +20,11 @@ public class Event {
     private String description;
     private int maxParticipants;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "board_game_id")
     private BoardGame boardGame;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "organizer_id")
     private UserAccount organizer;
 
