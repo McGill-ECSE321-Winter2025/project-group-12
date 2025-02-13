@@ -10,46 +10,24 @@ public abstract class UserRole {
     @GeneratedValue
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    public enum Role {
-        Player,
-        GameOwner;
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
     public UserRole() {}
 
-    public UserRole(User userAccount, Role role) {
-        this.user = userAccount;
-        this.role = role;
+    public UserRole(UserAccount userAccount) {
+        this.userAccount = userAccount;
     }
 
     public int getId() {
         return id;
     }
 
-    public User getUser() {
-        return user;
+    public UserAccount getUserAccount() {
+        return userAccount;
     }
 
-    public Role getRole() {
-        return role;
-    }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
 
-    public void toggleRole() {
-        if (role != null && role == Role.Player) {
-            this.role = Role.GameOwner;
-        } else {
-            this.role = Role.Player;
-        }
-    }
 }

@@ -25,14 +25,14 @@ public class BorrowRequest {
 
     @ManyToOne
     @JoinColumn(name = "borrower_id")
-    private User user;
+    private UserAccount userAccount;
 
 
     BorrowRequest(){};
 
-    BorrowRequest(BoardGameInstance boardGameInstance, User user, Date requestDate, Date returnDate) {
+    BorrowRequest(BoardGameInstance boardGameInstance, UserAccount userAccount, Date requestDate, Date returnDate) {
         this.boardGameInstance = boardGameInstance;
-        this.user = user;
+        this.userAccount = userAccount;
         this.requestDate = requestDate;
         this.returnDate = returnDate;
         this.status = RequestStatus.Pending;
@@ -46,8 +46,8 @@ public class BorrowRequest {
         return boardGameInstance;
     }
 
-    public User getUser() {
-        return user;
+    public UserAccount getUserAccount() {
+        return userAccount;
     }
 
     public Date getRequestDate() {

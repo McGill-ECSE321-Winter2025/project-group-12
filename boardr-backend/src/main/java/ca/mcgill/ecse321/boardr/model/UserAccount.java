@@ -9,32 +9,29 @@ import java.sql.Date;
 import java.util.Set;
 
 @Entity
-public class User {
+public class UserAccount {
     @Id
     @GeneratedValue
-    private int userId;
+    private int userAccountId;
     private String name;
     private String email;
     private String password;
     private Date creationDate;
 
-    @OneToMany
-    private Set<BorrowRequest> borrowRequests;
 
-    @OneToMany
-    private Set<UserRole> userRoles;
 
-    protected User(){};
+    protected UserAccount(){};
 
-    public User(String name, String email, String password) {
+    public UserAccount(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.creationDate = new Date(System.currentTimeMillis());
+        // TODO: Add default role
     }
 
-    public int getUserId() {
-        return userId;
+    public int getUserAccountId() {
+        return userAccountId;
     }
 
     public String getName() {
