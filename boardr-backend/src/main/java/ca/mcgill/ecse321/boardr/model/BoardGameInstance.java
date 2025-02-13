@@ -7,38 +7,32 @@ import jakarta.persistence.*;
 public class BoardGameInstance {
     @Id
     @GeneratedValue
-    private int id;
-
-    @OneToOne
-    @JoinColumn(name = "game_id")
-    private BoardGame boardGame;
-
-    @OneToOne
-    @JoinColumn(name = "owner_id")
-    private UserAccount userAccount;
-
+    private int individualGameId;
     private String condition;  //Should we have condition? idr
     private boolean isAvailable;
 
+    @ManyToOne
+    private GameOwner gameOwner;
+
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private BoardGame boardGame;
+
     BoardGameInstance() {}
 
-    BoardGameInstance(BoardGame boardGame, UserAccount userAccount, String condition) {
+    BoardGameInstance(BoardGame boardGame, GameOwner gameOwner, String condition) {
         this.boardGame = boardGame;
-        this.userAccount = userAccount;
+        this.gameOwner = gameOwner;
         this.condition = condition;
-        this.isAvailable = true; // I'm assuming available when added
+        this.isAvailable = true;
     }
 
-    public int getId() {
-        return id;
+    public int getindividualGameId() {
+        return individualGameId;
     }
 
     public BoardGame getBoardGame() {
         return boardGame;
-    }
-
-    public UserAccount getUserAccount() {
-        return userAccount;
     }
 
     public String getCondition() {
@@ -47,5 +41,9 @@ public class BoardGameInstance {
 
     public boolean isAvailable() {
         return isAvailable;
+    }
+
+    public GameOwner getGameOwner() {
+        return gameOwner;
     }
 }

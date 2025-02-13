@@ -11,7 +11,7 @@ import jakarta.persistence.GeneratedValue;
 public class Registration {
     @Id
     @GeneratedValue
-    private int id;
+    private int registrationId;
 
     private int registrationDate;
 
@@ -31,12 +31,18 @@ public class Registration {
         this.user = user;
     }
 
+    int getRegistrationId(){
+        return this.registrationId;
+    }
+
     int getRegistrationDate(){
         return this.registrationDate;
     }
+
     Event getEvent(){
         return this.event;
     }
+    
     UserAccount getUser(){
         return this.user;
     }

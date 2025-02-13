@@ -12,7 +12,7 @@ import jakarta.persistence.GeneratedValue;
 public class Event {
     @Id
     @GeneratedValue
-    private int id;
+    private int eventId;
 
     private int eventDate;
     private int eventTime;
@@ -43,26 +43,33 @@ public class Event {
     }
 
     public int getId() {
-		return this.id;
+		return this.eventId;
 	}
+
     public int getEventDate() {
 		return this.eventDate;
 	}
+
     public int getEventTime() {
 		return this.eventTime;
 	}
+
     public String getLocation() {
 		return this.location;
 	}
+
     public String getDescription() {
         return this.description;
     }
+
     public int getmaxParticipants() {
         return this.maxParticipants;
     }
+
     public BoardGame getboardGame() {
         return this.boardGame;
     }
+    
     public UserAccount getOrganizer() {
         return this.organizer;
     }

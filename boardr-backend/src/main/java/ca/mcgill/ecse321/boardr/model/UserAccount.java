@@ -1,20 +1,24 @@
 package ca.mcgill.ecse321.boardr.model;
 
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
 public class UserAccount {
     @Id
     @GeneratedValue
-    private int id;
+    private int userAccountId;
     private String name;
     private String email;
     private String password;
     private Date creationDate;
+
+
 
     protected UserAccount(){};
 
@@ -23,10 +27,11 @@ public class UserAccount {
         this.email = email;
         this.password = password;
         this.creationDate = new Date(System.currentTimeMillis());
+        // TODO: Add default role
     }
 
-    public int getId() {
-        return id;
+    public int getUserAccountId() {
+        return userAccountId;
     }
 
     public String getName() {
