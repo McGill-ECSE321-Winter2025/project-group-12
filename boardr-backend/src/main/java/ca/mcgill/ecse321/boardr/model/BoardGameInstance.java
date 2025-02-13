@@ -10,6 +10,8 @@ public class BoardGameInstance {
     private int individualGameId;
     private String condition;  //Should we have condition? idr
     private boolean isAvailable;
+
+    @ManyToOne
     private GameOwner gameOwner;
 
     @ManyToOne
@@ -22,7 +24,7 @@ public class BoardGameInstance {
         this.boardGame = boardGame;
         this.gameOwner = gameOwner;
         this.condition = condition;
-        this.isAvailable = true; // I'm assuming available when added
+        this.isAvailable = true;
     }
 
     public int getindividualGameId() {

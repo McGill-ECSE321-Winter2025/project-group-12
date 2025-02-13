@@ -18,8 +18,7 @@ public class UserAccount {
     private String password;
     private Date creationDate;
 
-    @OneToMany
-    private Set<UserRole> userRoles;
+
 
     protected UserAccount(){};
 

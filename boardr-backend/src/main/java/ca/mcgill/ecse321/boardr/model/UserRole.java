@@ -14,19 +14,10 @@ public abstract class UserRole {
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    public enum Role {
-        Player,
-        GameOwner;
-    }
-
     public UserRole() {}
 
-    public UserRole(UserAccount userAccount, Role role) {
+    public UserRole(UserAccount userAccount) {
         this.userAccount = userAccount;
-        this.role = role;
     }
 
     public int getId() {
@@ -37,19 +28,6 @@ public abstract class UserRole {
         return userAccount;
     }
 
-    public Role getRole() {
-        return role;
-    }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
 
-    public void toggleRole() {
-        if (role != null && role == Role.Player) {
-            this.role = Role.GameOwner;
-        } else {
-            this.role = Role.Player;
-        }
-    }
 }
