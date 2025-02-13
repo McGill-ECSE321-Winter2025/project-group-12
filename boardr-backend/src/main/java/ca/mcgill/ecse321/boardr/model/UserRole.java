@@ -10,9 +10,9 @@ public abstract class UserRole {
     @GeneratedValue
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -24,8 +24,8 @@ public abstract class UserRole {
 
     public UserRole() {}
 
-    public UserRole(User userAccount, Role role) {
-        this.user = userAccount;
+    public UserRole(UserAccount userAccount, Role role) {
+        this.userAccount = userAccount;
         this.role = role;
     }
 
@@ -33,8 +33,8 @@ public abstract class UserRole {
         return id;
     }
 
-    public User getUser() {
-        return user;
+    public UserAccount getUserAccount() {
+        return userAccount;
     }
 
     public Role getRole() {

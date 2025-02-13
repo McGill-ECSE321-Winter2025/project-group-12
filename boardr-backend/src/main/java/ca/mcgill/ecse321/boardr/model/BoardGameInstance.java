@@ -10,21 +10,17 @@ public class BoardGameInstance {
     private int individualGameId;
     private String condition;  //Should we have condition? idr
     private boolean isAvailable;
+    private GameOwner gameOwner;
 
     @ManyToOne
     @JoinColumn(name = "game_id")
     private BoardGame boardGame;
 
-    // TODO: Owner will need to be the GameOwner Class, not the User class
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User user;
-
     BoardGameInstance() {}
 
-    BoardGameInstance(BoardGame boardGame, String condition) {
+    BoardGameInstance(BoardGame boardGame, GameOwner gameOwner, String condition) {
         this.boardGame = boardGame;
-        // this.gameOwner = gameOwner;
+        this.gameOwner = gameOwner;
         this.condition = condition;
         this.isAvailable = true; // I'm assuming available when added
     }
@@ -43,5 +39,9 @@ public class BoardGameInstance {
 
     public boolean isAvailable() {
         return isAvailable;
+    }
+
+    public GameOwner getGameOwner() {
+        return gameOwner;
     }
 }
