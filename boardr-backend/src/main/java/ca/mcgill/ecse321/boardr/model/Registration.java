@@ -2,7 +2,10 @@ package ca.mcgill.ecse321.boardr.model;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+
+import java.sql.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
@@ -12,39 +15,38 @@ public class Registration {
     @Id
     @GeneratedValue
     private int registrationId;
+    private Date registrationDate;
 
-    private int registrationDate;
-
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private UserAccount user;
+
+    @ManyToOne
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
     
     protected Registration() {}
 
-    public Registration(int registrationDate, Event event, UserAccount user) {
-        this.registrationDate = registrationDate;
+    public Registration(Event event, UserAccount userAccount) {
         this.event = event;
-        this.user = user;
+        this.userAccount = userAccount;
+        this.registrationDate = new Date(System.currentTimeMillis());
     }
 
-    int getRegistrationId(){
+    public int getRegistrationId(){
         return this.registrationId;
     }
 
-    int getRegistrationDate(){
+    public Date getRegistrationDate(){
         return this.registrationDate;
     }
 
-    Event getEvent(){
+    public Event getEvent(){
         return this.event;
     }
     
-    UserAccount getUser(){
-        return this.user;
+    public UserAccount getUserAccount(){
+        return this.userAccount;
     }
-
 }

@@ -13,7 +13,6 @@ public class Event {
     @Id
     @GeneratedValue
     private int eventId;
-
     private int eventDate;
     private int eventTime;
     private String location;
@@ -21,8 +20,8 @@ public class Event {
     private int maxParticipants;
 
     @ManyToOne
-    @JoinColumn(name = "board_game_id")
-    private BoardGame boardGame;
+    @JoinColumn(name = "board_game_instance_id")
+    private BoardGameInstance boardGameInstance;
 
     @ManyToOne
     @JoinColumn(name = "organizer_id")
@@ -31,18 +30,18 @@ public class Event {
     
     protected Event() {}
 
-    public Event(int eventDate, int eventTime, String location, String description, int maxParticipants, BoardGame boardGame, UserAccount organizer) {
+    public Event(int eventDate, int eventTime, String location, String description, int maxParticipants, BoardGameInstance boardGameInstance, UserAccount organizer) {
         this.eventDate = eventDate;
         this.eventTime = eventTime;
         this.location = location;
         this.description = description;
         this.maxParticipants = maxParticipants;
-        this.boardGame = boardGame;
+        this.boardGameInstance = boardGameInstance;
         this.organizer = organizer;
 
     }
 
-    public int getId() {
+    public int getEventId() {
 		return this.eventId;
 	}
 
@@ -66,8 +65,8 @@ public class Event {
         return this.maxParticipants;
     }
 
-    public BoardGame getboardGame() {
-        return this.boardGame;
+    public BoardGameInstance getboardGameInstance() {
+        return this.boardGameInstance;
     }
     
     public UserAccount getOrganizer() {

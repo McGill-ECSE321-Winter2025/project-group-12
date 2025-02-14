@@ -10,24 +10,12 @@ public abstract class UserRole {
     @GeneratedValue
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_account_id")
-    private UserAccount userAccount;
-
     public UserRole() {}
 
     public UserRole(UserAccount userAccount) {
-        this.userAccount = userAccount;
     }
 
     public int getId() {
         return id;
     }
-
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
-
-
-
 }

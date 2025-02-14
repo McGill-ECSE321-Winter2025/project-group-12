@@ -12,10 +12,11 @@ public class BoardGameInstance {
     private boolean isAvailable;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private GameOwner gameOwner;
 
     @ManyToOne
-    @JoinColumn(name = "game_id")
+    @JoinColumn(name = "board_game_id")
     private BoardGame boardGame;
 
     BoardGameInstance() {}
@@ -35,6 +36,7 @@ public class BoardGameInstance {
         return boardGame;
     }
 
+    // TODO: What is Condition? Should we have it?
     public String getCondition() {
         return condition;
     }
