@@ -21,13 +21,19 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "user_acount_id")
     private UserAccount userAccount;
+
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private BoardGame boardGame;
+    
     
     protected Review() {}
 
-    public Review(int rating, String comment, UserAccount userAccount) {
+    public Review(int rating, String comment, UserAccount userAccount, BoardGame boardGame) {
         this.rating = rating;
         this.comment = comment;
         this.userAccount = userAccount;
+        this.boardGame = boardGame;
         this.reviewDate = new Date(System.currentTimeMillis());
     }
 
@@ -49,5 +55,9 @@ public class Review {
 
     public UserAccount getUserAccount() {
         return this.userAccount;
+    }
+
+    public BoardGame getBoardGame() {
+        return this.boardGame;
     }
 }

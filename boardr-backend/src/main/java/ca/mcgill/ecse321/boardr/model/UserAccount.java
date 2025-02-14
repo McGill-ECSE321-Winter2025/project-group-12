@@ -2,7 +2,6 @@ package ca.mcgill.ecse321.boardr.model;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,10 +18,6 @@ public class UserAccount {
     private String email;
     private String password;
     private Date creationDate;
-
-    @ManyToMany
-    @JoinColumn(name = "event_id")
-    private Set<Event> event;
 
     // We HAVE to see user role from user so we have to use this
     @OneToMany
@@ -57,10 +52,6 @@ public class UserAccount {
 
     public Date getCreationDate() {
         return creationDate;
-    }
-
-    public Set<Event> getEvent() {
-        return event;
     }
 
     public Set<UserRole> getUserRole() {
