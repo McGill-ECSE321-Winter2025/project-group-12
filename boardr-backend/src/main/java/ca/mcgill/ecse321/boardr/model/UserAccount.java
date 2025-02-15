@@ -1,10 +1,13 @@
 package ca.mcgill.ecse321.boardr.model;
 
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
 public class UserAccount {
@@ -16,7 +19,10 @@ public class UserAccount {
     private String password;
     private Date creationDate;
 
-
+    // We HAVE to see user role from user so we have to use this
+    @OneToMany
+    @JoinColumn(name = "role_id")
+    private Set<UserRole> userRole;
 
     protected UserAccount(){};
 
@@ -25,7 +31,7 @@ public class UserAccount {
         this.email = email;
         this.password = password;
         this.creationDate = new Date(System.currentTimeMillis());
-        // TODO: Add default role
+        this.userRole = Set.of(new Player(this), new GameOwner(this));
     }
 
     public int getUserAccountId() {
@@ -46,5 +52,9 @@ public class UserAccount {
 
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public Set<UserRole> getUserRole() {
+        return userRole;
     }
 }

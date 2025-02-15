@@ -1,6 +1,7 @@
 package ca.mcgill.ecse321.boardr.model;
 
 import jakarta.persistence.Id;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
@@ -12,7 +13,7 @@ public class BoardGame {
     private int gameId;
     private String name;
     private String description;
-    
+
     protected BoardGame() {}
 
     public BoardGame(String name, String description) {
