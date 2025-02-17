@@ -31,6 +31,13 @@ The app supports two types of accounts:
 ## Deliverables
 
 ### Deliverable 1: Requirements Model, Domain Model, Persistence Layer, and Project Management
+- **[Project Deliverable 1: Domain Model and Report](https://github.com/McGill-ECSE321-Winter2025/project-group-12/wiki/Deliverable-1-Report)**
+- **Requirements Model**: All
+- **Domain Model Generation**: Yoon, Kyujin, David Vo, David Zhou
+- **Domain Model Code**: Jione, David Zhou, Eric Deng
+- **Persistence Layer**: TBD
+- **Persistence Layer Testing**: TBD
+- **Project Management**: Yoon, David Zhou
 
 ### Deliverable 2: TBD
 - **Scope**: TBD
