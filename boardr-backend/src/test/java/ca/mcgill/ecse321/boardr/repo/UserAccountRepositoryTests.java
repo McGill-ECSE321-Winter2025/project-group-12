@@ -28,8 +28,7 @@ public class UserAccountRepositoryTests {
     public void testCreateandReadUserAccount() {
         
         // Arrange
-        Date creationDate = Date.valueOf(LocalDate.now());
-        UserAccount userAccount = new UserAccount("testUser", "testuser@mail.mcgill.ca", "password", creationDate);
+        UserAccount userAccount = new UserAccount("testUser", "testuser@mail.mcgill.ca", "password");
         userAccount = repo.save(userAccount);
 
         // Act
