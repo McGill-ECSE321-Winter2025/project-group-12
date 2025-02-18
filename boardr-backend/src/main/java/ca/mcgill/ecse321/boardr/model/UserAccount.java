@@ -26,12 +26,13 @@ public class UserAccount {
 
     protected UserAccount(){};
 
-    public UserAccount(String name, String email, String password) {
+    public UserAccount(String name, String email, String password, Date creationDate) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.creationDate = new Date(System.currentTimeMillis());
-        this.userRole = Set.of(new Player(this), new GameOwner(this));
+        this.creationDate = creationDate;
+        // this.creationDate = new Date(System.currentTimeMillis());
+        // this.userRole = Set.of(new Player(this), new GameOwner(this));
     }
 
     public int getUserAccountId() {

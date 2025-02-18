@@ -17,22 +17,23 @@ import ca.mcgill.ecse321.boardr.model.UserAccount;
 public class UserAccountRepositoryTests {
 
     @Autowired
-    private UserAccountRepository userAccountRepository;
+    private UserAccountRepository repo;
 
     @AfterEach
     public void clearDatabase() {
-        userAccountRepository.deleteAll();
+        repo.deleteAll();
     }
-
+    
     @Test
     public void testCreateandReadUserAccount() {
         
         // Arrange
-        UserAccount userAccount = new UserAccount("testUser", "testuser@mail.mcgill.ca", "password");
-        userAccount = userAccountRepository.save(userAccount);
+        Date creationDate = Date.valueOf(LocalDate.now());
+        UserAccount userAccount = new UserAccount("testUser", "testuser@mail.mcgill.ca", "password", creationDate);
+        userAccount = repo.save(userAccount);
 
         // Act
-        UserAccount retrievedUserAccount = userAccountRepository.findUserAccountById(userAccount.getUserAccountId());
+        UserAccount retrievedUserAccount = repo.findByUserAccountId(userAccount.getUserAccountId());
 
         // Assert
         assertNotNull(retrievedUserAccount);
@@ -42,5 +43,6 @@ public class UserAccountRepositoryTests {
         assertEquals(userAccount.getName(), retrievedUserAccount.getName());
         assertEquals(userAccount.getPassword(), retrievedUserAccount.getPassword());
     
-    }
+    }            
+    
 }
