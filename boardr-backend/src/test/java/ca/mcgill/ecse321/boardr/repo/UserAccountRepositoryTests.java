@@ -39,6 +39,8 @@ public class UserAccountRepositoryTests {
         assertEquals(userAccount.getEmail(), retrievedUserAccount.getEmail());
         assertEquals(userAccount.getName(), retrievedUserAccount.getName());
         assertEquals(userAccount.getPassword(), retrievedUserAccount.getPassword());
+
+        // assertEquals(userAccount.getUserRole(), retrievedUserAccount.getUserRole());
     
     }            
     
@@ -56,4 +58,5 @@ public class UserAccountRepositoryTests {
         // Assert
         assertFalse(exists);
     }
+
 }

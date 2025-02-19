@@ -12,7 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ca.mcgill.ecse321.boardr.model.BoardGame;
 
-@SpringBootTest  
+@SpringBootTest  // Loads the full Spring Boot context for testing
+
 public class BoardGameRepositoryTests {
 
     @Autowired
@@ -33,7 +34,7 @@ public class BoardGameRepositoryTests {
         // Save it to the repository
         BoardGame savedGame = boardGameRepository.save(game);
         
-        // Check that it was assigned an ID 
+        // Check that it was assigned an ID (i.e. persisted)
         assertNotNull(savedGame.getGameId(), "BoardGame ID should not be null after saving");
         
         // Retrieve the BoardGame by its ID
@@ -45,4 +46,5 @@ public class BoardGameRepositoryTests {
         assertEquals("Catan", retrievedGame.getName(), "BoardGame name should match");
         assertEquals("A popular strategy board game.", retrievedGame.getDescription(), "BoardGame description should match");
     }
+
 }

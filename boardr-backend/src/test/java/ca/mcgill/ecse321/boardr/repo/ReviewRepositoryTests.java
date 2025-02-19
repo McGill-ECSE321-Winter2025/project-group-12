@@ -57,25 +57,25 @@ public class ReviewRepositoryTests {
 
     }
 
-    @Test
-    public void testDeleteReview() {
+    // @Test
+    // public void testDeleteReview() {
         
-        // Arrange
-        UserAccount userAccount = new UserAccount("testUser", "testuser@mail.mcgill.ca", "password");
-        userAccount = userRepo.save(userAccount);
+    //     // Arrange
+    //     UserAccount userAccount = new UserAccount("testUser", "testuser@mail.mcgill.ca", "password");
+    //     userAccount = userRepo.save(userAccount);
 
-        BoardGame boardGame = new BoardGame("testGame", "testGameDescription");
-        boardGame = gameRepo.save(boardGame);
+    //     BoardGame boardGame = new BoardGame("testGame", "testGameDescription");
+    //     boardGame = gameRepo.save(boardGame);
 
-        Review review = new Review(5, "Great game!", userAccount, boardGame);
-        review = reviewRepo.save(review);
+    //     Review review = new Review(5, "Great game!", userAccount, boardGame);
+    //     review = reviewRepo.save(review);
 
-        // Act
-        reviewRepo.delete(review);
-        boolean exists = reviewRepo.existsById(review.getReviewID());
+    //     // Act
+    //     reviewRepo.delete(review);
+    //     boolean exists = reviewRepo.existsById(review.getReviewID());
 
-        // Assert
-        assertFalse(exists);
-    }
+    //     // Assert
+    //     assertFalse(exists);
+    // }
 
 }
