@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -32,11 +34,9 @@ public class UserAccount {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.creationDate = new Date(System.currentTimeMillis());
-        //Player as default
-        // this.userRole
-        //this.userRole = Set.of(new Player(this), new GameOwner(this));
-        // Using 0's and 1's
+        this.creationDate = Date.valueOf(LocalDate.now());
+        // this.userRole = Set.of(new Player(this), new GameOwner(this));
+        // this.userRole = new HashSet<>(Set.of(new Player(this), new GameOwner(this)));
     }
 
     public int getUserAccountId() {

@@ -7,4 +7,6 @@ import ca.mcgill.ecse321.boardr.model.BorrowRequest;
 @Repository
 public interface BorrowRequestRepository extends CrudRepository<BorrowRequest, Integer> {
     public BorrowRequest findByBorrowRequestId(int id);
+
 }
+

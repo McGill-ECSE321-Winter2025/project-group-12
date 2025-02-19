@@ -89,20 +89,24 @@ public class RegistrationRepositoryTests {
         event = eventRepo.save(event);
         assertNotNull(event.getEventId(), "Event should have an ID after being saved");
 
-        // Create a Registration using a composite key (RegistrationKey)
+        // 6. Create a Registration using a composite key (RegistrationKey)
+
         Registration.RegistrationKey key = new Registration.RegistrationKey(registrant, event);
         Registration registration = new Registration(key);
         registration = registrationRepo.save(registration);
+
+        // 7. Retrieve the Registration using the built-in findById() method
 
         Optional<Registration> registrationFromDb = registrationRepo.findById(key);
         assertTrue(registrationFromDb.isPresent(), "Registration should be retrievable via findById");
 
         Registration retrievedRegistration = registrationFromDb.get();
-        // Verify/read that the registration's key references the correct user and event
+
+        // Verify that the registration's key references the correct user and event
         assertEquals(registrant.getUserAccountId(), retrievedRegistration.getRegistrationKey().getRegistrant().getUserAccountId());
         assertEquals(event.getEventId(), retrievedRegistration.getRegistrationKey().getEvent().getEventId());
         assertEquals(organizer.getUserAccountId(),retrievedRegistration.getRegistrationKey().getEvent().getOrganizer().getUserAccountId());
-        // Verify/read that the registration date is set
+        // Verify that the registration date is set
         assertNotNull(retrievedRegistration.getRegistrationDate(), "Registration date should not be null");
     }
 }
