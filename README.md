@@ -20,13 +20,13 @@ The app supports two types of accounts:
 
 | Name                                              | Role                           | Deliverable 1 Effort (hours) | Deliverable 2 Effort (hours) | Deliverable 3 Effort (hours) | Total Effort (hours) |
 |---------------------------------------------------|--------------------------------|------------------------------|------------------------------|------------------------------|----------------------|
-| Kyujin [@3MinCurry](https://github.com/3MinCurry) | QA Tester                      | TBD                          | TBD                          | TBD                          | TBD                  |
-| Jun Ho [@Junho332](https://github.com/Junho322)   | QA Tester                      | TBD                          | TBD                          | TBD                          | TBD                  |
-| David Vo [@Kasamix](https://github.com/Kasamix)   | Project Manager                | TBD                          | TBD                          | TBD                          | TBD                  |
-| David Zhou [@Rampex1](https://github.com/Rampex1) | Software Developer             | TBD                          | TBD                          | TBD                          | TBD                  |
-| Eric [@Lawnless1](https://github.com/Lawnless1)   | Software Developer             | TBD                          | TBD                          | TBD                          | TBD                  |
-| Jione [@Ji-One1](https://github.com/Ji-One1)      | Software Architect             | TBD                          | TBD                          | TBD                          | TBD                  |
-| Yoon [@Yoonicornn](https://github.com/Yoonicornn) | QA Developer                   | TBD                          | TBD                          | TBD                          | TBD                  |
+| Kyujin [@3MinCurry](https://github.com/3MinCurry) | QA Tester                      | 8                          | TBD                          | TBD                          | TBD                  |
+| Jun Ho [@Junho332](https://github.com/Junho322)   | QA Tester                      | 8                          | TBD                          | TBD                          | TBD                  |
+| David Vo [@Kasamix](https://github.com/Kasamix)   | Project Manager                | 8                          | TBD                          | TBD                          | TBD                  |
+| David Zhou [@Rampex1](https://github.com/Rampex1) | Software Developer             | 8                          | TBD                          | TBD                          | TBD                  |
+| Eric [@Lawnless1](https://github.com/Lawnless1)   | Software Developer             | 8                          | TBD                          | TBD                          | TBD                  |
+| Jione [@Ji-One1](https://github.com/Ji-One1)      | Software Architect             | 8                          | TBD                          | TBD                          | TBD                  |
+| Yoon [@Yoonicornn](https://github.com/Yoonicornn) | QA Developer                   | 8                          | TBD                          | TBD                          | TBD                  |
 
 ## Deliverables
 
@@ -35,7 +35,7 @@ The app supports two types of accounts:
 - **Requirements Model**: All
 - **Domain Model Generation**: Yoon, Kyujin, David Vo, David Zhou
 - **Domain Model Code**: Jione, David Zhou, Eric Deng
-- **Persistence Layer**: David Zhou
+- **Persistence Layer**: David Zhou, Jione
 - **Persistence Layer Testing**: Yoon, Kyujin, Jun Ho
 - **Project Management**: Yoon, David Zhou, David Vo
 
