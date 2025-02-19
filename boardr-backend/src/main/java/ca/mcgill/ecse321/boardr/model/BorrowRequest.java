@@ -28,9 +28,9 @@ public class BorrowRequest {
     private UserAccount userAccount;
 
 
-    BorrowRequest(){};
+    public BorrowRequest(){};
 
-    BorrowRequest(BoardGameInstance boardGameInstance, UserAccount userAccount, Date requestDate, Date returnDate) {
+    public BorrowRequest(BoardGameInstance boardGameInstance, UserAccount userAccount, Date requestDate, Date returnDate) {
         this.boardGameInstance = boardGameInstance;
         this.userAccount = userAccount;
         this.requestDate = requestDate;
