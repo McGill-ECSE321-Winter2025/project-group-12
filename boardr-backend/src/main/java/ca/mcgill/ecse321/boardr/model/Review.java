@@ -5,6 +5,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,7 +35,7 @@ public class Review {
         this.comment = comment;
         this.userAccount = userAccount;
         this.boardGame = boardGame;
-        this.reviewDate = new Date(System.currentTimeMillis());
+        this.reviewDate = Date.valueOf(LocalDate.now());
     }
 
     public int getReviewID() {

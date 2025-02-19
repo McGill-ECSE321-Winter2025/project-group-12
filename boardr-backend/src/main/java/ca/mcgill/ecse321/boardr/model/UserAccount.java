@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -30,7 +31,7 @@ public class UserAccount {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.creationDate = new Date(System.currentTimeMillis());
+        this.creationDate = Date.valueOf(LocalDate.now());
         this.userRole = Set.of(new Player(this), new GameOwner(this));
     }
 
