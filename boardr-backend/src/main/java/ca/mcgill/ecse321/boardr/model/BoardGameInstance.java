@@ -21,7 +21,7 @@ public class BoardGameInstance {
 
     BoardGameInstance() {}
 
-    BoardGameInstance(BoardGame boardGame, GameOwner gameOwner, String condition) {
+    public BoardGameInstance(BoardGame boardGame, GameOwner gameOwner, String condition) {
         this.boardGame = boardGame;
         this.gameOwner = gameOwner;
         this.condition = condition;
