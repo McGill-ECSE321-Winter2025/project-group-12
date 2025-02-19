@@ -74,8 +74,6 @@ public class BoardGameInstanceRepositoryTests {
         assertTrue(retrievedBoardGameInstance.isAvailable(), "The instance should be available by default");
         assertNotNull(retrievedBoardGameInstance.getBoardGame(), "Associated BoardGame should not be null");
         assertEquals("Catan", retrievedBoardGameInstance.getBoardGame().getName(), "BoardGame name should match");
-
-        //Not sure about this
         assertEquals(retrievedBoardGameInstance.getGameOwner().getId(),owner.getId());
         
         
