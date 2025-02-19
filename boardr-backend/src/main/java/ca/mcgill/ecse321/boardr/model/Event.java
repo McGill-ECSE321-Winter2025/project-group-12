@@ -73,4 +73,9 @@ public class Event {
         return this.organizer;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+
 }

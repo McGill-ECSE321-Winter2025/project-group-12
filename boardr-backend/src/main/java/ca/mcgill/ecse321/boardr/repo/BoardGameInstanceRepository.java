@@ -6,4 +6,5 @@ import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
 
 @Repository
 public interface BoardGameInstanceRepository extends CrudRepository<BoardGameInstance, Integer> {
+
 }

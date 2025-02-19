@@ -90,15 +90,18 @@ public class RegistrationRepositoryTests {
         assertNotNull(event.getEventId(), "Event should have an ID after being saved");
 
         // 6. Create a Registration using a composite key (RegistrationKey)
+
         Registration.RegistrationKey key = new Registration.RegistrationKey(registrant, event);
         Registration registration = new Registration(key);
         registration = registrationRepo.save(registration);
 
         // 7. Retrieve the Registration using the built-in findById() method
+
         Optional<Registration> registrationFromDb = registrationRepo.findById(key);
         assertTrue(registrationFromDb.isPresent(), "Registration should be retrievable via findById");
 
         Registration retrievedRegistration = registrationFromDb.get();
+
         // Verify that the registration's key references the correct user and event
         assertEquals(registrant.getUserAccountId(), retrievedRegistration.getRegistrationKey().getRegistrant().getUserAccountId());
         assertEquals(event.getEventId(), retrievedRegistration.getRegistrationKey().getEvent().getEventId());

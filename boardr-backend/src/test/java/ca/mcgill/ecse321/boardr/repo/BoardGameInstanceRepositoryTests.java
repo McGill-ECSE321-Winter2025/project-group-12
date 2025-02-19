@@ -47,6 +47,7 @@ public class BoardGameInstanceRepositoryTests {
     
     @Test
     public void testCreateAndReadEvent() {
+
         // 1. Create and save a BoardGame
         BoardGame boardGame = new BoardGame("Catan", "A popular strategy board game.");
         boardGame = boardGameRepo.save(boardGame);
@@ -63,7 +64,6 @@ public class BoardGameInstanceRepositoryTests {
         //Create a board game instance with the owner
         BoardGameInstance boardGameInstance = new BoardGameInstance(boardGame, owner, "New");
         boardGameInstance = boardGameInstanceRepo.save(boardGameInstance);
-        
      
         Optional<BoardGameInstance> boardGameInstanceFromDb = boardGameInstanceRepo.findById(boardGameInstance.getindividualGameId());
         assertTrue(boardGameInstanceFromDb.isPresent(), "Event should be present in the repository");
@@ -74,6 +74,7 @@ public class BoardGameInstanceRepositoryTests {
         assertTrue(retrievedBoardGameInstance.isAvailable(), "The instance should be available by default");
         assertNotNull(retrievedBoardGameInstance.getBoardGame(), "Associated BoardGame should not be null");
         assertEquals("Catan", retrievedBoardGameInstance.getBoardGame().getName(), "BoardGame name should match");
+
         //Not sure about this
         assertEquals(retrievedBoardGameInstance.getGameOwner().getId(),owner.getId());
         

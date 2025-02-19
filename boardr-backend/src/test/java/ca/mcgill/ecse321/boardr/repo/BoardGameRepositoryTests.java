@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
 
 @SpringBootTest  // Loads the full Spring Boot context for testing
+
 public class BoardGameRepositoryTests {
 
     @Autowired
@@ -45,4 +46,5 @@ public class BoardGameRepositoryTests {
         assertEquals("Catan", retrievedGame.getName(), "BoardGame name should match");
         assertEquals("A popular strategy board game.", retrievedGame.getDescription(), "BoardGame description should match");
     }
+
 }

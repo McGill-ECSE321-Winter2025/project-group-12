@@ -82,14 +82,17 @@ public class EventRepositoryTests {
         assertTrue(eventFromDb.isPresent(), "Event should be present in the repository");
         
         Event retrievedEvent = eventFromDb.get();
+
         // Verify basic attributes
+
         assertEquals(eventDate, retrievedEvent.getEventDate());
         assertEquals(eventTime, retrievedEvent.getEventTime());
         assertEquals(location, retrievedEvent.getLocation());
         assertEquals(description, retrievedEvent.getDescription());
         assertEquals(maxParticipants, retrievedEvent.getmaxParticipants());
-        
+
         // Verify references
+
         assertNotNull(retrievedEvent.getboardGameInstance(), "BoardGameInstance should not be null");
         assertNotNull(retrievedEvent.getOrganizer(), "Organizer should not be null");
         assertEquals("New", retrievedEvent.getboardGameInstance().getCondition());

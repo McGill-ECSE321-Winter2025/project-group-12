@@ -21,11 +21,13 @@ public class UserAccount {
     private String password;
     private Date creationDate;
 
+
     // We HAVE to see user role from user so we have to use this
     @OneToMany
     @JoinColumn(name = "role_id")
-    private Set<UserRole> userRole;
+    private Set<UserRole> userRoles;
 
+    
     protected UserAccount(){};
 
     public UserAccount(String name, String email, String password) {
@@ -58,6 +60,6 @@ public class UserAccount {
     }
 
     public Set<UserRole> getUserRole() {
-        return userRole;
+        return userRoles;
     }
 }

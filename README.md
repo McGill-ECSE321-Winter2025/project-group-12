@@ -1,11 +1,11 @@
-# Boadr (Group 12)
+# Boardr (Group 12)
 
-Welcome to the **Boadr** repository! This project is designed to create a platform for board game lovers to connect, share their games, and organize events. Whether you're a **Player** or a **Game Owner**, this app will help you manage your board game experiences seamlessly.
+Welcome to the **Boardr** repository! This project is designed to create a platform for board game lovers to connect, share their games, and organize events. Whether you're a **Player** or a **Game Owner**, this app will help you manage your board game experiences seamlessly.
 
 ## Project Overview
 
 The app supports two types of accounts:
-- **Players**: Can browse games, review them, and participate in events.
+- **Players**: Can browse games, participate in events, and leave a review.
 - **Game Owners**: Can manage their board game collections, receive borrowing requests, and track lending history.
 
 ### Key Features:
@@ -18,19 +18,26 @@ The app supports two types of accounts:
 
 ## Team Members
 
-| Name        | Role                     | Deliverable 1 Effort (hours) | Deliverable 2 Effort (hours) | Deliverable 3 Effort (hours) | Total Effort (hours) |
-|-------------|--------------------------|------------------------------|------------------------------|------------------------------|----------------------|
-| Kyujin      | TBD                      | TBD                          | TBD                          | TBD                          | TBD                  |
-| Jun Ho      | TBD                      | TBD                          | TBD                          | TBD                          | TBD                  |
-| David Vo    | TBD                      | TBD                          | TBD                          | TBD                          | TBD                  |
-| David Zhou  | TBD                      | TBD                          | TBD                          | TBD                          | TBD                  |
-| Eric        | TBD                      | TBD                          | TBD                          | TBD                          | TBD                  |
-| Jione       | TBD                      | TBD                          | TBD                          | TBD                          | TBD                  |
-| Yoon        | TBD                      | TBD                          | TBD                          | TBD                          | TBD                  |
+| Name                                              | Role                           | Deliverable 1 Effort (hours) | Deliverable 2 Effort (hours) | Deliverable 3 Effort (hours) | Total Effort (hours) |
+|---------------------------------------------------|--------------------------------|------------------------------|------------------------------|------------------------------|----------------------|
+| Kyujin [@3MinCurry](https://github.com/3MinCurry) | QA Tester                      | 8                          | TBD                          | TBD                          | TBD                  |
+| Jun Ho [@Junho332](https://github.com/Junho322)   | QA Tester                      | 8                          | TBD                          | TBD                          | TBD                  |
+| David Vo [@Kasamix](https://github.com/Kasamix)   | Project Manager                | 8                          | TBD                          | TBD                          | TBD                  |
+| David Zhou [@Rampex1](https://github.com/Rampex1) | Software Developer             | 8                          | TBD                          | TBD                          | TBD                  |
+| Eric [@Lawnless1](https://github.com/Lawnless1)   | Software Developer             | 8                          | TBD                          | TBD                          | TBD                  |
+| Jione [@Ji-One1](https://github.com/Ji-One1)      | Software Architect             | 8                          | TBD                          | TBD                          | TBD                  |
+| Yoon [@Yoonicornn](https://github.com/Yoonicornn) | QA Developer                   | 8                          | TBD                          | TBD                          | TBD                  |
 
 ## Deliverables
 
 ### Deliverable 1: Requirements Model, Domain Model, Persistence Layer, and Project Management
+- **[Project Deliverable 1: Domain Model and Report](https://github.com/McGill-ECSE321-Winter2025/project-group-12/wiki/Deliverable-1-Report)**
+- **Requirements Model**: All
+- **Domain Model Generation**: Yoon, Kyujin, David Vo, David Zhou
+- **Domain Model Code**: Jione, David Zhou, Eric Deng
+- **Persistence Layer**: David Zhou, Jione
+- **Persistence Layer Testing**: Yoon, Kyujin, Jun Ho
+- **Project Management**: Yoon, David Zhou, David Vo
 
 ### Deliverable 2: TBD
 - **Scope**: TBD
@@ -39,3 +46,5 @@ The app supports two types of accounts:
 ### Deliverable 3: TBD
 - **Scope**: TBD
 - **Effort**: TBD
+
+

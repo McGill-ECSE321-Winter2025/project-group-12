@@ -49,7 +49,7 @@ public class BorrowRequestRepositoryTests {
 
     @Test
     public void testCreateAndReadBorrowRequest() {
-        
+
         //Create Board Game
         BoardGame boardGame = new BoardGame("Catan", "A popular strategy board game.");
         boardGame = boardGameRepo.save(boardGame);
@@ -74,7 +74,6 @@ public class BorrowRequestRepositoryTests {
         Date requestDate = Date.valueOf(LocalDate.of(2025, 2, 20));
         Date returnDate  = Date.valueOf(LocalDate.of(2025, 3, 1));
 
-        
         BorrowRequest borrowRequest = new BorrowRequest(boardGameInstance, borrower, requestDate, returnDate);
         borrowRequest = borrowRequestRepo.save(borrowRequest);
         assertNotNull(borrowRequest.getBorrowRequestId(), "BorrowRequest should have an ID after being saved");
@@ -98,4 +97,5 @@ public class BorrowRequestRepositoryTests {
         assertEquals(boardGameInstance.getindividualGameId(), retrieved.getBoardGameInstance().getindividualGameId(), "BoardGameInstance IDs should match");
         assertEquals(borrower.getUserAccountId(), retrieved.getUserAccount().getUserAccountId(), "Borrower IDs should match");
     }
+
 }
