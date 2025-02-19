@@ -1,10 +1,8 @@
 package ca.mcgill.ecse321.boardr.repo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.sql.Date;
-import java.time.LocalDate;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +39,22 @@ public class UserAccountRepositoryTests {
         assertEquals(userAccount.getEmail(), retrievedUserAccount.getEmail());
         assertEquals(userAccount.getName(), retrievedUserAccount.getName());
         assertEquals(userAccount.getPassword(), retrievedUserAccount.getPassword());
+        // assertEquals(userAccount.getUserRole(), retrievedUserAccount.getUserRole());
     
     }            
     
+    @Test
+    public void testDeleteUserAccount() {
+        
+        // Arrange
+        UserAccount userAccount = new UserAccount("testUser", "testuser@mail.mcgill.ca", "password");
+        userAccount = repo.save(userAccount);
+
+        // Act
+        repo.delete(userAccount);
+        boolean exists = repo.existsById(userAccount.getUserAccountId());
+
+        // Assert
+        assertFalse(exists);
+    }
 }
