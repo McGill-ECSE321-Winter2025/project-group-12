@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.Objects;
 
 
@@ -19,7 +18,7 @@ public class Registration {
 
     public Registration(RegistrationKey registrationKey) {
         this.registrationKey = registrationKey;
-        this.registrationDate = Date.valueOf(LocalDate.now());
+        this.registrationDate = new Date(System.currentTimeMillis());
     }
 
     public RegistrationKey getRegistrationKey(){

@@ -11,7 +11,7 @@ public abstract class UserRole {
     private int id;
 
     public UserRole() {}
-
+    //This doesnt do anything                                                                                                   
     public UserRole(UserAccount userAccount) {
     }
 

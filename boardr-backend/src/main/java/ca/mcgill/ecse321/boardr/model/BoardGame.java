@@ -32,4 +32,9 @@ public class BoardGame {
     public String getDescription() {
         return this.description;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
 }
