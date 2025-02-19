@@ -1,11 +1,11 @@
-# Boadr (Group 12)
+# Boardr (Group 12)
 
-Welcome to the **Boadr** repository! This project is designed to create a platform for board game lovers to connect, share their games, and organize events. Whether you're a **Player** or a **Game Owner**, this app will help you manage your board game experiences seamlessly.
+Welcome to the **Boardr** repository! This project is designed to create a platform for board game lovers to connect, share their games, and organize events. Whether you're a **Player** or a **Game Owner**, this app will help you manage your board game experiences seamlessly.
 
 ## Project Overview
 
 The app supports two types of accounts:
-- **Players**: Can browse games, review them, and participate in events.
+- **Players**: Can browse games, participate in events, and leave a review.
 - **Game Owners**: Can manage their board game collections, receive borrowing requests, and track lending history.
 
 ### Key Features:
