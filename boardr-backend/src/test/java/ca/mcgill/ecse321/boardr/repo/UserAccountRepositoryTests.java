@@ -11,11 +11,39 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 
+/**
+ * Integration Tests for the {@link UserAccountRepository}.
+ * Ensures {@link UserAccount} entities are correctly persisted, retrieved, and deleted.
+ * 
+ * Test Scenario: Verifies the creation, retrieval, and deletion of {@link UserAccount} entities.
+ * 
+ * Setup:
+ * - Uses @SpringBootTest to load the full Spring context for integration testing.
+ * - Uses @Autowired to inject the repository instance for the {@link UserAccount}.
+ * - Utilizes @AfterEach annotation to clear the repository after each test to maintain a fresh state.
+ * 
+ * Test Cases:
+ * 1. testCreateandReadUserAccount
+ * 2. testDeleteUserAccount
+ * 
+ * Dependencies:
+ * - Gradle
+ * - Jakarta Persistence
+ * - Spring Boot
+ * 
+ * Author: Yoon
+ * Version: 1.0
+ */
+
 @SpringBootTest
 public class UserAccountRepositoryTests {
 
     @Autowired
     private UserAccountRepository repo;
+
+    /**
+     * Clears the repository after each test to ensure a fresh state.
+     */
 
     @AfterEach
     public void clearDatabase() {
@@ -44,6 +72,19 @@ public class UserAccountRepositoryTests {
     
     }            
     
+    /**
+     * Tests the creation and retrieval of a {@link UserAccount} entity.
+     *
+     * Steps:
+     * 1. Create a {@link UserAccount} with a username, email, and password.
+     * 2. Save the {@link UserAccount} to the repository.
+     * 3. Retrieve the {@link UserAccount} by its ID.
+     * 4. Verify that the retrieved user account matches the original in all attributes.
+     *
+     * Assertions:
+     * - All attributes of the retrieved user account should match the original user account.
+     */
+
     @Test
     public void testDeleteUserAccount() {
         

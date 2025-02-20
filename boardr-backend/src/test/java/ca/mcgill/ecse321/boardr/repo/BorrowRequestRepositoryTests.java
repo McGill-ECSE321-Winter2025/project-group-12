@@ -18,6 +18,30 @@ import ca.mcgill.ecse321.boardr.model.BorrowRequest;
 import ca.mcgill.ecse321.boardr.model.GameOwner;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 
+/**
+ * Integration Tests for the {@link BorrowRequestRepository}.
+ * Ensures {@link BorrowRequest} entities are correctly persisted and retrieved.
+ * 
+ * Test Scenario: Verifies the creation, persistence, and retrieval of
+ * {@link BorrowRequest} entities using Spring Boot, Jakarta Persistence, and Gradle.
+ * 
+ * Setup:
+ * - Uses @SpringBootTest to load the full Spring context for integration testing.
+ * - Uses @Autowired to inject the repository instances for related entities (BoardGame, UserAccount, GameOwner, etc.).
+ * - Utilizes @BeforeEach and @AfterEach annotations to clear the database before and after each test to maintain a fresh state.
+ * 
+ * Test Cases:
+ * 1. testCreateAndReadBorrowRequest
+ * 
+ * Dependencies:
+ * - Gradle
+ * - Jakarta Persistence
+ * - Spring Boot
+ * 
+ * Author: Yoon, Jun Ho
+ * Version: 1.0
+ */
+
 @SpringBootTest
 public class BorrowRequestRepositoryTests {
 
@@ -36,6 +60,10 @@ public class BorrowRequestRepositoryTests {
     @Autowired
     private GameOwnerRepository gameOwnerRepo;
 
+    /**
+    * Clears the database before and after each test to maintain a fresh state.
+    */
+
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -46,6 +74,27 @@ public class BorrowRequestRepositoryTests {
         boardGameRepo.deleteAll();
         gameOwnerRepo.deleteAll();
     }
+
+    /**
+     * Tests the creation and retrieval of a {@link BorrowRequest} entity.
+     *
+     * Steps:
+     * 1. Create a {@link BoardGame} and save it to the repository.
+     * 2. Create a {@link UserAccount} for the lender/game owner and save it.
+     * 3. Create a {@link GameOwner} linked to the {@link UserAccount}.
+     * 4. Create a {@link BoardGameInstance} linked to the {@link GameOwner}.
+     * 5. Create and save a {@link UserAccount} for the borrower.
+     * 6. Create and save a {@link BorrowRequest} for the {@link BoardGameInstance}.
+     * 7. Retrieve and verify that all attributes match the expected values.
+     *
+     * Assertions:
+     * - {@link BorrowRequest} ID should not be null after being saved.
+     * - {@link BorrowRequest} should be retrievable from the repository.
+     * - The request and return dates should match the expected values.
+     * - The default status should be Pending.
+     * - The references to {@link BoardGameInstance} and {@link UserAccount} (borrower) should not be null.
+     * - The IDs for the {@link BoardGameInstance} and {@link UserAccount} (borrower) should match the saved values.
+     */
 
     @Test
     public void testCreateAndReadBorrowRequest() {

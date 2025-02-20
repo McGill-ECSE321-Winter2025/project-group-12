@@ -19,6 +19,30 @@ import ca.mcgill.ecse321.boardr.model.GameOwner;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 import ca.mcgill.ecse321.boardr.model.Registration;
 
+/**
+ * Integration Tests for the {@link RegistrationRepository}.
+ * Ensures {@link Registration} entities are correctly persisted and retrieved.
+ * 
+ * Test Scenario: Verifies the creation, persistence, and retrieval of
+ * {@link Registration} entities using Spring Boot, Jakarta Persistence, and Gradle.
+ * 
+ * Setup:
+ * - Uses @SpringBootTest to load the full Spring context for integration testing.
+ * - Uses @Autowired to inject the repository instances for related entities (BoardGame, UserAccount, GameOwner, etc.).
+ * - Utilizes @BeforeEach and @AfterEach annotations to clear the database before and after each test to maintain a fresh state.
+ * 
+ * Test Cases:
+ * 1. testCreateAndReadRegistration
+ * 
+ * Dependencies:
+ * - Gradle
+ * - Jakarta Persistence
+ * - Spring Boot
+ * 
+ * Author: Yoon, Jun Ho
+ * Version: 1.0
+ */
+
 @SpringBootTest
 public class RegistrationRepositoryTests {
 
@@ -40,6 +64,10 @@ public class RegistrationRepositoryTests {
     @Autowired
     private GameOwnerRepository gameOwnerRepository;
 
+     /**
+     * Clears the repositories before and after each test to maintain a fresh database state.
+     */
+
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -51,6 +79,25 @@ public class RegistrationRepositoryTests {
         boardGameRepository.deleteAll();
         gameOwnerRepository.deleteAll();
     }
+
+    /**
+     * Tests the creation and retrieval of a {@link Registration} entity.
+     *
+     * Steps:
+     * 1. Create a {@link UserAccount} (registrant) and save it to the repository.
+     * 2. Create a {@link BoardGame} and save it.
+     * 3. Create a {@link UserAccount} for the game owner and save it.
+     * 4. Create a {@link GameOwner} linked to the {@link UserAccount}.
+     * 5. Create and save a {@link BoardGameInstance} linked to the {@link GameOwner}.
+     * 6. Create a {@link UserAccount} for the event organizer.
+     * 7. Create and save an {@link Event} organized by the organizer.
+     * 8. Create a {@link Registration} entity using a composite key for the registrant and event.
+     * 9. Verify that the {@link Registration} entity can be retrieved from the repository.
+     *
+     * Assertions:
+     * - The registration's composite key should reference the correct user and event.
+     * - The registration date should not be null.
+     */
 
     @Test
     public void testCreateAndReadRegistration() {
