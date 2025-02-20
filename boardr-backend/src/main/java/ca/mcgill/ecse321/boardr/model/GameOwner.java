@@ -1,5 +1,6 @@
 package ca.mcgill.ecse321.boardr.model;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
 /**
@@ -10,6 +11,7 @@ import jakarta.persistence.Entity;
  * @since 2023-10-05
  */
 @Entity
+@DiscriminatorValue("GAMEOWNER")
 public class GameOwner extends UserRole {
     public GameOwner() {
     }
