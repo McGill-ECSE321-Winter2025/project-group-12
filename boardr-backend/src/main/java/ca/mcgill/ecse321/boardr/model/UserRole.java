@@ -28,5 +28,5 @@ public abstract class UserRole {
     }
 
     @Transient
-    public String getUserType() { return this.getClass().getAnnotation(DiscriminatorValue.class).value(); }
+    public String getUserRole() { return this.getClass().getAnnotation(DiscriminatorValue.class).value(); }
 }
