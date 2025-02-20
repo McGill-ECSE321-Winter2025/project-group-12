@@ -13,6 +13,30 @@ import ca.mcgill.ecse321.boardr.model.Review;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
 
+/**
+ * Integration Tests for the {@link ReviewRepository}.
+ * Ensures {@link Review} entities are correctly persisted, retrieved, and deleted.
+ * 
+ * Test Scenario: Verifies the creation, retrieval, and deletion of {@link Review} entities.
+ * 
+ * Setup:
+ * - Uses @SpringBootTest to load the full Spring context for integration testing.
+ * - Uses @Autowired to inject the repository instances for related entities (Review, UserAccount, and BoardGame).
+ * - Utilizes @AfterEach annotation to clear the database after each test to maintain a fresh state.
+ * 
+ * Test Cases:
+ * 1. testCreateandReadReview
+ * 2. testDeleteReview
+ * 
+ * Dependencies:
+ * - Gradle
+ * - Jakarta Persistence
+ * - Spring Boot
+ * 
+ * Author: Yoon
+ * Version: 1.0
+ */
+
 @SpringBootTest
 public class ReviewRepositoryTests {
 
@@ -22,6 +46,10 @@ public class ReviewRepositoryTests {
     private UserAccountRepository userRepo;
     @Autowired
     private BoardGameRepository gameRepo;
+
+    /**
+     * Clears the repositories after each test to ensure a fresh state.
+     */
 
     @AfterEach
     public void clearDatabase() {
@@ -56,6 +84,21 @@ public class ReviewRepositoryTests {
         assertEquals(review.getBoardGame().getGameId(), retrievedReview.getBoardGame().getGameId());
 
     }
+
+    /**
+     * Tests the creation and retrieval of a {@link Review} entity.
+     *
+     * Steps:
+     * 1. Create a {@link UserAccount} (user) and save it to the repository.
+     * 2. Create a {@link BoardGame} and save it.
+     * 3. Create a {@link Review} with a rating, comment, and associations to user and game.
+     * 4. Save the review to the repository.
+     * 5. Retrieve the review by its ID.
+     * 6. Verify that the retrieved review matches the original review in all attributes.
+     *
+     * Assertions:
+     * - All attributes of the retrieved review should match those of the original review.
+     */
 
     @Test
     public void testDeleteReview() {

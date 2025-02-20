@@ -16,6 +16,30 @@ import ca.mcgill.ecse321.boardr.model.Event;
 import ca.mcgill.ecse321.boardr.model.GameOwner;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 
+/**
+ * Integration Tests for the {@link EventRepository}.
+ * Ensures {@link Event} entities are correctly persisted and retrieved.
+ * 
+ * Test Scenario: Verifies the creation, persistence, and retrieval of
+ * {@link Event} entities using Spring Boot, Jakarta Persistence, and Gradle.
+ * 
+ * Setup:
+ * - Uses @SpringBootTest to load the full Spring context for integration testing.
+ * - Uses @Autowired to inject the repository instances for related entities (BoardGame, UserAccount, GameOwner, etc.).
+ * - Utilizes @BeforeEach and @AfterEach annotations to clear the database before and after each test to maintain a fresh state.
+ * 
+ * Test Cases:
+ * 1. testCreateAndReadEvent
+ * 
+ * Dependencies:
+ * - Gradle
+ * - Jakarta Persistence
+ * - Spring Boot
+ * 
+ * Author: Yoon, Jun Ho
+ * Version: 1.0
+ */
+
 @SpringBootTest
 public class EventRepositoryTests {
 
@@ -34,7 +58,9 @@ public class EventRepositoryTests {
     @Autowired
     private GameOwnerRepository gameOwnerRepository;
 
-    
+    /**
+     * Clears the database before and after each test to maintain a fresh state.
+     */
 
     @BeforeEach
     @AfterEach
@@ -46,6 +72,25 @@ public class EventRepositoryTests {
         boardGameRepository.deleteAll();
         gameOwnerRepository.deleteAll();
     }
+
+    /**
+     * Tests the creation and retrieval of an {@link Event} entity.
+     *
+     * Steps:
+     * 1. Create a {@link BoardGame} and save it to the repository.
+     * 2. Create a {@link UserAccount} for the event organizer and save it.
+     * 3. Create a {@link GameOwner} linked to the {@link UserAccount}.
+     * 4. Create a {@link BoardGameInstance} linked to the {@link GameOwner}.
+     * 5. Create and save a new {@link Event} for the {@link BoardGameInstance}.
+     * 6. Retrieve and verify that all attributes match the expected values.
+     *
+     * Assertions:
+     * - {@link Event} ID should not be null after being saved.
+     * - {@link Event} should be retrievable from the repository.
+     * - The event date, time, location, description, and max participants should match the expected values.
+     * - The references to {@link BoardGameInstance} and {@link UserAccount} (organizer) should not be null.
+     * - The IDs for the {@link BoardGameInstance} and {@link UserAccount} (organizer) should match the saved values.
+     */
 
     @Test
     public void testCreateAndReadEvent() {
