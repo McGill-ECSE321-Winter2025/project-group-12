@@ -7,10 +7,16 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Objects;
 
-
+/**
+ * Represents a registration for an event, uniquely identified by a user and event combination.
+ * 
+ * @author Eric, Junho, Jione, David Zhou
+ * @version 1.0
+ * @since 2023-10-05
+ */
 @Entity
 public class Registration {
-    @EmbeddedId
+    @EmbeddedId /* Registrations are unique to users and events, so no generated id required */
     private RegistrationKey registrationKey;
     private Date registrationDate;
 
@@ -31,7 +37,7 @@ public class Registration {
     }
 
     
-    @Embeddable
+    @Embeddable 
     public static class RegistrationKey implements Serializable {
         @ManyToOne
         @JoinColumn(name = "user_account_id")
@@ -57,7 +63,7 @@ public class Registration {
             return event;
         }
 
-        @Override
+        @Override /* Registration key instances should be fungible if they are owned by the same user and for the same event */
         public boolean equals(Object obj) {
             if (!(obj instanceof RegistrationKey)) {
                 return false;
@@ -67,7 +73,7 @@ public class Registration {
                     && this.event.getEventId() == that.event.getEventId();
         }
 
-        @Override
+        @Override /* Allows different instances of the same registration key fungible */
         public int hashCode() {
             return Objects.hash(this.registrant.getUserAccountId(), this.event.getEventId());
         }

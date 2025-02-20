@@ -2,22 +2,28 @@ package ca.mcgill.ecse321.boardr.model;
 
 import jakarta.persistence.*;
 
-
+/**
+ * Represents an instance of a board game with a unique ID, condition, and availability status.
+ * Reduces redundancy for multiple instances of the same game 
+ * @author Junho, Jione, David Zhou
+ * @version 1.0
+ * @since 2023-10-05
+ */
 @Entity
 public class BoardGameInstance {
     @Id
-    @GeneratedValue
+    @GeneratedValue /* GameId is irrelevant to user, but valuable for table management */
     private int individualGameId;
     private String condition;  //Should we have condition? idr
     private boolean isAvailable;
 
-    @ManyToOne
+    @ManyToOne 
     @JoinColumn(name = "user_id")
     private GameOwner gameOwner;
 
     @ManyToOne
     @JoinColumn(name = "board_game_id")
-    private BoardGame boardGame;
+    private BoardGame boardGame; 
 
     BoardGameInstance() {}
 
@@ -36,7 +42,6 @@ public class BoardGameInstance {
         return boardGame;
     }
 
-    // TODO: What is Condition? Should we have it?
     public String getCondition() {
         return condition;
     }

@@ -4,16 +4,22 @@ import jakarta.persistence.*;
 
 import java.sql.Date;
 
+/**
+ * Represents a borrow request for a board game, including request and return dates, status, and associated user and game instance.
+ * @author Junho, Jione, David Zhou
+ * @version 1.0
+ * @since 2023-10-05
+ */
 @Entity
 public class BorrowRequest {
     @Id
-    @GeneratedValue
+    @GeneratedValue /* RequestId is irrelevant to user, but valuable for table management */
     private int borrowRequestId;
     private Date requestDate;
     private Date returnDate;
     private RequestStatus status;
 
-    public enum RequestStatus {
+    public enum RequestStatus { /* Expired Requests will default to Declined */
         Pending,
         Accepted,
         Declined;
