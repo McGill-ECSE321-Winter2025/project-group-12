@@ -33,7 +33,7 @@ import ca.mcgill.ecse321.boardr.model.BoardGame;
  * - Jakarta Persistence
  * - Spring Boot
  * 
- * Author: Yoon
+ * Author: Yoon, Junho
  * Version: 1.0
  */
 

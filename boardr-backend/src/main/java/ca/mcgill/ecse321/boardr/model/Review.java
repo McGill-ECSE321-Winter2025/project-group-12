@@ -10,10 +10,17 @@ import java.time.LocalDate;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
+/**
+ * Represents a review for a board game, including rating, comment, and associated user account.
+ * 
+ * @author Eric, Junho, Jione, David Zhou
+ * @version 1.0
+ * @since 2023-10-05
+ */
 @Entity
 public class Review {
     @Id
-    @GeneratedValue
+    @GeneratedValue /* reviewId is irrelevant to user, but valuable for table management */
     private int reviewId;
     private int rating;
     private String comment;

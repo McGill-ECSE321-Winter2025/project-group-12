@@ -11,10 +11,17 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents a user account with personal details and associated roles.
+ * 
+ * @author Junho, Jione, David Zhou
+ * @version 1.0
+ * @since 2023-10-05
+ */
 @Entity
 public class UserAccount {
     @Id
-    @GeneratedValue
+    @GeneratedValue /* UserAccount is irrelevant to user, but valuable for table management */
     private int userAccountId;
     private String name;
     private String email;
@@ -22,7 +29,7 @@ public class UserAccount {
     private Date creationDate;
 
 
-    // We HAVE to see user role from user so we have to use this
+    // Allows to get the UserRole from the UserAccount Class
     @OneToMany
     @JoinColumn(name = "role_id")
     private Set<UserRole> userRoles;

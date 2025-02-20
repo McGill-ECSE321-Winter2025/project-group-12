@@ -6,12 +6,18 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 
-
+/**
+ * Represents an event with a date, time, location, description, and associated board game instance and organizer.
+ * 
+ * @author Eric, David Zhou, Junho, Jione, 
+ * @version 1.0
+ * @since 2023-10-05
+ */
 
 @Entity
 public class Event {
     @Id
-    @GeneratedValue
+    @GeneratedValue /* EventId is irrelevant to user, but valuable for table management */
     private int eventId;
     private int eventDate;
     private int eventTime;
