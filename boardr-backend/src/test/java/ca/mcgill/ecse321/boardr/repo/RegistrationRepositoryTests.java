@@ -39,7 +39,7 @@ import ca.mcgill.ecse321.boardr.model.Registration;
  * - Jakarta Persistence
  * - Spring Boot
  * 
- * Author: Yoon, Jun Ho
+ * Author: Yoon, Jun Ho 
  * Version: 1.0
  */
 

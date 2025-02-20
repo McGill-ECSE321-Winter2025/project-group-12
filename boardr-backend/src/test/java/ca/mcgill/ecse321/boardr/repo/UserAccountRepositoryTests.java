@@ -31,7 +31,7 @@ import ca.mcgill.ecse321.boardr.model.UserAccount;
  * - Jakarta Persistence
  * - Spring Boot
  * 
- * Author: Yoon, Junho
+ * Author: Yoon, Kyujin, Jun Ho
  * Version: 1.0
  */
 

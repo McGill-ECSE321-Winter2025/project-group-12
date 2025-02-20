@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 /**
  * Represents an instance of a board game with a unique ID, condition, and availability status.
  * Reduces redundancy for multiple instances of the same game 
- * @author [Your Name]
+ * @author Junho, Jione, David Zhou
  * @version 1.0
  * @since 2023-10-05
  */
