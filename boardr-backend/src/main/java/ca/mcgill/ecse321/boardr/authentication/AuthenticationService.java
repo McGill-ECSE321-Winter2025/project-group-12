@@ -3,6 +3,8 @@ package ca.mcgill.ecse321.boardr.service;
 import ca.mcgill.ecse321.boardr.authentication.JwtService;
 import ca.mcgill.ecse321.boardr.dto.Authorization.AuthRequestDTO;
 import ca.mcgill.ecse321.boardr.dto.Authorization.AuthResponseDTO;
+import ca.mcgill.ecse321.boardr.dto.Registration.RegistrationRequestDTO;
+import ca.mcgill.ecse321.boardr.dto.Registration.RegistrationResponseDTO;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,4 +34,10 @@ public class AuthenticationService {
         return new AuthResponseDTO(jwtService.generateToken(user.getEmail()), user.getEmail(), user.getName());
     }
 
+    public RegistrationResponseDTO register(RegistrationRequestDTO userInfo) {
+
+        UserAccount accountToRegister = new UserAccount(userInfo.getName(), userInfo.getEmail(), bCryptPasswordEncoder.encode(userInfo.getPassword()));
+        UserAccountRepository.save(accountToRegister);
+        
+    }
 }
