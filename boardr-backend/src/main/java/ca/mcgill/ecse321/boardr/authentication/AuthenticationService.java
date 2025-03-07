@@ -1,13 +1,13 @@
-package ca.mcgill.ecse321.boardr.service;
+package ca.mcgill.ecse321.boardr.authentication;
 
-import ca.mcgill.ecse321.boardr.authentication.JwtService;
 import ca.mcgill.ecse321.boardr.dto.Authorization.AuthRequestDTO;
 import ca.mcgill.ecse321.boardr.dto.Authorization.AuthResponseDTO;
 import ca.mcgill.ecse321.boardr.dto.Registration.RegistrationRequestDTO;
-import ca.mcgill.ecse321.boardr.dto.Registration.RegistrationResponseDTO;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,16 +28,49 @@ public class AuthenticationService {
 
 
     public AuthResponseDTO login(AuthRequestDTO credentials) {
-        UserAccount user = userAccountRepository.findByEmail(credentials.getEmail()).orElseThrow(() -> new RuntimeException("Account not found"));
+        try {
+            UserAccount user = userAccountRepository.findByEmail(credentials.getEmail())
+                    .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-        return new AuthResponseDTO(jwtService.generateToken(user.getEmail()), user.getEmail(), user.getName());
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword())
+            );
+
+            String token = jwtService.generateToken(user.getEmail());
+            System.out.println("Generated token: " + token);
+
+            AuthResponseDTO response = new AuthResponseDTO(token, user.getEmail(), user.getName());
+            System.out.println("Response DTO: " + response.getEmail() + ", " + response.getName() + ", " + response.getToken());
+
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
-    public RegistrationResponseDTO register(RegistrationRequestDTO userInfo) {
+    public void register(RegistrationRequestDTO userInfo) {
+        if (userInfo.getName().trim().isEmpty()){
+            throw new IllegalArgumentException("Name cannot be empty!");
+        }
+
+        if (userInfo.getEmail().trim().isEmpty()){
+            throw new IllegalArgumentException("Email cannot be empty!");
+        }
+
+        if (userInfo.getPassword().trim().isEmpty()){
+            throw new IllegalArgumentException("Password cannot be empty!");
+        }
+
+        UserAccount existingUserAccount = userAccountRepository.findByEmail(userInfo.getEmail()).orElse(null);
+
+        if (existingUserAccount != null) {
+            throw new IllegalArgumentException("Email is already in use!");
+        }
+
 
         UserAccount accountToRegister = new UserAccount(userInfo.getName(), userInfo.getEmail(), bCryptPasswordEncoder.encode(userInfo.getPassword()));
-        UserAccountRepository.save(accountToRegister);
-        
+        userAccountRepository.save(accountToRegister);
     }
 }
