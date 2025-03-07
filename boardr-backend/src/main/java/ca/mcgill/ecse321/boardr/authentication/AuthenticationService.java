@@ -28,26 +28,16 @@ public class AuthenticationService {
 
 
     public AuthResponseDTO login(AuthRequestDTO credentials) {
-        try {
-            UserAccount user = userAccountRepository.findByEmail(credentials.getEmail())
-                    .orElseThrow(() -> new RuntimeException("Account not found"));
+        UserAccount user = userAccountRepository.findByEmail(credentials.getEmail())
+                .orElseThrow(() ->  new IllegalArgumentException("Account not found"));
 
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword())
-            );
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword())
+        );
 
-            String token = jwtService.generateToken(user.getEmail());
-            System.out.println("Generated token: " + token);
+        String token = jwtService.generateToken(user.getEmail());
 
-            AuthResponseDTO response = new AuthResponseDTO(token, user.getEmail(), user.getName());
-            System.out.println("Response DTO: " + response.getEmail() + ", " + response.getName() + ", " + response.getToken());
-
-            return response;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        return new AuthResponseDTO(token, user.getEmail(), user.getName());
     }
 
     public void register(RegistrationRequestDTO userInfo) {
@@ -68,7 +58,6 @@ public class AuthenticationService {
         if (existingUserAccount != null) {
             throw new IllegalArgumentException("Email is already in use!");
         }
-
 
         UserAccount accountToRegister = new UserAccount(userInfo.getName(), userInfo.getEmail(), bCryptPasswordEncoder.encode(userInfo.getPassword()));
         userAccountRepository.save(accountToRegister);

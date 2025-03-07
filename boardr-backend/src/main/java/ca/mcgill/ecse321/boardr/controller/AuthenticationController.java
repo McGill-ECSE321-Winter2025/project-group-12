@@ -23,11 +23,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO credentials) {
         AuthResponseDTO response = authenticationService.login(credentials);
-        System.out.println("Login response: token=" + response.getToken() +
-                ", email=" + response.getEmail() +
-                ", name=" + response.getName());
+
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
                 .body(response);
     }
 
