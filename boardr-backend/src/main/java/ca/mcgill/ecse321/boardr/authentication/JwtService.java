@@ -1,7 +1,6 @@
-package ca.mcgill.ecse321.boardr.service;
+package ca.mcgill.ecse321.boardr.authentication;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -17,7 +16,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class JWTService {
+public class JwtService {
 
     @Value("${security.jwt.secret-key}")
     private String secretKey;
@@ -40,7 +39,7 @@ public class JWTService {
 
 
 
-    public boolean validateToken(String token, UserDetails userDetails) {
+    public boolean isValidToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
