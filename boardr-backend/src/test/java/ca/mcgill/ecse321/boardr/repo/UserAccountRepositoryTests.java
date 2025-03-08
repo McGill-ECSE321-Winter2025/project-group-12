@@ -58,7 +58,7 @@ public class UserAccountRepositoryTests {
         userAccount = repo.save(userAccount);
 
         // Act
-        UserAccount retrievedUserAccount = repo.findByUserAccountId(userAccount.getUserAccountId());
+        UserAccount retrievedUserAccount = repo.findByUserAccountId(userAccount.getUserAccountId()).orElse(null);
 
         // Assert
         assertNotNull(retrievedUserAccount);
