@@ -4,8 +4,12 @@ import ca.mcgill.ecse321.boardr.model.BoardGame;
 import ca.mcgill.ecse321.boardr.repo.BoardGameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class BoardGameService {
@@ -14,7 +18,8 @@ public class BoardGameService {
 
 
     public List<BoardGame> getAllBoardGames() {
-        return boardGameRepository.findAll();
+        return StreamSupport.stream(boardGameRepository.findAll().spliterator(), false)
+            .collect(Collectors.toList());
     }
 
     public Optional<BoardGame> getBoardGameById(int id) {

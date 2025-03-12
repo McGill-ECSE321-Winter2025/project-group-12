@@ -1,37 +1,31 @@
 package ca.mcgill.ecse321.boardr.controller;
 
+import ca.mcgill.ecse321.boardr.dto.BoardGame.BoardGameDTO;
+import ca.mcgill.ecse321.boardr.model.BoardGame;
 import ca.mcgill.ecse321.boardr.service.BoardGameService;
-
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/boardgames")
 public class BoardGameController {
-    
-    private final BoardGameService boardGameService;
 
     @Autowired
-    public BoardGameController(BoardGameService boardGameService) {
-        this.boardGameService = boardGameService;
+    private BoardGameService boardGameService;
+
+    @GetMapping
+    public List<BoardGameDTO> getAllBoardGames() {
+        return boardGameService.getAllBoardGames().stream()
+                .map(game -> new BoardGameDTO(game.getGameId(), game.getName(), game.getDescription()))
+                .collect(Collectors.toList());
     }
 
     @PostMapping
-    @RequiredUser
-    public ResponseEntity<BoardGameResponse> createBoardGame (
-        @RequestBody CreateBoardGame request
-    ) {
-        boardGameService.createBoardGame(request);
-        return ResponseEntity.ok().build();
+    public BoardGameDTO createBoardGame(@RequestBody BoardGameDTO dto) {
+        BoardGame boardGame = boardGameService.createBoardGame(dto.getName(), dto.getDescription());
+        return new BoardGameDTO(boardGame.getGameId(), boardGame.getName(), boardGame.getDescription());
     }
-
 }

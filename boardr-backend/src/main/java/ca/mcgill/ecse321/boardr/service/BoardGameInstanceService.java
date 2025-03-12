@@ -3,14 +3,17 @@ package ca.mcgill.ecse321.boardr.service;
 import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
 import ca.mcgill.ecse321.boardr.model.GameOwner;
-import ca.mcgill.ecse321.boardr.repository.BoardGameInstanceRepository;
-import ca.mcgill.ecse321.boardr.repository.BoardGameRepository;
-import ca.mcgill.ecse321.boardr.repository.GameOwnerRepository;
+import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
+import ca.mcgill.ecse321.boardr.repo.BoardGameRepository;
+import ca.mcgill.ecse321.boardr.repo.GameOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class BoardGameInstanceService {
@@ -25,7 +28,8 @@ public class BoardGameInstanceService {
     private GameOwnerRepository gameOwnerRepository;
 
     public List<BoardGameInstance> getAllBoardGameInstances() {
-        return boardGameInstanceRepository.findAll();
+        return StreamSupport.stream(boardGameInstanceRepository.findAll().spliterator(), false)
+            .collect(Collectors.toList());
     }
 
     public Optional<BoardGameInstance> getBoardGameInstanceById(int id) {
@@ -42,10 +46,24 @@ public class BoardGameInstanceService {
         return boardGameInstanceRepository.save(new BoardGameInstance(boardGame, gameOwner, condition));
     }
 
-    public void deleteBoardGameInstance(int id) {
-        boardGameInstanceRepository.deleteById(id);
+    public void removeBoardGameInstance(int instanceId) {
+        if (!boardGameInstanceRepository.existsById(instanceId)) {
+            throw new IllegalArgumentException("Board Game Instance not found");
+        }
+        boardGameInstanceRepository.deleteById(instanceId);
     }
 
+    public void borrowBoardGameInstance(int instanceId) {
+        BoardGameInstance instance = boardGameInstanceRepository.findById(instanceId)
+                .orElseThrow(() -> new IllegalArgumentException("Board Game Instance not found"));
 
+        if (!instance.isAvailable()) {
+            throw new IllegalStateException("Board Game Instance is not available for borrowing");
+        }
+
+        // Mark as unavailable when borrowed
+        instance.setAvailable(false);
+        boardGameInstanceRepository.save(instance);
+    }
     
 }
