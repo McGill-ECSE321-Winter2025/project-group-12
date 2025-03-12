@@ -1,10 +1,6 @@
 package ca.mcgill.ecse321.boardr.model;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.*;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -30,7 +26,7 @@ public class UserAccount {
 
 
     // Allows to get the UserRole from the UserAccount Class
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Set<UserRole> userRoles;
 
@@ -42,8 +38,8 @@ public class UserAccount {
         this.email = email;
         this.password = password;
         this.creationDate = Date.valueOf(LocalDate.now());
-        // this.userRole = Set.of(new Player(this), new GameOwner(this));
-        // this.userRole = new HashSet<>(Set.of(new Player(this), new GameOwner(this)));
+        this.userRoles = Set.of(new Player(this), new GameOwner(this));
+       
     }
 
     public int getUserAccountId() {
