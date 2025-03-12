@@ -10,6 +10,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller class for managing Board Game Instances in the Boardr application.
+ * Provides endpoints for creating, deleting, borrowing and view all board game instances.
+ * This class interacts with the BoardGameInstanceService to perform operations related to events.
+ * 
+ * REST APIs:
+ * - POST /boardgameinstances: Create a new board game instance
+ * - DELETE /boardgameinstances/{Id}: Delete a board game instance by its ID
+ * - GET /boardgameinstances: Retrieve all available board game instances
+ * - POST /boardgameinstances/{id}/borrow: borrow a board game instance
+ * 
+ * @author Jun Ho
+ * @version 1.0
+ * @since 2025-03-11
+ * 
+ */
+
 @RestController
 @RequestMapping("/boardgameinstances")
 public class BoardGameInstanceController {

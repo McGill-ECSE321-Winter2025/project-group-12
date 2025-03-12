@@ -1,5 +1,14 @@
 package ca.mcgill.ecse321.boardr.dto.BoardGameInstance;
 
+/**
+* Data Transfer Object class for BoardGameInstance
+* Contains all attributes required to create and update a board game instance, as well as sets condition
+* Used to transfer information between the frontend and backend while maintaining separation of concerns
+* @author Jun Ho Oh
+* @version 1.0
+* @since 2025-03-11
+*/
+
 public class BoardGameInstanceDTO {
     private int individualGameId;
     private String condition;

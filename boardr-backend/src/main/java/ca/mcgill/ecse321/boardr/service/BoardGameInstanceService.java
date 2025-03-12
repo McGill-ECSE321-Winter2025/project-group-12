@@ -15,6 +15,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Service class for managing board game instances in the Boardr application.
+ * Provides methods for creating, deleting, and retrieving board game instances. As well as managing borrows
+ * This class interacts with the BoardGameInstanceRepository,BoardGameRepository, and GameOwnerRepository
+ * to perform operations related to board game instances.
+ * @author Jun Ho Oh
+ * @version 1.0
+ * @since 2025-03-11
+ */
+
+
 @Service
 public class BoardGameInstanceService {
 

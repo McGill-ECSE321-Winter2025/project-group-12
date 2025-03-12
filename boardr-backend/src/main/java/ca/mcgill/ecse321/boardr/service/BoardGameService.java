@@ -11,6 +11,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Service class for managing board games in the Boardr application.
+ * Provides methods for creating, deleting, updating and retrieving board games.
+ * This class interacts with the BoardGameRepository
+ * to perform operations related to board games.
+ * @author Jun Ho Oh
+ * @version 1.0
+ * @since 2025-03-11
+ */
+
 @Service
 public class BoardGameService {
     @Autowired
@@ -40,7 +50,7 @@ public class BoardGameService {
         throw new IllegalArgumentException("Board Game not found");
     }
 
-    public void deleteBoardGame(int id) {
+    public void removeBoardGame(int id) {
         boardGameRepository.deleteById(id);
     }
 

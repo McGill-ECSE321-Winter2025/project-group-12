@@ -1,5 +1,14 @@
 package ca.mcgill.ecse321.boardr.dto.BoardGame;
 
+/**
+* Data Transfer Object class for BoardGame
+* Contains all attributes required to create and update a board game
+* Used to transfer information between the frontend and backend while maintaining separation of concerns
+* @author Jun Ho Oh
+* @version 1.0
+* @since 2025-03-11
+*/
+
 public class BoardGameDTO {
     private int gameId;
     private String name;
