@@ -8,8 +8,17 @@ import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
+
+/**
+ * Service class for managing events in the Boardr application.
+ * Provides methods for creating, deleting, and retrieving events.
+ * This class interacts with the EventRepository, UserAccountRepository, and BoardGameInstanceRepository
+ * to perform operations related to events.
+ * @author David Vo
+ * @version 1.0
+ * @since 2025-03-12
+ */
 
 @Service
 public class EventService {
@@ -45,6 +54,7 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    // Helper method to create an Event from a DTO
     public Event createEventFromDTO(EventDTO eventDTO) {
         UserAccount organizer = userAccountRepository.findById(eventDTO.getOrganizerId())
                 .orElseThrow(() -> new IllegalArgumentException("Organizer not found."));

@@ -12,6 +12,16 @@ import ca.mcgill.ecse321.boardr.repo.EventRepository;
 import ca.mcgill.ecse321.boardr.repo.RegistrationRepository;
 import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
 
+/** 
+ * Service class for managing registrations in the Boardr application.
+ * Provides methods for registering for events.
+ * This class interacts with the RegistrationRepository, EventRepository, and UserAccountRepository
+ * to perform operations related to registrations.
+ * @author David Vo
+ * @version 1.0
+ * @since 2025-03-12
+ */
+
 @Service
 public class RegistrationService {
 

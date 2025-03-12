@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Represents a registration for an event, uniquely identified by a user and event combination.
  * 
- * @author Eric, Junho, Jione, David Zhou
+ * @author Eric, Junho, Jione, David Zhou, David Vo
  * @version 1.0
  * @since 2023-10-05
  */

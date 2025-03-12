@@ -1,5 +1,14 @@
 package ca.mcgill.ecse321.boardr.dto.Event;
 
+/**
+* Data Transfer Object class for Event
+* Contains all attributes required to create an Event
+* Used to transfer information between the frontend and backend while maintaining separation of concerns
+* @author David Vo
+* @version 1.0
+* @since 2025-03-12
+*/
+
 public class EventDTO {
     private int eventDate;
     private int eventTime;
