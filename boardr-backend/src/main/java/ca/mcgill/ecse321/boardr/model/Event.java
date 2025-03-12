@@ -14,7 +14,7 @@ import jakarta.persistence.OneToMany;
 /**
  * Represents an event with a date, time, location, description, and associated board game instance and organizer.
  * 
- * @author Eric, David Zhou, Junho, Jione
+ * @author Eric, David Zhou, Junho, Jione, David Vo
  * @version 1.0
  * @since 2023-10-05
  */

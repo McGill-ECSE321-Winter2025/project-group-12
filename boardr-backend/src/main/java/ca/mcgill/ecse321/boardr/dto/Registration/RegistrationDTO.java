@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.boardr.dto;
+package ca.mcgill.ecse321.boardr.dto.Registration;
 
 public class RegistrationDTO {
     private int userId;
