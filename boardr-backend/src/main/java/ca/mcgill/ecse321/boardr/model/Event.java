@@ -1,19 +1,23 @@
 package ca.mcgill.ecse321.boardr.model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.OneToMany;
 
 /**
  * Represents an event with a date, time, location, description, and associated board game instance and organizer.
  * 
- * @author Eric, David Zhou, Junho, Jione, 
+ * @author Eric, David Zhou, Junho, Jione
  * @version 1.0
  * @since 2023-10-05
  */
-
 @Entity
 public class Event {
     @Id
@@ -33,7 +37,9 @@ public class Event {
     @JoinColumn(name = "organizer_id")
     private UserAccount organizer;
 
-    
+    @OneToMany(mappedBy = "registrationKey.event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Registration> registrations;
+
     protected Event() {}
 
     public Event(int eventDate, int eventTime, String location, String description, int maxParticipants, BoardGameInstance boardGameInstance, UserAccount organizer) {
@@ -44,24 +50,23 @@ public class Event {
         this.maxParticipants = maxParticipants;
         this.boardGameInstance = boardGameInstance;
         this.organizer = organizer;
-
     }
 
     public int getEventId() {
-		return this.eventId;
-	}
+        return this.eventId;
+    }
 
     public int getEventDate() {
-		return this.eventDate;
-	}
+        return this.eventDate;
+    }
 
     public int getEventTime() {
-		return this.eventTime;
-	}
+        return this.eventTime;
+    }
 
     public String getLocation() {
-		return this.location;
-	}
+        return this.location;
+    }
 
     public String getDescription() {
         return this.description;
@@ -79,9 +84,15 @@ public class Event {
         return this.organizer;
     }
 
+    public List<Registration> getRegistrations() {
+        return this.registrations;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
 
+    public void setRegistrations(List<Registration> registrations) {
+        this.registrations = registrations;
+    }
 }
