@@ -91,8 +91,4 @@ public class Event {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public void setRegistrations(List<Registration> registrations) {
-        this.registrations = registrations;
-    }
 }

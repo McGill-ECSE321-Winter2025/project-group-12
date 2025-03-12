@@ -38,13 +38,12 @@ public class EventService {
         if (organizer == null) {
             throw new IllegalArgumentException("Organizer must be provided.");
         }
+        
         BoardGameInstance gameInstance = event.getboardGameInstance();
         if (gameInstance == null) {
             throw new IllegalArgumentException("A board game instance must be provided.");
         }
-        // Minimal validation: ensure the game instance exists and is tied to some owner
-        // We can't directly check ownership without getUserAccount(), so we assume the provided gameInstance is valid
-        // If stricter validation is needed, it should be enforced elsewhere (e.g., database constraints or frontend)
+
         if (gameInstance.getGameOwner() == null) {
             throw new IllegalArgumentException("Board game instance must have an owner.");
         }
