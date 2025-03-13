@@ -1,11 +1,11 @@
 package ca.mcgill.ecse321.boardr.controller;
 
-import ca.mcgill.ecse321.boardr.dto.BoardGame.BoardGameDTO;
+import ca.mcgill.ecse321.boardr.dto.BoardGame.*;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
 import ca.mcgill.ecse321.boardr.service.BoardGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,29 +25,34 @@ import java.util.stream.Collectors;
  * 
  */
 
-@RestController
-@RequestMapping("/boardgames")
-public class BoardGameController {
-
-    @Autowired
-    private BoardGameService boardGameService;
-
-    @GetMapping
-    public List<BoardGameDTO> getAllBoardGames() {
-        return boardGameService.getAllBoardGames().stream()
-                .map(game -> new BoardGameDTO(game.getGameId(), game.getName(), game.getDescription()))
-                .collect(Collectors.toList());
-    }
-
-    @PostMapping
-    public BoardGameDTO createBoardGame(@RequestBody BoardGameDTO dto) {
-        BoardGame boardGame = boardGameService.createBoardGame(dto.getName(), dto.getDescription());
-        return new BoardGameDTO(boardGame.getGameId(), boardGame.getName(), boardGame.getDescription());
-    }
-
-    // 2. Remove a game 
-    @DeleteMapping("/{id}")
-    public void removeBoardGame(@PathVariable int id) {
-        boardGameService.removeBoardGame(id);
-    }
-}
+ @RestController
+ public class BoardGameController {
+ 
+     @Autowired
+     private BoardGameService boardGameService;
+ 
+     // 1. Get all board games
+     @GetMapping("/boardgames")
+     public List<BoardGameResponseDTO> getAllBoardGames() {
+         return boardGameService.getAllBoardGames();
+     }
+ 
+     // 2. Get a specific board game by ID
+     @GetMapping("/boardgames/{id}")
+     public BoardGameResponseDTO getBoardGameById(@PathVariable int id) {
+         return boardGameService.getBoardGameById(id);
+     }
+ 
+     // 3. Create a board game
+     @PostMapping("/boardgames")
+     @ResponseStatus(HttpStatus.CREATED)
+     public BoardGameResponseDTO createBoardGame(@RequestBody BoardGameCreationDTO dto) {
+         return boardGameService.createBoardGame(dto);
+     }
+ 
+     // 4. Remove a board game
+     @DeleteMapping("/boardgames/{id}")
+     public void removeBoardGame(@PathVariable int id) {
+         boardGameService.removeBoardGame(id);
+     }
+ }
