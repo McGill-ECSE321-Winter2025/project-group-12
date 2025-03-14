@@ -1,5 +1,6 @@
 package ca.mcgill.ecse321.boardr.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -38,7 +39,7 @@ public class Event {
     private UserAccount organizer;
 
     @OneToMany(mappedBy = "registrationKey.event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Registration> registrations;
+    private List<Registration> registrations = new ArrayList<>();
 
     protected Event() {}
 
