@@ -43,14 +43,14 @@ public class BoardGameInstanceService {
     @Autowired
     private GameOwnerRepository gameOwnerRepository;
 
-    // 1. Retrieve all board game instances
+    // 1.Retrieve all board game instances - ResponseDTO for getters
     public List<BoardGameInstanceResponseDTO> getAllBoardGameInstances() {
         return StreamSupport.stream(boardGameInstanceRepository.findAll().spliterator(), false)
                 .map(BoardGameInstanceResponseDTO::new)
                 .collect(Collectors.toList());
     }
 
-    // 2. Create a new board game instance
+    // 2.Create a new board game instance - Creation DTO for input then Response DTO for output
     @Transactional
     public BoardGameInstanceResponseDTO createBoardGameInstance(@Valid BoardGameInstanceCreationDTO dto) {
         BoardGame boardGame = boardGameRepository.findById(dto.getBoardGameId())
@@ -63,7 +63,7 @@ public class BoardGameInstanceService {
         return new BoardGameInstanceResponseDTO(instance);
     }
 
-    // 3. Remove a board game instance
+    // 3.Remove a board game instance 
     @Transactional
     public void removeBoardGameInstance(int instanceId) {
         if (!boardGameInstanceRepository.existsById(instanceId)) {

@@ -3,8 +3,12 @@ package ca.mcgill.ecse321.boardr.dto.BoardGameInstance;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * DTO for creating a new BoardGameInstance entity.
+ * DTO for creating a new BoardGameInstance entity. Also used for updating board game instances.
  * Ensures the required fields are provided when a new instance is created.
+ * 
+ * @author Jun Ho
+ * @version 1.0
+ * @since 2025-03-11
  */
 public class BoardGameInstanceCreationDTO {
 

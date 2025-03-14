@@ -32,28 +32,28 @@ import java.util.stream.StreamSupport;
      @Autowired
      private BoardGameRepository boardGameRepository;
  
-     // 1. Retrieve all board games
+     // 1.Retrieve all board games - Response DTO
      public List<BoardGameResponseDTO> getAllBoardGames() {
          return StreamSupport.stream(boardGameRepository.findAll().spliterator(), false)
                  .map(BoardGameResponseDTO::new)
                  .collect(Collectors.toList());
      }
  
-     // 2. Retrieve a single board game by ID
+     // 2.Retrieve a single board game by ID - Response DTO
      public BoardGameResponseDTO getBoardGameById(int id) {
          BoardGame boardGame = boardGameRepository.findById(id)
                  .orElseThrow(() -> new BoardrException(HttpStatus.NOT_FOUND, "Board Game not found"));
          return new BoardGameResponseDTO(boardGame);
      }
  
-     // 3. Create a new board game
+     // 3.Create a new board game - Creation DTO then response DTO for output
      @Transactional
      public BoardGameResponseDTO createBoardGame(@Valid BoardGameCreationDTO dto) {
          BoardGame boardGame = boardGameRepository.save(new BoardGame(dto.getName(), dto.getDescription()));
          return new BoardGameResponseDTO(boardGame);
      }
  
-     // 4. Remove a board game
+     // 4.Remove a board game
      @Transactional
      public void removeBoardGame(int id) {
          if (!boardGameRepository.existsById(id)) {

@@ -16,8 +16,9 @@ import java.util.stream.Collectors;
  * 
  * REST APIs:
  * - POST /boardgames: Create a new board game 
- * - DELETE /boardgames/{Id}: Delete a board game by its ID
+ * - DELETE /boardgames/{id}: Delete a board game by its ID
  * - GET /boardgames: Retrieve all available board game 
+ * - GET /boardgames/ {id}: Retrieve all available board game 
  * 
  * @author Jun Ho
  * @version 1.0
@@ -31,26 +32,26 @@ import java.util.stream.Collectors;
      @Autowired
      private BoardGameService boardGameService;
  
-     // 1. Get all board games
+     // 1.Get all board games
      @GetMapping("/boardgames")
      public List<BoardGameResponseDTO> getAllBoardGames() {
          return boardGameService.getAllBoardGames();
      }
  
-     // 2. Get a specific board game by ID
+     // 2.Get a specific board game by ID
      @GetMapping("/boardgames/{id}")
      public BoardGameResponseDTO getBoardGameById(@PathVariable int id) {
          return boardGameService.getBoardGameById(id);
      }
  
-     // 3. Create a board game
+     // 3.Create a board game
      @PostMapping("/boardgames")
      @ResponseStatus(HttpStatus.CREATED)
      public BoardGameResponseDTO createBoardGame(@RequestBody BoardGameCreationDTO dto) {
          return boardGameService.createBoardGame(dto);
      }
  
-     // 4. Remove a board game
+     // 4.Remove a board game with specified ID
      @DeleteMapping("/boardgames/{id}")
      public void removeBoardGame(@PathVariable int id) {
          boardGameService.removeBoardGame(id);

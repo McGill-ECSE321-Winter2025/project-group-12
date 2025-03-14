@@ -3,8 +3,12 @@ package ca.mcgill.ecse321.boardr.dto.BoardGame;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
 
 /**
- * DTO for returning BoardGame details as a response.
- * Used when retrieving data from the backend.
+ * DTO for returning BoardGame details as a response. ResponseDTO is for the output.
+ * Used when retrieving data from the backend such as getters.
+ * 
+ * @author Jun Ho
+ * @version 1.0
+ * @since 2025-03-11
  */
 public class BoardGameResponseDTO {
 
@@ -12,7 +16,6 @@ public class BoardGameResponseDTO {
     private String name;
     private String description;
 
-    // Jackson needs a no-args constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
     private BoardGameResponseDTO() {
     }
