@@ -53,6 +53,11 @@ public class BoardGameInstanceService {
     // 2.Create a new board game instance - Creation DTO for input then Response DTO for output
     @Transactional
     public BoardGameInstanceResponseDTO createBoardGameInstance(@Valid BoardGameInstanceCreationDTO dto) {
+        // Additional manual validation
+        if (dto.getCondition() == null || dto.getCondition().trim().isEmpty()) {
+            throw new BoardrException(HttpStatus.BAD_REQUEST, "Condition cannot be empty");
+        }
+        
         BoardGame boardGame = boardGameRepository.findById(dto.getBoardGameId())
                 .orElseThrow(() -> new BoardrException(HttpStatus.NOT_FOUND, "Board Game not found"));
 

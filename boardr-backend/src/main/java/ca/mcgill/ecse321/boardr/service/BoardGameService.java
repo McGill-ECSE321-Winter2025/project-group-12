@@ -49,6 +49,15 @@ import java.util.stream.StreamSupport;
      // 3.Create a new board game - Creation DTO then response DTO for output
      @Transactional
      public BoardGameResponseDTO createBoardGame(@Valid BoardGameCreationDTO dto) {
+         // Additional manual validation (for empty or blank values)
+         if (dto.getName() == null || dto.getName().trim().isEmpty()) {
+             throw new BoardrException(HttpStatus.BAD_REQUEST, "Board game name cannot be empty");
+         }
+ 
+         if (dto.getDescription() == null || dto.getDescription().trim().isEmpty()) {
+             throw new BoardrException(HttpStatus.BAD_REQUEST, "Board game description cannot be empty");
+         }
+ 
          BoardGame boardGame = boardGameRepository.save(new BoardGame(dto.getName(), dto.getDescription()));
          return new BoardGameResponseDTO(boardGame);
      }

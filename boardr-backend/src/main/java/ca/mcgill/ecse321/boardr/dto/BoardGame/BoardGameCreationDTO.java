@@ -1,6 +1,7 @@
 package ca.mcgill.ecse321.boardr.dto.BoardGame;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+
 
 /**
  * DTO for creating a new BoardGame entity. CreationDTO is the input to create/update board games
@@ -12,10 +13,10 @@ import jakarta.validation.constraints.NotNull;
  */
 public class BoardGameCreationDTO {
 
-    @NotNull(message = "Name is required")
+    @NotBlank(message = "Name is required")
     private String name;
 
-    @NotNull(message = "Description is required")
+    @NotBlank(message = "Description is required")
     private String description;
 
     public BoardGameCreationDTO(String name, String description) {
