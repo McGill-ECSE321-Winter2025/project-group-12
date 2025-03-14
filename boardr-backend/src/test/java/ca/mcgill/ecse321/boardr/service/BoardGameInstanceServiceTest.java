@@ -193,4 +193,18 @@ public class BoardGameInstanceServiceTest {
         verify(boardGameInstanceRepository, times(1)).existsById(instanceId);
         verify(boardGameInstanceRepository, never()).deleteById(anyInt());
     }
+
+    @Test
+    public void testCreateBoardGameInstance_InvalidInput() {
+        BoardGameInstanceCreationDTO dto = new BoardGameInstanceCreationDTO(null, 1, 1);
+
+        BoardrException exception = assertThrows(BoardrException.class, () -> {
+            boardGameInstanceService.createBoardGameInstance(dto);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Condition cannot be null", exception.getMessage());
+        verify(boardGameRepository, never()).findById(anyInt());
+        verify(gameOwnerRepository, never()).findById(anyInt());
+        verify(boardGameInstanceRepository, never()).save(any());
+    }
 }

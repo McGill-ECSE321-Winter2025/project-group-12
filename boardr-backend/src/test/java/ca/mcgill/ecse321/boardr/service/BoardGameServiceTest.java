@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
@@ -149,5 +150,17 @@ public class BoardGameServiceTest {
         assertEquals("Board Game not found", exception.getMessage());
         verify(boardGameRepository, times(1)).existsById(gameId);
         verify(boardGameRepository, never()).deleteById(anyInt());
+    }
+
+    @Test
+    public void testCreateBoardGame_InvalidInput() {
+        BoardGameCreationDTO dto = new BoardGameCreationDTO(null, "A strategic board game");
+
+        BoardrException exception = assertThrows(BoardrException.class, () -> {
+            boardGameService.createBoardGame(dto);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Board game name cannot be null", exception.getMessage());
+        verify(boardGameRepository, never()).save(any());
     }
 }

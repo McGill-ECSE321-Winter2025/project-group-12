@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.2'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'ca.mcgill.ecse321'
@@ -37,4 +38,43 @@ tasks.named('test') {
 	testLogging {
 		events "passed", "skipped", "failed"
 	}
+}
+
+jacoco {
+    toolVersion = "0.8.11" // Compatible with Java 17
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true  // For CI tools like Jenkins
+        html.required = true // For human-readable report
+        csv.required = false
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                // Exclude test classes and non-business logic
+                '**/integration/**',
+                '**/dto/**',
+                '**/model/**',
+                '**/repo/**',
+                '**/config/**',
+                '**/controller/**',
+                '**/exceptions/**',
+                '**/BoardrApplication.class'
+            ])
+        }))
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.8 // Enforce 80% line coverage (adjust as needed)
+            }
+        }
+    }
 }
