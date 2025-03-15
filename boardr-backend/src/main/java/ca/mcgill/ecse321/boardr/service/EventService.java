@@ -1,14 +1,18 @@
 package ca.mcgill.ecse321.boardr.service;
 
-import ca.mcgill.ecse321.boardr.dto.Event.EventDTO;
-import ca.mcgill.ecse321.boardr.model.*;
-import ca.mcgill.ecse321.boardr.repo.EventRepository;
-import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
-import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import ca.mcgill.ecse321.boardr.dto.Event.EventCreationDTO;
+import ca.mcgill.ecse321.boardr.dto.Event.EventResponseDTO;
+import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
+import ca.mcgill.ecse321.boardr.model.Event;
+import ca.mcgill.ecse321.boardr.model.UserAccount;
+import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
+import ca.mcgill.ecse321.boardr.repo.EventRepository;
+import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
 
 /**
  * Service class for managing events in the Boardr application.
@@ -16,10 +20,9 @@ import java.util.Optional;
  * This class interacts with the EventRepository, UserAccountRepository, and BoardGameInstanceRepository
  * to perform operations related to events.
  * @author David Vo
- * @version 1.0
+ * @version 2.0
  * @since 2025-03-12
  */
-
 @Service
 public class EventService {
 
@@ -54,7 +57,7 @@ public class EventService {
     }
 
     // Helper method to create an Event from a DTO
-    public Event createEventFromDTO(EventDTO eventDTO) {
+    public EventResponseDTO createEventFromDTO(EventCreationDTO eventDTO) {
         UserAccount organizer = userAccountRepository.findById(eventDTO.getOrganizerId())
                 .orElseThrow(() -> new IllegalArgumentException("Organizer not found."));
         BoardGameInstance gameInstance = boardGameInstanceRepository.findById(eventDTO.getBoardGameInstanceId())
@@ -68,7 +71,8 @@ public class EventService {
             gameInstance,
             organizer
         );
-        return createEvent(event);
+        Event savedEvent = createEvent(event);
+        return new EventResponseDTO(savedEvent);
     }
 
     // Use Case 2: Delete an Event

@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.mcgill.ecse321.boardr.dto.Event.EventDTO;
-import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
+import ca.mcgill.ecse321.boardr.dto.Event.EventCreationDTO;
+import ca.mcgill.ecse321.boardr.dto.Event.EventResponseDTO;
 import ca.mcgill.ecse321.boardr.model.Event;
-import ca.mcgill.ecse321.boardr.model.UserAccount;
 import ca.mcgill.ecse321.boardr.service.EventService;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * REST controller class for managing events in the Boardr application.
@@ -28,12 +31,9 @@ import ca.mcgill.ecse321.boardr.service.EventService;
  * - GET /events: Retrieve all available events
  * 
  * @author David Vo
- * @version 1.0
+ * @version 2.0
  * @since 2025-03-12
- * 
-
  */
-
 @RestController
 @RequestMapping("/events")
 public class EventController {
@@ -41,34 +41,10 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @Autowired
-    private ca.mcgill.ecse321.boardr.repo.UserAccountRepository userAccountRepository;
-
-    @Autowired
-    private ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository boardGameInstanceRepository;
-
     // Use Case 1: Create an Event
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody EventDTO eventDTO) {
-        // Fetch related entities first
-        UserAccount organizer = userAccountRepository.findById(eventDTO.getOrganizerId())
-                .orElseThrow(() -> new IllegalArgumentException("Organizer not found."));
-        BoardGameInstance gameInstance = boardGameInstanceRepository.findById(eventDTO.getBoardGameInstanceId())
-                .orElseThrow(() -> new IllegalArgumentException("Board game instance not found."));
-
-        // Convert DTO to Event entity using the public constructor
-        Event event = new Event(
-            eventDTO.getEventDate(),
-            eventDTO.getEventTime(),
-            eventDTO.getLocation(),
-            eventDTO.getDescription(),
-            eventDTO.getMaxParticipants(),
-            gameInstance,
-            organizer
-        );
-
-        // Call service to create event
-        Event createdEvent = eventService.createEvent(event);
+    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody EventCreationDTO eventDTO) {
+        EventResponseDTO createdEvent = eventService.createEventFromDTO(eventDTO);
         return ResponseEntity.ok(createdEvent);
     }
 
@@ -81,8 +57,11 @@ public class EventController {
 
     // Use Case 6: Display All Available Events
     @GetMapping
-    public ResponseEntity<Iterable<Event>> getAllEvents() { // Changed from List<Event> to Iterable<Event>
-        Iterable<Event> events = eventService.getAllEvents();
-        return ResponseEntity.ok(events);
+    public ResponseEntity<List<EventResponseDTO>> getAllEvents() {
+        Iterable<Event> events = eventService.getAllEvents(); // Correct type: Iterable<Event>
+        List<EventResponseDTO> eventDTOs = StreamSupport.stream(events.spliterator(), false)
+                .map(EventResponseDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(eventDTOs);
     }
 }
