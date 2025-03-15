@@ -29,8 +29,7 @@ import java.util.stream.StreamSupport;
  * @since 2025-03-11
  */
 
-
- @Service
+@Service
 @Validated
 public class BoardGameInstanceService {
 

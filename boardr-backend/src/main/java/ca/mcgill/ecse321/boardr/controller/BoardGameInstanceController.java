@@ -1,14 +1,11 @@
 package ca.mcgill.ecse321.boardr.controller;
 
 import ca.mcgill.ecse321.boardr.dto.BoardGameInstance.*;
-import ca.mcgill.ecse321.boardr.dto.BoardGame.*;
-import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
 import ca.mcgill.ecse321.boardr.service.BoardGameInstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * REST controller class for managing Board Game Instances in the Boardr application.
@@ -26,7 +23,7 @@ import java.util.stream.Collectors;
  * 
  */
 
- @RestController
+@RestController
 public class BoardGameInstanceController {
 
     @Autowired

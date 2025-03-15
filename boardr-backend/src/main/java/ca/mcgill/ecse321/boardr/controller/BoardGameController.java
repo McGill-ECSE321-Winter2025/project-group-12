@@ -1,13 +1,11 @@
 package ca.mcgill.ecse321.boardr.controller;
 
 import ca.mcgill.ecse321.boardr.dto.BoardGame.*;
-import ca.mcgill.ecse321.boardr.model.BoardGame;
 import ca.mcgill.ecse321.boardr.service.BoardGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * REST controller class for managing Board Game in the Boardr application.
@@ -15,10 +13,10 @@ import java.util.stream.Collectors;
  * This class interacts with the BoardGameService to perform operations related to events.
  * 
  * REST APIs:
- * - POST /boardgames: Create a new board game 
- * - DELETE /boardgames/{id}: Delete a board game by its ID
  * - GET /boardgames: Retrieve all available board game 
  * - GET /boardgames/ {id}: Retrieve all available board game 
+ * - POST /boardgames: Create a new board game 
+ * - DELETE /boardgames/{id}: Delete a board game by its ID
  * 
  * @author Jun Ho
  * @version 1.0

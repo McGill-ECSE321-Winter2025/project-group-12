@@ -10,6 +10,7 @@ import ca.mcgill.ecse321.boardr.model.BoardGame;
  * @version 1.0
  * @since 2025-03-11
  */
+
 public class BoardGameResponseDTO {
 
     private int gameId;
