@@ -41,6 +41,18 @@ public class UserAccount {
         this.userRoles = Set.of(new Player(this), new GameOwner(this));
        
     }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public int getUserAccountId() {
         return userAccountId;
