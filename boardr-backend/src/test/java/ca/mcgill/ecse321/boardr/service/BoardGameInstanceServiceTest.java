@@ -30,6 +30,15 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for BoardGameInstanceService.
+ * 
+ * Methods tested:
+ * getAllBoardGameInstances,
+ * createBoardGameInstance,
+ * removeBoardGameInstance
+ * 
+ * @author David Zhou
+ * @version 1.0
+ * @since 2025-03-13
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -193,7 +202,8 @@ public class BoardGameInstanceServiceTest {
         verify(boardGameInstanceRepository, times(1)).existsById(instanceId);
         verify(boardGameInstanceRepository, never()).deleteById(anyInt());
     }
-
+    
+    // Test 8: createBoardGameInstance - Invalid input
     @Test
     public void testCreateBoardGameInstance_InvalidInput() {
         BoardGameInstanceCreationDTO dto = new BoardGameInstanceCreationDTO(null, 1, 1);
@@ -202,7 +212,7 @@ public class BoardGameInstanceServiceTest {
             boardGameInstanceService.createBoardGameInstance(dto);
         });
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Condition cannot be null", exception.getMessage());
+        assertEquals("Condition cannot be empty", exception.getMessage());
         verify(boardGameRepository, never()).findById(anyInt());
         verify(gameOwnerRepository, never()).findById(anyInt());
         verify(boardGameInstanceRepository, never()).save(any());

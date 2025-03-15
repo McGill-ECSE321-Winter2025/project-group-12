@@ -5,7 +5,6 @@ import ca.mcgill.ecse321.boardr.dto.BoardGame.BoardGameResponseDTO;
 import ca.mcgill.ecse321.boardr.exceptions.BoardrException;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
 import ca.mcgill.ecse321.boardr.repo.BoardGameRepository;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +24,17 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for BoardGameService.
+ * 
+ * Methods tested: 
+ * getAllBoardGames, 
+ * getBoardGameById, 
+ * createBoardGame, 
+ * removeBoardGame
+ * 
+ * @author David Zhou
+ * @version 1.0
+ * @since 2025-03-13
+ * 
  */
 @ExtendWith(MockitoExtension.class)
 public class BoardGameServiceTest {
@@ -152,6 +162,7 @@ public class BoardGameServiceTest {
         verify(boardGameRepository, never()).deleteById(anyInt());
     }
 
+    // Test 8: createBoardGame - Invalid input
     @Test
     public void testCreateBoardGame_InvalidInput() {
         BoardGameCreationDTO dto = new BoardGameCreationDTO(null, "A strategic board game");
@@ -160,7 +171,7 @@ public class BoardGameServiceTest {
             boardGameService.createBoardGame(dto);
         });
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Board game name cannot be null", exception.getMessage());
+        assertEquals("Board game name cannot be empty", exception.getMessage());
         verify(boardGameRepository, never()).save(any());
     }
 }
