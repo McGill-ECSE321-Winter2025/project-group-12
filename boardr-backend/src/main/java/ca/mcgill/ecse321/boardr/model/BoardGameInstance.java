@@ -50,11 +50,11 @@ public class BoardGameInstance {
         return isAvailable;
     }
 
-    public void setAvailable(Boolean bool) {
-        this.isAvailable = bool;
-    }
-
     public GameOwner getGameOwner() {
         return gameOwner;
+    }
+
+    public void setAvailable(Boolean bool) {
+        this.isAvailable = bool;
     }
 }

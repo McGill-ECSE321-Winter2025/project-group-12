@@ -29,8 +29,7 @@ import java.util.stream.StreamSupport;
  * @since 2025-03-11
  */
 
-
- @Service
+@Service
 @Validated
 public class BoardGameInstanceService {
 
@@ -43,16 +42,21 @@ public class BoardGameInstanceService {
     @Autowired
     private GameOwnerRepository gameOwnerRepository;
 
-    // 1. Retrieve all board game instances
+    // 1.Retrieve all board game instances - ResponseDTO for getters
     public List<BoardGameInstanceResponseDTO> getAllBoardGameInstances() {
         return StreamSupport.stream(boardGameInstanceRepository.findAll().spliterator(), false)
                 .map(BoardGameInstanceResponseDTO::new)
                 .collect(Collectors.toList());
     }
 
-    // 2. Create a new board game instance
+    // 2.Create a new board game instance - Creation DTO for input then Response DTO for output
     @Transactional
     public BoardGameInstanceResponseDTO createBoardGameInstance(@Valid BoardGameInstanceCreationDTO dto) {
+        // Additional manual validation
+        if (dto.getCondition() == null || dto.getCondition().trim().isEmpty()) {
+            throw new BoardrException(HttpStatus.BAD_REQUEST, "Condition cannot be empty");
+        }
+        
         BoardGame boardGame = boardGameRepository.findById(dto.getBoardGameId())
                 .orElseThrow(() -> new BoardrException(HttpStatus.NOT_FOUND, "Board Game not found"));
 
@@ -63,7 +67,7 @@ public class BoardGameInstanceService {
         return new BoardGameInstanceResponseDTO(instance);
     }
 
-    // 3. Remove a board game instance
+    // 3.Remove a board game instance 
     @Transactional
     public void removeBoardGameInstance(int instanceId) {
         if (!boardGameInstanceRepository.existsById(instanceId)) {

@@ -1,20 +1,25 @@
 package ca.mcgill.ecse321.boardr.dto.BoardGameInstance;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 /**
- * DTO for creating a new BoardGameInstance entity.
+ * DTO for creating a new BoardGameInstance entity. Also used for updating board game instances.
  * Ensures the required fields are provided when a new instance is created.
+ * 
+ * @author Jun Ho
+ * @version 1.0
+ * @since 2025-03-11
  */
+
 public class BoardGameInstanceCreationDTO {
 
-    @NotNull(message = "Condition is required")
+    @NotBlank(message = "Condition is required")
     private String condition;
 
-    @NotNull(message = "BoardGame ID is required")
+    @NotBlank(message = "BoardGame ID is required")
     private Integer boardGameId;
 
-    @NotNull(message = "GameOwner ID is required")
+    @NotBlank(message = "GameOwner ID is required")
     private Integer gameOwnerId;
 
     public BoardGameInstanceCreationDTO(String condition, Integer boardGameId, Integer gameOwnerId) {

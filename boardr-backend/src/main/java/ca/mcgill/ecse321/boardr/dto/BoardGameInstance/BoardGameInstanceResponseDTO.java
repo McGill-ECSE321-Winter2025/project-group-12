@@ -3,9 +3,14 @@ package ca.mcgill.ecse321.boardr.dto.BoardGameInstance;
 import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
 
 /**
- * DTO for returning BoardGameInstance details as a response.
+ * DTO for returning BoardGameInstance details as a response. Look at Response DTO as output.
  * Used when retrieving data from the backend.
+ * 
+ * @author Jun Ho
+ * @version 1.0
+ * @since 2025-03-11
  */
+
 public class BoardGameInstanceResponseDTO {
 
     private int individualGameId;
@@ -14,7 +19,6 @@ public class BoardGameInstanceResponseDTO {
     private int boardGameId;
     private int gameOwnerId;
 
-    // Jackson needs a no-args constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
     private BoardGameInstanceResponseDTO() {
     }
