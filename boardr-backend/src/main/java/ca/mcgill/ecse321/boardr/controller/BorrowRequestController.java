@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestCreationDTO;
 import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestResponseDTO;
+import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestStatusUpdateDTO;
 import ca.mcgill.ecse321.boardr.model.BorrowRequest;
 import ca.mcgill.ecse321.boardr.service.BorrowRequestService;
 
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 public class BorrowRequestController {
+
     @Autowired
     private BorrowRequestService borrowRequestService;
 
@@ -66,7 +69,21 @@ public class BorrowRequestController {
      * @param borrowRequestId The primary key of the borrow request to delete
      */
     @DeleteMapping("/borrowRequests/{borrowRequestId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBorrowRequest(@PathVariable int borrowRequestId) {
         borrowRequestService.deleteBorrowRequest(borrowRequestId);
+    }
+
+    /**
+     * Update the status of a borrow request.
+     *
+     * @param borrowRequestId The primary key of the borrow request to update
+     * @param statusUpdateDTO The new status of the borrow request
+     * @return The updated borrow request
+     */
+    @PutMapping("/borrowRequests/{borrowRequestId}/status")
+    public BorrowRequestResponseDTO updateBorrowRequestStatus(@PathVariable int borrowRequestId, @RequestBody BorrowRequestStatusUpdateDTO statusUpdateDTO) {
+        BorrowRequest updatedBorrowRequest = borrowRequestService.updateBorrowRequestStatus(borrowRequestId, statusUpdateDTO.getRequestStatus());
+        return new BorrowRequestResponseDTO(updatedBorrowRequest);
     }
 }
