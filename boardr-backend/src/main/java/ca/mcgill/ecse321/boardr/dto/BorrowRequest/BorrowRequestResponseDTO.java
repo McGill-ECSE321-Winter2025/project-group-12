@@ -11,8 +11,8 @@ public class BorrowRequestResponseDTO {
     private int boardGameInstanceId;
     private Date requestDate;
     private Date returnDate;
+    private BorrowRequest.RequestStatus requestStatus;
 
-    // Jackson needs a no-args constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
     private BorrowRequestResponseDTO() {
     }
@@ -23,6 +23,7 @@ public class BorrowRequestResponseDTO {
         this.boardGameInstanceId = borrowRequest.getBoardGameInstance().getindividualGameId();
         this.requestDate = borrowRequest.getRequestDate();
         this.returnDate = borrowRequest.getReturnDate();
+        this.requestStatus = borrowRequest.getRequestStatus();
     }
 
     public int getId() {
@@ -43,5 +44,9 @@ public class BorrowRequestResponseDTO {
 
     public Date getReturnDate() {
         return returnDate;
+    }
+
+    public BorrowRequest.RequestStatus getRequestStatus() {
+        return requestStatus;
     }
 }
