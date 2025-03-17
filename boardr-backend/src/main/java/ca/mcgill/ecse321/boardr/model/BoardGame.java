@@ -21,7 +21,7 @@ public class BoardGame {
     private String name;
     private String description;
 
-    protected BoardGame() {}
+    public BoardGame() {}
 
     public BoardGame(String name, String description) {
         this.name = name;
