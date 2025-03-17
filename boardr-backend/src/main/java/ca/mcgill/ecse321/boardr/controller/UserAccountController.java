@@ -3,6 +3,8 @@ package ca.mcgill.ecse321.boardr.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountResponseDTO;
 import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountCreationDTO;
+import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountUpdateDTO;
+
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 import ca.mcgill.ecse321.boardr.service.UserAccountService;
 import org.springframework.http.ResponseEntity;
@@ -44,9 +46,9 @@ public class UserAccountController {
     }
 
     @PutMapping("/{id}")
-    public  void updateUser(
+    public void updateUser(
             @PathVariable int id, 
-            @RequestBody UserAccountResponseDTO userDto) {
+            @RequestBody UserAccountUpdateDTO userDto) {
 
         userAccountService.updateUser(
                 id, 
@@ -55,6 +57,7 @@ public class UserAccountController {
                 userDto.getPassword()
         );
 
+       
        
     }
     @GetMapping
