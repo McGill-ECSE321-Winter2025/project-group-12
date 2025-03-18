@@ -14,6 +14,7 @@ public class UserAccountCreationDTO {
     private String password; 
     private Date creationDate;
     
+    
     private Set<String> roles;
     
     // Default constructor (needed for JSON deserialization)
@@ -31,13 +32,7 @@ public class UserAccountCreationDTO {
         this.password = userAccount.getPassword();
         this.creationDate = userAccount.getCreationDate();
 
-        // Convert each UserRole into a string representation
-        // e.g., "Player", "GameOwner", or even the 'role_type' from the discriminator
-        if (userAccount.getUserRole() != null) {
-            this.roles = userAccount.getUserRole().stream()
-                .map(UserRole::getUserRole) // This returns the DiscriminatorValue (e.g. "PLAYER" or "GAMEOWNER")
-                .collect(Collectors.toSet());
-        }
+        
     }
 
 
