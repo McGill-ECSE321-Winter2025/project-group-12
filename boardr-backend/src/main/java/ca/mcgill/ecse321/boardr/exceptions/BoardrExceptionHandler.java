@@ -20,11 +20,16 @@ public class BoardrExceptionHandler {
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
             errors.add(violation.getMessage());
         }
-        return new ResponseEntity<ErrorDTO>(new ErrorDTO(errors), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorDTO(errors), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BoardrException.class)
     public ResponseEntity<ErrorDTO> handleBoardrException(BoardrException e) {
-        return new ResponseEntity<ErrorDTO>(new ErrorDTO(e.getMessage()), e.getStatus());
+        return new ResponseEntity<>(new ErrorDTO(e.getMessage()), e.getStatus());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

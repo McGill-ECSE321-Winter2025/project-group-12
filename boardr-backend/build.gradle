@@ -40,6 +40,18 @@ tasks.named('test') {
 	}
 }
 
+task integrationTest(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+    useJUnitPlatform()
+    // Include only integration tests
+    include '**/*IntegrationTest.class'
+    // Ensure test classes are compiled
+    classpath = sourceSets.test.runtimeClasspath
+    // Run after unit tests (optional)
+    mustRunAfter test
+}
+
 jacoco {
     toolVersion = "0.8.11" // Compatible with Java 17
 }
