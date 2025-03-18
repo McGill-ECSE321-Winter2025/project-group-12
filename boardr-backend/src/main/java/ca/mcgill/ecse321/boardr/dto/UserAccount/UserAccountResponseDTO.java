@@ -10,10 +10,12 @@ import java.util.stream.Collectors;
 public class UserAccountResponseDTO {
 
     private int userAccountId;
+    private Integer gameOwnerRoleId;
     private String name;
     private String email;
     private String password; 
     private Date creationDate;
+   
     
     private Set<String> roles;
     
@@ -28,6 +30,7 @@ public class UserAccountResponseDTO {
         }
         
         this.userAccountId = userAccount.getUserAccountId();
+        this.gameOwnerRoleId = userAccount.getGameOwnerRoleId();
         this.name = userAccount.getName();
         this.email = userAccount.getEmail();
         this.password = userAccount.getPassword();
@@ -35,11 +38,7 @@ public class UserAccountResponseDTO {
 
         // Convert each UserRole into a string representation
         // e.g., "Player", "GameOwner", or even the 'role_type' from the discriminator
-        if (userAccount.getUserRole() != null) {
-            this.roles = userAccount.getUserRole().stream()
-                .map(UserRole::getUserRole) // This returns the DiscriminatorValue (e.g. "PLAYER" or "GAMEOWNER")
-                .collect(Collectors.toSet());
-        }
+        
     }
 
     // Getters and setters
@@ -89,5 +88,9 @@ public class UserAccountResponseDTO {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public Integer getGameOwnerRoleId() {
+        return gameOwnerRoleId;
     }
 }
