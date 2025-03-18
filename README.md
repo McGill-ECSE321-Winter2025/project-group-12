@@ -16,17 +16,34 @@ The app supports two types of accounts:
 - **Event Registration**: Users can register for events if slots are available.
 - **Game Browsing**: All users can browse a list of available board games, see reviews, and check ownership details.
 
+## Running the Application Locally
+1. Ensure you have Java 17 (or the version your project uses) and Gradle installed.
+2. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd boardr-backend
+3. Build the project:
+   ```bash
+   ./gradlew build
+4. Run the project
+   ```bash
+   ./gradlew bootrun
+5. The application will be deployed to http://localhost:8080/
+6. If you wish to only run integration tests, use the following:
+   ```bash
+   ./gradlew integrationTest
+
 ## Team Members
 
 | Name                                              | Role                           | Deliverable 1 Effort (hours) | Deliverable 2 Effort (hours) | Deliverable 3 Effort (hours) | Total Effort (hours) |
 |---------------------------------------------------|--------------------------------|------------------------------|------------------------------|------------------------------|----------------------|
-| Kyujin [@3MinCurry](https://github.com/3MinCurry) | QA Tester                      | 8                          | TBD                          | TBD                          | TBD                  |
-| Jun Ho [@Junho332](https://github.com/Junho322)   | QA Tester                      | 8                          | TBD                          | TBD                          | TBD                  |
-| David Vo [@Kasamix](https://github.com/Kasamix)   | Project Manager                | 8                          | TBD                          | TBD                          | TBD                  |
-| David Zhou [@Rampex1](https://github.com/Rampex1) | Software Developer             | 8                          | TBD                          | TBD                          | TBD                  |
-| Eric [@Lawnless1](https://github.com/Lawnless1)   | Software Developer             | 8                          | TBD                          | TBD                          | TBD                  |
-| Jione [@Ji-One1](https://github.com/Ji-One1)      | Software Architect             | 8                          | TBD                          | TBD                          | TBD                  |
-| Yoon [@Yoonicornn](https://github.com/Yoonicornn) | QA Developer                   | 8                          | TBD                          | TBD                          | TBD                  |
+| Kyujin [@3MinCurry](https://github.com/3MinCurry) | QA Tester                      | 8                          | 12                           | TBD                          | TBD                  |
+| Jun Ho [@Junho332](https://github.com/Junho322)   | QA Tester                      | 8                          | 12                           | TBD                          | TBD                  |
+| David Vo [@Kasamix](https://github.com/Kasamix)   | Project Manager                | 8                          | 12                           | TBD                          | TBD                  |
+| David Zhou [@Rampex1](https://github.com/Rampex1) | Software Developer             | 8                          | 12                           | TBD                          | TBD                  |
+| Eric [@Lawnless1](https://github.com/Lawnless1)   | Software Developer             | 8                          | 12                           | TBD                          | TBD                  |
+| Jione [@Ji-One1](https://github.com/Ji-One1)      | Software Architect             | 8                          | 12                           | TBD                          | TBD                  |
+| Yoon [@Yoonicornn](https://github.com/Yoonicornn) | QA Developer                   | 8                          | 12                           | TBD                          | TBD                  |
 
 ## Deliverables
 
