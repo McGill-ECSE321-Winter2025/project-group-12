@@ -29,6 +29,9 @@ The app supports two types of accounts:
    ```bash
    ./gradlew bootrun
 5. The application will be deployed to http://localhost:8080/
+6. If you wish to only run integration tests, use the following:
+   ```bash
+   ./gradlew integrationTest
 
 ## Team Members
 
