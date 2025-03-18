@@ -16,6 +16,20 @@ The app supports two types of accounts:
 - **Event Registration**: Users can register for events if slots are available.
 - **Game Browsing**: All users can browse a list of available board games, see reviews, and check ownership details.
 
+## Running the Application Locally
+1. Ensure you have Java 17 (or the version your project uses) and Gradle installed.
+2. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd boardr-backend
+3. Build the project:
+   ```bash
+   ./gradlew build
+4. Run the project
+   ```bash
+   ./gradlew bootrun
+5. The application will be deployed to http://localhost:8080/
+
 ## Team Members
 
 | Name                                              | Role                           | Deliverable 1 Effort (hours) | Deliverable 2 Effort (hours) | Deliverable 3 Effort (hours) | Total Effort (hours) |
