@@ -1,10 +1,24 @@
 package ca.mcgill.ecse321.boardr.repo;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
+import ca.mcgill.ecse321.boardr.model.GameOwner;
+import ca.mcgill.ecse321.boardr.model.UserAccount;
+
+
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface BoardGameInstanceRepository extends CrudRepository<BoardGameInstance, Integer> {
 
+    @Query("SELECT b FROM BoardGameInstance b " +
+           "WHERE b.gameOwner.userAccountId = :userId")
+    List<BoardGameInstance> findAllByUserAccountId(@Param("userId") int userId);
 }
+
+
