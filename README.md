@@ -33,6 +33,21 @@ The app supports two types of accounts:
    ```bash
    ./gradlew integrationTest
 
+## Database Configuration
+
+Before running the application, ensure that your database is properly configured. The application uses the following default credentials for the database:
+
+- **Database Username**: `postgres`
+- **Database Password**: `boardr`
+
+You can update these credentials in the `application.properties` file located in the `src/main/resources` directory.
+
+Example:
+```properties
+spring.datasource.username = <your-username>
+spring.datasource.password = <your-password>
+```
+
 ## Team Members
 
 | Name                                              | Role                           | Deliverable 1 Effort (hours) | Deliverable 2 Effort (hours) | Deliverable 3 Effort (hours) | Total Effort (hours) |
