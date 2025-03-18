@@ -13,20 +13,11 @@ import jakarta.persistence.Entity;
 @Entity
 @DiscriminatorValue("GAMEOWNER")
 public class GameOwner extends UserRole {
-    
-    private int userAccountId;
-
     public GameOwner() {
     }
 
     public GameOwner(UserAccount userAccount) {
         super(userAccount);
-        this.userAccountId = userAccount.getUserAccountId();
     }
-
-    public int getUserAccountId() {
-        return userAccountId;
-    }
-
 
 }

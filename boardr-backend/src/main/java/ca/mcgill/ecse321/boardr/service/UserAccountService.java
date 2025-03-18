@@ -5,14 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Repository;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountCreationDTO;
-import ca.mcgill.ecse321.boardr.exceptions.BoardrException;
-import ca.mcgill.ecse321.boardr.model.UserAccount;
-import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
-import ca.mcgill.ecse321.boardr.model.BorrowRequest;
 import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
-import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
-import ca.mcgill.ecse321.boardr.repo.BorrowRequestRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
@@ -27,14 +20,6 @@ public class UserAccountService {
 
     @Autowired
     private UserAccountRepository userAccountRepository;
-
-    @Autowired
-    private BoardGameInstanceRepository boardGameInstanceRepository;
-
-    @Autowired
-    private BorrowRequestRepository borrowRequestRepository;
-
-
 
     @Transactional
     public UserAccount createUser(@Valid UserAccountCreationDTO userAccountToCreate) {
@@ -105,27 +90,10 @@ public class UserAccountService {
     }
 
     @Transactional
-    public List<UserAccount> getAllUsers() {
-        return StreamSupport.stream(userAccountRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<BoardGameInstance> getOwnedGames(int userId){
-
-        return boardGameInstanceRepository.findAllByUserAccountId(userId);
-
-    }
-
-    @Transactional
-    public List<BoardGameInstance> getBorrowedGames (int borrowerId){
-    
-    return borrowRequestRepository.findAcceptedBoardGameInstancesByBorrower(borrowerId);
-    }
+public List<UserAccount> getAllUsers() {
+    return StreamSupport.stream(userAccountRepository.findAll().spliterator(), false)
+        .collect(Collectors.toList());
+}
 
 
-    @Transactional
-    public List<BorrowRequest> getLendingHistoryByGameOwnerId(int gameOwnerId) {
-        return borrowRequestRepository.findAllBorrowRequestsByGameOwner(gameOwnerId);
-    }
 }
