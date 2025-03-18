@@ -3,7 +3,13 @@ package ca.mcgill.ecse321.boardr.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountResponseDTO;
 import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountCreationDTO;
+import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountUpdateDTO;
+import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestResponseDTO;
+import ca.mcgill.ecse321.boardr.dto.BoardGameInstance.*;
+
 import ca.mcgill.ecse321.boardr.model.UserAccount;
+import ca.mcgill.ecse321.boardr.model.BorrowRequest;
+import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
 import ca.mcgill.ecse321.boardr.service.UserAccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,5 +73,44 @@ public class UserAccountController {
             .map(UserAccountResponseDTO::new)
             .collect(Collectors.toList());
     }
+
+
+    @GetMapping("/{gameOwnerId}/owned-games")
+    public List<BoardGameInstanceResponseDTO> getOwnedGames(@PathVariable int gameOwnerId) {
+        List<BoardGameInstance> ownedGames = userAccountService.getOwnedGames(gameOwnerId);
+        return ownedGames.stream()
+            .map(BoardGameInstanceResponseDTO::new)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * **Get all Borrowed Games** (BoardGameInstances) for a user
+     * where the borrow request has been ACCEPTED.
+     * 
+     * GET /users/{userId}/borrowed-games
+     */
+    @GetMapping("/{userId}/borrowed-games")
+    public List<BoardGameInstanceResponseDTO> getBorrowedGames(@PathVariable int userId) {
+        List<BoardGameInstance> borrowedGames = userAccountService.getBorrowedGames(userId);
+        return borrowedGames.stream()
+            .map(BoardGameInstanceResponseDTO::new)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * **Get the Lending History** for a user who is a GameOwner.
+     * 
+     * GET /users/{gameOwnerId}/lending-history
+     */
+    @GetMapping("/{gameOwnerId}/lending-history")
+    public List<BorrowRequestResponseDTO> getLendingHistory(@PathVariable int gameOwnerId) {
+        // This returns the BorrowRequests for the user who has a GameOwner role
+        List<BorrowRequest> lendingHistory = userAccountService.getLendingHistoryByGameOwnerId(gameOwnerId);
+        return lendingHistory.stream()
+            .map(BorrowRequestResponseDTO::new)
+            .collect(Collectors.toList());
+    }
+
+
 }
 
