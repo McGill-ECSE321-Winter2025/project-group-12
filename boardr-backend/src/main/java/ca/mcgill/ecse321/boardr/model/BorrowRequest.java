@@ -67,4 +67,8 @@ public class BorrowRequest {
     public RequestStatus getRequestStatus() {
         return status;
     }
+
+    public void setRequestStatus(RequestStatus status) {
+        this.status = status;
+    }
 }

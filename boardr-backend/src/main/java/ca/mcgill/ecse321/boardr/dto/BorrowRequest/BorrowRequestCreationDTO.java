@@ -37,6 +37,6 @@ public class BorrowRequestCreationDTO {
     }
 
     public Date getReturnDate() {
-        return requestDate;
+        return returnDate;
     }
 }

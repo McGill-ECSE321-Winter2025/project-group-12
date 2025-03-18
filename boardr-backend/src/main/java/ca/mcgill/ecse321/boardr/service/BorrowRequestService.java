@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestCreationDTO;
+import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestStatusUpdateDTO;
 import ca.mcgill.ecse321.boardr.exceptions.BoardrException;
 import ca.mcgill.ecse321.boardr.model.BorrowRequest;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
@@ -56,5 +57,13 @@ public class BorrowRequestService {
     @Transactional
     public void deleteBorrowRequest(int borrowRequestId) {
         borrowRequestRepo.deleteById(borrowRequestId);
+    }
+
+    @Transactional
+    public BorrowRequest updateBorrowRequestStatus(int borrowRequestId, BorrowRequest.RequestStatus status) {
+        BorrowRequest borrowRequest = borrowRequestRepo.findById(borrowRequestId)
+                .orElseThrow(() -> new BoardrException(HttpStatus.NOT_FOUND, "Invalid borrow request ID"));
+        borrowRequest.setRequestStatus(status);
+        return borrowRequestRepo.save(borrowRequest);
     }
 }
