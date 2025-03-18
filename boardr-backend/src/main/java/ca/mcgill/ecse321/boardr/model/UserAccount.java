@@ -77,15 +77,4 @@ public class UserAccount {
     public Set<UserRole> getUserRole() {
         return userRoles;
     }
-
-    public Integer getGameOwnerRoleId() {
-        GameOwner owner = userRoles.stream()
-            .filter(role -> role instanceof GameOwner)
-            .map(role -> (GameOwner) role)
-            .findFirst()
-            .orElse(null);
-    
-        return (owner != null) ? owner.getId() : null;
-    }
-    
 }
