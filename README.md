@@ -46,6 +46,7 @@ Example:
 ```properties
 spring.datasource.username = <your-username>
 spring.datasource.password = <your-password>
+```
 
 ## Team Members
 
