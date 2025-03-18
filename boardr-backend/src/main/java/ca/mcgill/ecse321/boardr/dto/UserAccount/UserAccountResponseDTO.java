@@ -17,8 +17,7 @@ public class UserAccountResponseDTO {
     private Date creationDate;
    
     
-    private Set<String> roles;
-    
+ 
     // Default constructor (needed for JSON deserialization)
     public UserAccountResponseDTO() {
     }
@@ -36,8 +35,7 @@ public class UserAccountResponseDTO {
         this.password = userAccount.getPassword();
         this.creationDate = userAccount.getCreationDate();
 
-        // Convert each UserRole into a string representation
-        // e.g., "Player", "GameOwner", or even the 'role_type' from the discriminator
+        
         
     }
 
@@ -82,13 +80,6 @@ public class UserAccountResponseDTO {
         this.creationDate = creationDate;
     }
 
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
 
     public Integer getGameOwnerRoleId() {
         return gameOwnerRoleId;
