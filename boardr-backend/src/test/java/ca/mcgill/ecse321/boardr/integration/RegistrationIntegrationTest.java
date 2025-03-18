@@ -12,7 +12,6 @@ import ca.mcgill.ecse321.boardr.service.RegistrationService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,41 +42,41 @@ import static org.mockito.Mockito.*;
  * These tests verify that the RegistrationController correctly interacts with the RegistrationService
  * and returns the expected responses.
  */
-@SpringBootTest(classes = ca.mcgill.ecse321.boardr.BoardrApplication.class, 
+@SpringBootTest(classes = ca.mcgill.ecse321.boardr.BoardrApplication.class,
                 webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Import(BoardrExceptionHandler.class)  // Import the exception handler
+@Import(BoardrExceptionHandler.class) // Import the exception handler
 public class RegistrationIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-    
+
     private MockMvc mockMvc;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
-    
+
     @MockBean
     private UserAccountRepository userAccountRepository;
-    
+
     @MockBean
     private EventRepository eventRepository;
-    
+
     @MockBean
     private RegistrationRepository registrationRepository;
-    
+
     @MockBean
     private RegistrationService registrationService;
-    
+
     private UserAccount testUser;
     private Event testEvent;
     private Registration testRegistration;
     private RegistrationKey testRegistrationKey;
     private RegistrationResponseDTO testResponseDTO;
-    
-    private static final int TEST_EVENT_DATE = 20250312; 
-    private static final int TEST_EVENT_TIME = 1800; 
+
+    private static final int TEST_EVENT_DATE = 20250312;
+    private static final int TEST_EVENT_TIME = 1800;
     private static final String TEST_LOCATION = "Test Location";
     private static final String TEST_DESCRIPTION = "Test Event Description";
     private static final int TEST_MAX_PARTICIPANTS = 10;
@@ -90,10 +89,10 @@ public class RegistrationIntegrationTest {
         // Set up the MockMvc instance with the exception handler
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .build();
-                
+
         // Create test user with constructor
         testUser = new UserAccount("Test User", "test@example.com", "password123");
-        
+
         try {
             java.lang.reflect.Field field = UserAccount.class.getDeclaredField("userAccountId");
             field.setAccessible(true);
@@ -101,22 +100,22 @@ public class RegistrationIntegrationTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         // Create board game
         BoardGame testBoardGame = new BoardGame();
         try {
             java.lang.reflect.Field nameField = BoardGame.class.getDeclaredField("name");
             nameField.setAccessible(true);
             nameField.set(testBoardGame, "Test Game");
-            
+
             java.lang.reflect.Field descField = BoardGame.class.getDeclaredField("description");
             descField.setAccessible(true);
             descField.set(testBoardGame, "A test board game");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        // Find the GameOwner role in the user's roles
+
+        // Find or create GameOwner role
         GameOwner gameOwner = null;
         for (UserRole role : testUser.getUserRole()) {
             if (role instanceof GameOwner) {
@@ -124,10 +123,13 @@ public class RegistrationIntegrationTest {
                 break;
             }
         }
-        
+        if (gameOwner == null) {
+            gameOwner = new GameOwner(testUser);
+        }
+
         // Create board game instance with constructor
         BoardGameInstance testBoardGameInstance = new BoardGameInstance(testBoardGame, gameOwner, "Good");
-        
+
         // Create test event with constructor
         testEvent = new Event(
             TEST_EVENT_DATE,
@@ -138,7 +140,7 @@ public class RegistrationIntegrationTest {
             testBoardGameInstance,
             testUser
         );
-        
+
         // Set ID for test event
         try {
             java.lang.reflect.Field field = Event.class.getDeclaredField("eventId");
@@ -147,7 +149,7 @@ public class RegistrationIntegrationTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         // Ensure registrations list is initialized
         if (testEvent.getRegistrations() == null) {
             try {
@@ -158,13 +160,13 @@ public class RegistrationIntegrationTest {
                 e.printStackTrace();
             }
         }
-        
+
         // Create test registration key
         testRegistrationKey = new RegistrationKey(testUser, testEvent);
-        
+
         // Create test registration with constructor
         testRegistration = new Registration(testRegistrationKey);
-        
+
         // Set registration date
         try {
             java.lang.reflect.Field field = Registration.class.getDeclaredField("registrationDate");
@@ -173,15 +175,15 @@ public class RegistrationIntegrationTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         // Create DTO response using the registration instance
         testResponseDTO = new RegistrationResponseDTO(testRegistration);
-        
+
         // Reset mocks
         reset(registrationService);
-        
+
         // Mock service behaviors for happy path
-        when(registrationService.registerForEventDTO(any(RegistrationCreationDTO.class))).thenReturn(testResponseDTO);
+        when(registrationService.createRegistration(any(RegistrationCreationDTO.class))).thenReturn(testResponseDTO);
     }
 
     /**
@@ -196,26 +198,26 @@ public class RegistrationIntegrationTest {
                 TEST_USER_ID,
                 TEST_EVENT_ID
         );
-        
+
         String requestJson = objectMapper.writeValueAsString(registrationDTO);
-        
+
         // Act and Assert
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/registrations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
-        
+
         // Verify response
         String responseJson = result.getResponse().getContentAsString();
         RegistrationResponseDTO responseDTO = objectMapper.readValue(responseJson, RegistrationResponseDTO.class);
-        
+
         assertEquals(TEST_USER_ID, responseDTO.getUserId());
         assertEquals(TEST_EVENT_ID, responseDTO.getEventId());
         assertNotNull(responseDTO.getRegistrationDate());
-        
+
         // Verify the service was called
-        verify(registrationService).registerForEventDTO(any(RegistrationCreationDTO.class));
+        verify(registrationService).createRegistration(any(RegistrationCreationDTO.class));
     }
 
     /**
@@ -229,8 +231,8 @@ public class RegistrationIntegrationTest {
                 -1, // Invalid user ID
                 TEST_EVENT_ID
         );
-        
-        when(registrationService.registerForEventDTO(any(RegistrationCreationDTO.class)))
+
+        when(registrationService.createRegistration(any(RegistrationCreationDTO.class)))
                 .thenThrow(new IllegalArgumentException("User not found."));
 
         String requestJson = objectMapper.writeValueAsString(registrationDTO);
@@ -240,10 +242,10 @@ public class RegistrationIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("User not found."));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("User not found."));
 
         // Verify the service was called
-        verify(registrationService).registerForEventDTO(any(RegistrationCreationDTO.class));
+        verify(registrationService).createRegistration(any(RegistrationCreationDTO.class));
     }
 
     /**
@@ -257,8 +259,8 @@ public class RegistrationIntegrationTest {
                 TEST_USER_ID,
                 -1 // Invalid event ID
         );
-        
-        when(registrationService.registerForEventDTO(any(RegistrationCreationDTO.class)))
+
+        when(registrationService.createRegistration(any(RegistrationCreationDTO.class)))
                 .thenThrow(new IllegalArgumentException("Event not found."));
 
         String requestJson = objectMapper.writeValueAsString(registrationDTO);
@@ -268,10 +270,10 @@ public class RegistrationIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("Event not found."));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("Event not found."));
 
         // Verify the service was called
-        verify(registrationService).registerForEventDTO(any(RegistrationCreationDTO.class));
+        verify(registrationService).createRegistration(any(RegistrationCreationDTO.class));
     }
 
     /**
@@ -285,8 +287,8 @@ public class RegistrationIntegrationTest {
                 TEST_USER_ID,
                 TEST_EVENT_ID
         );
-        
-        when(registrationService.registerForEventDTO(any(RegistrationCreationDTO.class)))
+
+        when(registrationService.createRegistration(any(RegistrationCreationDTO.class)))
                 .thenThrow(new IllegalArgumentException("User is already registered for this event."));
 
         String requestJson = objectMapper.writeValueAsString(registrationDTO);
@@ -296,10 +298,10 @@ public class RegistrationIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("User is already registered for this event."));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("User is already registered for this event."));
 
         // Verify the service was called
-        verify(registrationService).registerForEventDTO(any(RegistrationCreationDTO.class));
+        verify(registrationService).createRegistration(any(RegistrationCreationDTO.class));
     }
 
     /**
@@ -313,8 +315,8 @@ public class RegistrationIntegrationTest {
                 TEST_USER_ID,
                 TEST_EVENT_ID
         );
-        
-        when(registrationService.registerForEventDTO(any(RegistrationCreationDTO.class)))
+
+        when(registrationService.createRegistration(any(RegistrationCreationDTO.class)))
                 .thenThrow(new IllegalArgumentException("Event is fully booked."));
 
         String requestJson = objectMapper.writeValueAsString(registrationDTO);
@@ -324,9 +326,9 @@ public class RegistrationIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("Event is fully booked."));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("Event is fully booked."));
 
         // Verify the service was called
-        verify(registrationService).registerForEventDTO(any(RegistrationCreationDTO.class));
+        verify(registrationService).createRegistration(any(RegistrationCreationDTO.class));
     }
-}
+} 

@@ -36,6 +36,10 @@ public class Registration {
         return this.registrationDate;
     }
 
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+    
     
     @Embeddable 
     public static class RegistrationKey implements Serializable {
