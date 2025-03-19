@@ -1,192 +1,283 @@
-// package ca.mcgill.ecse321.boardr.integration;
+package ca.mcgill.ecse321.boardr.integration;
 
-// import static org.junit.jupiter.api.Assertions.assertEquals;
-// import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-// import static org.junit.jupiter.api.Assertions.assertNotNull;
-// import static org.junit.jupiter.api.Assertions.assertTrue;
+import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountCreationDTO;
+import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountResponseDTO;
+import ca.mcgill.ecse321.boardr.exceptions.BoardrExceptionHandler;
+import ca.mcgill.ecse321.boardr.model.*;
+import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
+import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
+import ca.mcgill.ecse321.boardr.repo.BorrowRequestRepository;
+import ca.mcgill.ecse321.boardr.service.UserAccountService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-// import java.time.LocalDate;
-// import java.util.List;
-// import java.util.Set;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-// import org.junit.jupiter.api.BeforeAll;
-// import org.junit.jupiter.api.MethodOrderer;
-// import org.junit.jupiter.api.Order;
-// import org.junit.jupiter.api.Test;
-// import org.junit.jupiter.api.TestInstance;
-// import org.junit.jupiter.api.TestInstance.Lifecycle;
-// import org.junit.jupiter.api.TestMethodOrder;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.boot.test.context.SpringBootTest;
-// import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-// import org.springframework.boot.test.web.client.TestRestTemplate;
-// import org.springframework.http.HttpEntity;
-// import org.springframework.http.HttpMethod;
-// import org.springframework.http.HttpStatus;
-// import org.springframework.http.ResponseEntity;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import ca.mcgill.ecse321.boardr.dto.BoardGameInstance.BoardGameInstanceResponseDTO;
+import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestResponseDTO;
 
-// import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountCreationDTO;
-// import ca.mcgill.ecse321.boardr.dto.UserAccount.UserAccountResponseDTO;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.AdditionalMatchers.not;
+import ca.mcgill.ecse321.boardr.exceptions.BoardrException;
 
-// @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-// @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-// @TestInstance(Lifecycle.PER_CLASS)
-// public class UserAccountIntegrationTest {
+/**
+ * Integration tests for the UserAccount API endpoints.
+ * Verifies that UserAccountController interacts correctly with UserAccountService.
+ */
+@SpringBootTest(classes = ca.mcgill.ecse321.boardr.BoardrApplication.class,
+                webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Import(BoardrExceptionHandler.class)
+public class UserAccountIntegrationTest {
 
-//     @Autowired
-//     private TestRestTemplate client;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
-//     private int createdUserId;
+    private MockMvc mockMvc;
 
-//     private static final String VALID_NAME = "John Doe";
-//     private static final String VALID_EMAIL = "john.doe@example.com";
-//     private static final String VALID_PASSWORD = "securePass123";
-//     private static final Set<String> EXPECTED_ROLES = Set.of("PLAYER", "GAMEOWNER");
+    @Autowired
+    private ObjectMapper objectMapper;
 
-//     @BeforeAll
-//     public void clearExistingUsers() {
-//         // Fetch all existing users
-//         ResponseEntity<UserAccountResponseDTO[]> response = client.getForEntity("/users", UserAccountResponseDTO[].class);
-//         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-//             List<UserAccountResponseDTO> users = List.of(response.getBody());
-//             // Delete each user
-//             for (UserAccountResponseDTO user : users) {
-//                 String url = String.format("/users/%d", user.getUserAccountId());
-//                 client.exchange(url, HttpMethod.DELETE, null, Void.class);
-//             }
-//         }
-//         // Verify no users remain
-//         ResponseEntity<UserAccountResponseDTO[]> verifyResponse = client.getForEntity("/users", UserAccountResponseDTO[].class);
-//         assertEquals(HttpStatus.OK, verifyResponse.getStatusCode());
-//         assertTrue(List.of(verifyResponse.getBody()).isEmpty(), "All users should be deleted before tests begin");
-//     }
+    @MockBean
+    private UserAccountRepository userAccountRepository;
 
-//     @Test
-//     @Order(0)
-//     public void testCreateValidUser() {
-//         // Arrange
-//         UserAccountCreationDTO body = new UserAccountCreationDTO();
-//         body.setName(VALID_NAME);
-//         body.setEmail(VALID_EMAIL);
-//         body.setPassword(VALID_PASSWORD);
+    @MockBean
+    private BoardGameInstanceRepository boardGameInstanceRepository;
 
-//         // Act
-//         ResponseEntity<UserAccountResponseDTO> response = client.postForEntity("/users", body, UserAccountResponseDTO.class);
+    @MockBean
+    private BorrowRequestRepository borrowRequestRepository;
 
-//         // Assert
-//         assertEquals(HttpStatus.OK, response.getStatusCode()); // Controller returns 200 OK
-//         assertNotNull(response.getBody());
-//         assertTrue(response.getBody().getUserAccountId() > 0, "The ID should be a positive int");
-//         this.createdUserId = response.getBody().getUserAccountId();
-//         assertEquals(VALID_NAME, response.getBody().getName());
-//         assertEquals(VALID_EMAIL, response.getBody().getEmail());
-//         assertEquals(VALID_PASSWORD, response.getBody().getPassword());
-//         assertEquals(LocalDate.now(), response.getBody().getCreationDate().toLocalDate());
-//         assertIterableEquals(EXPECTED_ROLES, response.getBody().getRoles(), "User should have PLAYER and GAMEOWNER roles");
-//     }
+    @MockBean
+    private UserAccountService userAccountService;
 
-//     @Test
-//     @Order(1)
-//     public void testCreateUserWithDuplicateEmail() {
-//         // Arrange
-//         UserAccountCreationDTO body = new UserAccountCreationDTO();
-//         body.setName("Jane Smith");
-//         body.setEmail(VALID_EMAIL); // Same email as above
-//         body.setPassword("anotherPass456");
+    private UserAccount testUser;
+    private BoardGame testBoardGame;
+    private BoardGameInstance testBoardGameInstance;
+    private BorrowRequest testBorrowRequest;
 
-//         // Act
-//         ResponseEntity<String> response = client.postForEntity("/users", body, String.class); // Expecting error as plain text
+    private static final int TEST_USER_ID = 1;
+    private static final String TEST_NAME = "Test User";
+    private static final String TEST_EMAIL = "test@example.com";
+    private static final String TEST_PASSWORD = "password123";
+    private static final Date TEST_CREATION_DATE = Date.valueOf(LocalDate.now());
 
-//         // Assert
-//         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-//         assertNotNull(response.getBody());
-//         assertTrue(response.getBody().contains("Email is already in use"), "Should indicate duplicate email error");
-//     }
+    @BeforeEach
+    public void setUp() throws Exception {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-//     @Test
-//     @Order(2)
-//     public void testFindUserByValidId() {
-//         // Arrange
-//         String url = String.format("/users/%d", this.createdUserId);
+        // Setup test user
+        testUser = new UserAccount(TEST_NAME, TEST_EMAIL, TEST_PASSWORD);
+        setField(testUser, "userAccountId", TEST_USER_ID);
 
-//         // Act
-//         ResponseEntity<UserAccountResponseDTO> response = client.getForEntity(url, UserAccountResponseDTO.class);
+        // Setup test board game and instance
+        testBoardGame = new BoardGame();
+        setField(testBoardGame, "name", "Test Game");
+        setField(testBoardGame, "description", "A test board game");
 
-//         // Assert
-//         assertEquals(HttpStatus.OK, response.getStatusCode());
-//         assertNotNull(response.getBody());
-//         assertEquals(this.createdUserId, response.getBody().getUserAccountId());
-//         assertEquals(VALID_NAME, response.getBody().getName());
-//         assertEquals(VALID_EMAIL, response.getBody().getEmail());
-//         assertEquals(VALID_PASSWORD, response.getBody().getPassword());
-//         assertEquals(LocalDate.now(), response.getBody().getCreationDate().toLocalDate());
-//         assertIterableEquals(EXPECTED_ROLES, response.getBody().getRoles());
-//     }
+        GameOwner gameOwner = testUser.getUserRole().stream()
+                .filter(role -> role instanceof GameOwner)
+                .map(role -> (GameOwner) role)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("GameOwner role not found"));
 
-//     @Test
-//     @Order(3)
-//     public void testUpdateUser() {
-//         // Arrange
-//         String url = String.format("/users/%d", this.createdUserId);
-//         UserAccountResponseDTO body = new UserAccountResponseDTO();
-//         body.setName("John Updated");
-//         body.setEmail("john.updated@example.com");
-//         // Note: No setPassword method in DTO, assuming controller fix to use UserAccountCreationDTO
+        testBoardGameInstance = new BoardGameInstance(testBoardGame, gameOwner, "Good");
 
-//         // Act
-//         ResponseEntity<Void> response = client.exchange(url, HttpMethod.PUT, new HttpEntity<>(body), Void.class);
+        // Setup test borrow request
+        testBorrowRequest = new BorrowRequest(testBoardGameInstance, testUser, Date.valueOf("2025-03-10"), Date.valueOf("2025-03-20"));
+        setField(testBorrowRequest, "status", BorrowRequest.RequestStatus.Accepted);
 
-//         // Assert
-//         assertEquals(HttpStatus.OK, response.getStatusCode()); // Controller returns void, so expect 200 OK
+        // Mock service behaviors
+        when(userAccountService.createUser(any(UserAccountCreationDTO.class))).thenReturn(testUser);
+        when(userAccountService.getUserById(TEST_USER_ID)).thenReturn(testUser);
+        when(userAccountService.getUserById(not(eq(TEST_USER_ID)))).thenThrow(new BoardrException(HttpStatus.NOT_FOUND, "No userAccount has ID"));
+        when(userAccountService.getUserByEmail(TEST_EMAIL)).thenReturn(testUser);
+        when(userAccountService.getUserByEmail(not(eq(TEST_EMAIL)))).thenThrow(new BoardrException(HttpStatus.NOT_FOUND, "No userAccount has email"));
+        doNothing().when(userAccountService).deleteUser(TEST_USER_ID);
+        doAnswer(invocation -> null).when(userAccountService).updateUser(eq(TEST_USER_ID), anyString(), anyString(), anyString());
+        when(userAccountService.getAllUsers()).thenReturn(Collections.singletonList(testUser));
+        when(userAccountService.getOwnedGames(TEST_USER_ID)).thenReturn(List.of(testBoardGameInstance));
+        when(userAccountService.getBorrowedGames(TEST_USER_ID)).thenReturn(List.of(testBoardGameInstance));
+        when(userAccountService.getLendingHistoryByGameOwnerId(TEST_USER_ID)).thenReturn(List.of(testBorrowRequest));
+    }
 
-//         // Verify update by fetching the user
-//         ResponseEntity<UserAccountResponseDTO> getResponse = client.getForEntity(url, UserAccountResponseDTO.class);
-//         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-//         assertNotNull(getResponse.getBody());
-//         assertEquals(this.createdUserId, getResponse.getBody().getUserAccountId());
-//         assertEquals("John Updated", getResponse.getBody().getName());
-//         assertEquals("john.updated@example.com", getResponse.getBody().getEmail());
-//         assertEquals(VALID_PASSWORD, getResponse.getBody().getPassword()); // Password unchanged due to DTO limitation
-//         assertIterableEquals(EXPECTED_ROLES, getResponse.getBody().getRoles());
-//     }
+    private void setField(Object target, String fieldName, Object value) throws Exception {
+        java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(target, value);
+    }
 
-//     @Test
-//     @Order(4)
-//     public void testGetAllUsers() {
-//         // Act
-//         ResponseEntity<UserAccountResponseDTO[]> response = client.getForEntity("/users", UserAccountResponseDTO[].class);
+    @Test
+    public void testCreateUserSuccess() throws Exception {
+        UserAccountCreationDTO dto = new UserAccountCreationDTO();
+        dto.setName(TEST_NAME);
+        dto.setEmail(TEST_EMAIL);
+        dto.setPassword(TEST_PASSWORD);
+        String requestJson = objectMapper.writeValueAsString(dto);
 
-//         // Assert
-//         assertEquals(HttpStatus.OK, response.getStatusCode());
-//         assertNotNull(response.getBody());
-//         List<UserAccountResponseDTO> users = List.of(response.getBody());
-//         assertTrue(users.size() >= 1, "Should have at least one user");
-//         UserAccountResponseDTO updatedUser = users.stream()
-//                 .filter(u -> u.getUserAccountId() == this.createdUserId)
-//                 .findFirst()
-//                 .orElse(null);
-//         assertNotNull(updatedUser);
-//         assertEquals("John Updated", updatedUser.getName());
-//         assertEquals("john.updated@example.com", updatedUser.getEmail());
-//         assertEquals(VALID_PASSWORD, updatedUser.getPassword());
-//         assertIterableEquals(EXPECTED_ROLES, updatedUser.getRoles());
-//     }
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
 
-//     @Test
-//     @Order(5)
-//     public void testDeleteUser() {
-//         // Arrange
-//         String url = String.format("/users/%d", this.createdUserId);
+        UserAccountResponseDTO response = objectMapper.readValue(result.getResponse().getContentAsString(), UserAccountResponseDTO.class);
+        assertEquals(TEST_USER_ID, response.getUserAccountId());
+        assertEquals(TEST_NAME, response.getName());
+        assertEquals(TEST_EMAIL, response.getEmail());
+    }
 
-//         // Act
-//         ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
+    @Test
+    public void testCreateUserDuplicateEmail() throws Exception {
+        UserAccountCreationDTO dto = new UserAccountCreationDTO();
+        dto.setName("New User");
+        dto.setEmail(TEST_EMAIL);
+        dto.setPassword("newpass");
+        String requestJson = objectMapper.writeValueAsString(dto);
 
-//         // Assert
-//         assertEquals(HttpStatus.OK, response.getStatusCode()); // Controller returns void, so expect 200 OK
+        when(userAccountService.createUser(any(UserAccountCreationDTO.class)))
+                .thenThrow(new BoardrException(HttpStatus.CONFLICT, "Email is already in use."));
 
-//         // Verify deletion
-//         ResponseEntity<String> getResponse = client.getForEntity(url, String.class);
-//         assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
-//         assertTrue(getResponse.getBody().contains("No user found with ID"), "Should indicate user not found");
-//     }
-// }
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isConflict())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("Email is already in use."));
+    }
+
+    @Test
+    public void testGetUserByIdSuccess() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", TEST_USER_ID))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        UserAccountResponseDTO response = objectMapper.readValue(result.getResponse().getContentAsString(), UserAccountResponseDTO.class);
+        assertEquals(TEST_USER_ID, response.getUserAccountId());
+    }
+
+    @Test
+    public void testGetUserByIdNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", 999))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("No userAccount has ID"));
+    }
+
+    @Test
+    public void testGetUserByEmailSuccess() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/email/{email}", TEST_EMAIL))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        UserAccountResponseDTO response = objectMapper.readValue(result.getResponse().getContentAsString(), UserAccountResponseDTO.class);
+        assertEquals(TEST_EMAIL, response.getEmail());
+    }
+
+    @Test
+    public void testGetUserByEmailNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/email/{email}", "unknown@example.com"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("No userAccount has email"));
+    }
+
+    @Test
+    public void testDeleteUserSuccess() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", TEST_USER_ID))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void testUpdateUserSuccess() throws Exception {
+        UserAccountResponseDTO dto = new UserAccountResponseDTO();
+        dto.setName("Updated Name");
+        dto.setEmail("updated@example.com");
+        dto.setPassword("newpassword");
+        String requestJson = objectMapper.writeValueAsString(dto);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", TEST_USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void testUpdateUserEmptyName() throws Exception {
+        UserAccountResponseDTO dto = new UserAccountResponseDTO();
+        dto.setName("");
+        dto.setEmail("updated@example.com");
+        dto.setPassword("newpassword");
+        String requestJson = objectMapper.writeValueAsString(dto);
+
+        doThrow(new BoardrException(HttpStatus.BAD_REQUEST, "Name cannot be empty"))
+                .when(userAccountService).updateUser(eq(TEST_USER_ID), eq(""), anyString(), anyString());
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", TEST_USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("Name cannot be empty"));
+    }
+
+    @Test
+    public void testGetAllUsersSuccess() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        UserAccountResponseDTO[] users = objectMapper.readValue(result.getResponse().getContentAsString(), UserAccountResponseDTO[].class);
+        assertEquals(1, users.length);
+        assertEquals(TEST_USER_ID, users[0].getUserAccountId());
+    }
+
+    @Test
+    public void testGetOwnedGamesSuccess() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/{gameOwnerId}/owned-games", TEST_USER_ID))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        BoardGameInstanceResponseDTO[] games = objectMapper.readValue(result.getResponse().getContentAsString(), BoardGameInstanceResponseDTO[].class);
+        assertEquals(1, games.length);
+        assertEquals("Test Game", games[0].getBoardGameName());
+    }
+
+    @Test
+    public void testGetBorrowedGamesSuccess() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/{userId}/borrowed-games", TEST_USER_ID))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        BoardGameInstanceResponseDTO[] games = objectMapper.readValue(result.getResponse().getContentAsString(), BoardGameInstanceResponseDTO[].class);
+        assertEquals(1, games.length);
+        assertEquals("Test Game", games[0].getBoardGameName());
+    }
+
+    @Test
+    public void testGetLendingHistorySuccess() throws Exception {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/{gameOwnerId}/lending-history", TEST_USER_ID))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        BorrowRequestResponseDTO[] history = objectMapper.readValue(result.getResponse().getContentAsString(), BorrowRequestResponseDTO[].class);
+        assertEquals(1, history.length);
+        assertEquals(TEST_USER_ID, history[0].getUserAccountId());
+    }
+}
