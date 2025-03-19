@@ -71,9 +71,12 @@ spring.datasource.password = <your-password>
 - **Persistence Layer Testing**: Yoon, Kyujin, Jun Ho
 - **Project Management**: Yoon, David Zhou, David Vo
 
-### Deliverable 2: TBD
-- **Scope**: TBD
-- **Effort**: TBD
+### Deliverable 2: REST APIs, Unit Testing, Integration Testing, and Project Management
+- **[Project Deliverable 2: Report](https://github.com/McGill-ECSE321-Winter2025/project-group-12/wiki/Deliverable-2-Report)**
+- **REST APIs**: David Vo, Jun Ho, Yoon, Kyujin
+- **Unit Testing**: Ji One, Eric, David Zhou, Jun Ho, Kyujin
+- **Integration Testing**: Ji One, Eric, David Zhou, ,David Vo, Yoon
+- **Project Management**: All
 
 ### Deliverable 3: TBD
 - **Scope**: TBD
