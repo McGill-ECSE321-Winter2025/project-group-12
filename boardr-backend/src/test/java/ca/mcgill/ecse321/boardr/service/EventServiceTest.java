@@ -487,38 +487,34 @@ public class EventServiceTest {
     // Test 25: updateEvent - Change board game instance
     @Test
     public void testUpdateEvent_ChangeBoardGameInstance() {
-    int eventId = 1;
-    int userId = 1;
-    BoardGameInstance newGameInstance = mock(BoardGameInstance.class);
-    when(newGameInstance.getindividualGameId()).thenReturn(2);
-    when(newGameInstance.getGameOwner()).thenReturn(mockGameOwner);
-    EventCreationDTO newGameDTO = new EventCreationDTO(
-        20250320, 1800, "Board Game Cafe", "Settlers of Catan Tournament", 8, 2, 1
-    );
-    Event updatedEvent = mock(Event.class); // New mock for updated event
-    when(updatedEvent.getEventId()).thenReturn(1);
-    when(updatedEvent.getEventDate()).thenReturn(20250320);
-    when(updatedEvent.getEventTime()).thenReturn(1800);
-    when(updatedEvent.getLocation()).thenReturn("Board Game Cafe");
-    when(updatedEvent.getDescription()).thenReturn("Settlers of Catan Tournament");
-    when(updatedEvent.getmaxParticipants()).thenReturn(8);
-    when(updatedEvent.getboardGameInstance()).thenReturn(newGameInstance);
-    when(updatedEvent.getOrganizer()).thenReturn(mockOrganizer);
-
-    when(eventRepository.findById(eventId)).thenReturn(Optional.of(mockEvent));
-    when(userAccountRepository.findById(userId)).thenReturn(Optional.of(mockOrganizer));
-    when(boardGameInstanceRepository.findById(2)).thenReturn(Optional.of(newGameInstance));
-    when(eventRepository.save(any(Event.class))).thenReturn(updatedEvent); // Return updated mock
-
-    EventResponseDTO result = eventService.updateEvent(eventId, userId, newGameDTO);
-
-    assertNotNull(result);
-    assertEquals(2, result.getBoardGameInstanceId());
-    verify(eventRepository, times(1)).findById(eventId);
-    verify(userAccountRepository, times(1)).findById(userId);
-    verify(boardGameInstanceRepository, times(1)).findById(2);
-    verify(eventRepository, times(1)).save(any(Event.class));
-}
+        int eventId = 1;
+        int userId = 1;
+        BoardGameInstance newGameInstance = mock(BoardGameInstance.class);
+        when(newGameInstance.getindividualGameId()).thenReturn(2);
+        when(newGameInstance.getGameOwner()).thenReturn(mockGameOwner);
+        EventCreationDTO newGameDTO = new EventCreationDTO(
+            20250320, 1800, "Board Game Cafe", "Settlers of Catan Tournament", 8, 2, 1
+        );
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(mockEvent));
+        when(userAccountRepository.findById(userId)).thenReturn(Optional.of(mockOrganizer));
+        when(boardGameInstanceRepository.findById(2)).thenReturn(Optional.of(newGameInstance));
+        when(eventRepository.save(any(Event.class))).thenReturn(mockEvent);
+    
+        // Fix for boardGameInstanceId assertion
+        doAnswer(invocation -> {
+            when(mockEvent.getboardGameInstance()).thenReturn(newGameInstance);
+            return null;
+        }).when(mockEvent).setboardGameInstance(newGameInstance);
+    
+        EventResponseDTO result = eventService.updateEvent(eventId, userId, newGameDTO);
+    
+        assertNotNull(result);
+        assertEquals(2, result.getBoardGameInstanceId());
+        verify(eventRepository, times(1)).findById(eventId);
+        verify(userAccountRepository, times(2)).findById(userId); // Expect 2 calls
+        verify(boardGameInstanceRepository, times(1)).findById(2);
+        verify(eventRepository, times(1)).save(any(Event.class));
+    }
 
     // Test 26: getEventById - Success
     @Test
