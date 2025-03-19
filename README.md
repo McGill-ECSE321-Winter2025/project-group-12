@@ -74,27 +74,27 @@ spring.datasource.password = <your-password>
 ### Deliverable 2: REST APIs, Unit Testing, Integration Testing, and Project Management
 - **[Project Deliverable 2: Report](https://github.com/McGill-ECSE321-Winter2025/project-group-12/wiki/Deliverable-2-Report)**
 - **REST APIs**:
- - User Account: Kyujin
- - Borrow Request & Review: Yoon
- - Board Game & Board Game Instance: Jun Ho
- - Event & Registration: David Vo
+  - User Account: Kyujin
+  - Borrow Request & Review: Yoon
+  - Board Game & Board Game Instance: Jun Ho
+  - Event & Registration: David Vo
 - **Unit Testing**:
- - User Account: Eric
- - Borrow Request & Review: Kyujin
- - Board Game & Board Game Instance: David Zhou
- - Event & Registration: Jun Ho
+  - User Account: Eric
+  - Borrow Request & Review: Kyujin
+  - Board Game & Board Game Instance: David Zhou
+  - Event & Registration: Jun Ho
 - **Integration Testing**: Ji One, Eric, David Zhou, David Vo, Yoon
- - User Account: David Vo
- - Borrow Request & Review: Eric
- - Board Game & Board Game Instance: Jione
- - Event & Registration: David Zhou
+  - User Account: David Vo
+  - Borrow Request & Review: Eric
+  - Board Game & Board Game Instance: Jione
+  - Event & Registration: David Zhou
 - **Project Management**:
- - REST APIs: David Vo
- - Software QA Plan and Report: Yoon, Kyujin
- - ReadMe: David Vo, David Zhou
- - Javadoc: Eric, Jione
- - Meeting Minutes: Jun Ho
- - Project Report: Kyujin
+  - REST APIs: David Vo
+  - Software QA Plan and Report: Yoon, Kyujin
+  - ReadMe: David Vo, David Zhou
+  - Javadoc: Eric, Jione
+  - Meeting Minutes: Jun Ho
+  - Project Report: Kyujin
 
 ### Deliverable 3: TBD
 - **Scope**: TBD
