@@ -1,6 +1,5 @@
 package ca.mcgill.ecse321.boardr.integration;
 
-
 import ca.mcgill.ecse321.boardr.dto.BoardGame.BoardGameCreationDTO;
 import ca.mcgill.ecse321.boardr.dto.BoardGame.BoardGameResponseDTO;
 import ca.mcgill.ecse321.boardr.repo.BoardGameRepository;
@@ -16,15 +15,22 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-@SpringBootTest(webEnvironment =  SpringBootTest.WebEnvironment.RANDOM_PORT)
+/**
+ * Integration tests for the BoardGame API.
+ * This class tests the creation, retrieval, and deletion of board games.
+ * 
+ * @author Jione Ban
+ * @date 2025-03-19
+ */
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BoardGameIntegrationTest {
+
     @Autowired
     private TestRestTemplate client;
+
     @Autowired
     private BoardGameRepository boardGameRepository;
 
@@ -33,20 +39,28 @@ public class BoardGameIntegrationTest {
     final String boardGameName2 = "Dominion";
     final String boardGameDescription2 = "A deck building game";
 
-
+    /**
+     * Clears the database before and after each test.
+     */
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
         boardGameRepository.deleteAll();
     }
 
+    /**
+     * Tests the creation of a board game.
+     * Verifies that the board game is created successfully and the response contains the correct data.
+     */
     @Test
     public void testCreateBoardGame() {
-        //arrange
+        // arrange
         BoardGameCreationDTO requestDTO = new BoardGameCreationDTO(boardGameName1, boardGameDescription1);
-        //act
+
+        // act
         ResponseEntity<BoardGameResponseDTO> response = client.postForEntity("/boardgames", requestDTO, BoardGameResponseDTO.class);
-        //assert
+
+        // assert
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         BoardGameResponseDTO createdGame = response.getBody();
@@ -54,13 +68,15 @@ public class BoardGameIntegrationTest {
         assertEquals(boardGameName1, createdGame.getName());
         assertEquals(boardGameDescription1, createdGame.getDescription());
         assertTrue(createdGame.getGameId() > 0);
-
     }
 
-
+    /**
+     * Tests the retrieval of all board games.
+     * Verifies that the correct board games are returned and their data matches the expected values.
+     */
     @Test
     public void testGetBoardGames() {
-        //arrange
+        // arrange
         BoardGameCreationDTO requestDTO = new BoardGameCreationDTO(boardGameName1, boardGameDescription1);
         ResponseEntity<BoardGameResponseDTO> response = client.postForEntity("/boardgames", requestDTO, BoardGameResponseDTO.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -69,10 +85,10 @@ public class BoardGameIntegrationTest {
         response = client.postForEntity("/boardgames", requestDTO, BoardGameResponseDTO.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        //act
+        // act
         ResponseEntity<BoardGameResponseDTO[]> responseEntity = client.getForEntity("/boardgames", BoardGameResponseDTO[].class);
 
-        //assert
+        // assert
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
@@ -84,9 +100,13 @@ public class BoardGameIntegrationTest {
         assertTrue(gameNames.contains(boardGameName2));
     }
 
+    /**
+     * Tests the retrieval of a specific board game by its ID.
+     * Verifies that the correct board game is returned and its data matches the expected values.
+     */
     @Test
     public void testGetSpecificBoardGames() {
-        //arrange
+        // arrange
         BoardGameCreationDTO requestDTO = new BoardGameCreationDTO(boardGameName1, boardGameDescription1);
         ResponseEntity<BoardGameResponseDTO> response = client.postForEntity("/boardgames", requestDTO, BoardGameResponseDTO.class);
         assertNotNull(response);
@@ -95,10 +115,10 @@ public class BoardGameIntegrationTest {
         assertNotNull(createdGame);
         int idToFetch = createdGame.getGameId();
 
-        //act
+        // act
         response = client.getForEntity("/boardgames/{id}", BoardGameResponseDTO.class, idToFetch);
 
-        //assert
+        // assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         BoardGameResponseDTO fetchedGame = response.getBody();
@@ -108,21 +128,23 @@ public class BoardGameIntegrationTest {
         assertEquals(idToFetch, fetchedGame.getGameId());
     }
 
+    /**
+     * Tests the deletion of a board game by its ID.
+     * Verifies that the board game is deleted successfully and the response status is OK.
+     */
     @Test
     public void testDeleteBoardGame() {
-        //arrange
+        // arrange
         BoardGameCreationDTO requestDTO = new BoardGameCreationDTO(boardGameName1, boardGameDescription1);
         ResponseEntity<BoardGameResponseDTO> response = client.postForEntity("/boardgames", requestDTO, BoardGameResponseDTO.class);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         int idToFetch = response.getBody().getGameId();
 
-        //act
+        // act
         ResponseEntity<Void> deleteResponse = client.exchange("/boardgames/{id}", HttpMethod.DELETE, null, Void.class, idToFetch);
 
-        //assert
+        // assert
         assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
     }
-
-
 }

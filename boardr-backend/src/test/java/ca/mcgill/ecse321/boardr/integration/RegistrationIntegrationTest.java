@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,6 +40,9 @@ import static org.mockito.Mockito.*;
  * Integration tests for the Registration API endpoints.
  * These tests verify that the RegistrationController correctly interacts with the RegistrationService
  * and returns the expected responses.
+* 
+ * @author David Zhou
+ * @date 2025-03-19
  */
 @SpringBootTest(classes = ca.mcgill.ecse321.boardr.BoardrApplication.class,
                 webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -84,6 +86,11 @@ public class RegistrationIntegrationTest {
     private static final int TEST_EVENT_ID = 1;
     private static final Date TEST_REGISTRATION_DATE = Date.valueOf(LocalDate.now());
 
+/**
+     * Sets up the test environment before each test.
+     * Initializes mock data for a user, event, and registration.
+     * Configures the mocked repositories and services to return the expected data.
+     */
     @BeforeEach
     public void setUp() {
         // Set up the MockMvc instance with the exception handler
