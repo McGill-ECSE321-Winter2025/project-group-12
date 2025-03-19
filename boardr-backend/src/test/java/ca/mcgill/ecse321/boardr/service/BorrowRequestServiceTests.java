@@ -25,6 +25,21 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for BorrowRequestService.
+ *
+ * Methods tested:
+ * getAllBorrowRequests,
+ * createBorrowRequest,
+ * getBorrowRequestById,
+ * deleteBorrowRequest,
+ * updateBorrowRequestStatus
+ *
+ * @author Kyujin Chu
+ * @version 1.0
+ * @since 2025-03-18
+ */
+
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BorrowRequestServiceTests {
