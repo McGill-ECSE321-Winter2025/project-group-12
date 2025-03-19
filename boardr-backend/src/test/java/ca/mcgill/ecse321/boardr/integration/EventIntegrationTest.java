@@ -33,6 +33,9 @@ import static org.mockito.Mockito.*;
  * Integration tests for the Event API endpoints.
  * These tests verify that the EventController correctly interacts with the EventService
  * and returns the expected responses.
+ * 
+ * @author David Zhou
+ * @date 2025-03-19
  */
 @SpringBootTest(classes = ca.mcgill.ecse321.boardr.BoardrApplication.class, 
                 webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -68,6 +71,11 @@ public class EventIntegrationTest {
     private static final int TEST_BOARD_GAME_INSTANCE_ID = 1;
     private static final int TEST_EVENT_ID = 1;
 
+    /**
+     * Sets up the test environment before each test.
+     * Creates mock data for a user, board game instance, and event.
+     * Configures the mocked repositories to return the expected data.
+     */
     @BeforeEach
     public void setUp() {
         // Create test user with GameOwner role
@@ -135,6 +143,8 @@ public class EventIntegrationTest {
      * Test the POST /events endpoint for creating a new event.
      * Verifies that the event is created successfully and the response contains
      * the correct event data.
+     * 
+     * @throws Exception if the request fails
      */
     @Test
     public void testCreateEvent() throws Exception {
@@ -175,6 +185,8 @@ public class EventIntegrationTest {
     /**
      * Test the GET /events endpoint for retrieving all events.
      * Verifies that the response contains the correct list of events.
+     * 
+     * @throws Exception if the request fails
      */
     @Test
     public void testGetAllEvents() throws Exception {
@@ -203,6 +215,8 @@ public class EventIntegrationTest {
     /**
      * Test the DELETE /events/{eventId} endpoint for deleting an event.
      * Verifies that the event is deleted successfully.
+     * 
+     * @throws Exception if the request fails
      */
     @Test
     public void testDeleteEvent() throws Exception {

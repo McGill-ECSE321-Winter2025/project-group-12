@@ -43,6 +43,9 @@ import ca.mcgill.ecse321.boardr.exceptions.BoardrException;
 /**
  * Integration tests for the UserAccount API endpoints.
  * Verifies that UserAccountController interacts correctly with UserAccountService.
+* 
+ * @author David Vo
+ * @date 2025-03-19
  */
 @SpringBootTest(classes = ca.mcgill.ecse321.boardr.BoardrApplication.class,
                 webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -82,6 +85,13 @@ public class UserAccountIntegrationTest {
     private static final String TEST_PASSWORD = "password123";
     private static final Date TEST_CREATION_DATE = Date.valueOf(LocalDate.now());
 
+    /**
+     * Sets up the test environment before each test.
+     * Initializes mock data for a user, board game, board game instance, and borrow request.
+     * Configures the mocked services to return the expected data.
+     * 
+     * @throws Exception if reflection fails
+     */
     @BeforeEach
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -121,12 +131,26 @@ public class UserAccountIntegrationTest {
         when(userAccountService.getLendingHistoryByGameOwnerId(TEST_USER_ID)).thenReturn(List.of(testBorrowRequest));
     }
 
+    /**
+     * Utility method to set private fields using reflection.
+     * 
+     * @param target    the object whose field is to be set
+     * @param fieldName the name of the field to set
+     * @param value     the value to set the field to
+     * @throws Exception if reflection fails
+     */
     private void setField(Object target, String fieldName, Object value) throws Exception {
         java.lang.reflect.Field field = target.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(target, value);
     }
 
+    /**
+     * Tests the creation of a user account.
+     * Verifies that the user is created successfully and the response contains the correct data.
+     * 
+     * @throws Exception if the request fails
+     */
     @Test
     public void testCreateUserSuccess() throws Exception {
         UserAccountCreationDTO dto = new UserAccountCreationDTO();
@@ -147,6 +171,12 @@ public class UserAccountIntegrationTest {
         assertEquals(TEST_EMAIL, response.getEmail());
     }
 
+    /**
+     * Tests the creation of a user account with a duplicate email.
+     * Verifies that a conflict response is returned.
+     * 
+     * @throws Exception if the request fails
+     */
     @Test
     public void testCreateUserDuplicateEmail() throws Exception {
         UserAccountCreationDTO dto = new UserAccountCreationDTO();
@@ -165,6 +195,12 @@ public class UserAccountIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("Email is already in use."));
     }
 
+    /**
+     * Tests the retrieval of a user account by ID.
+     * Verifies that the correct user is returned.
+     * 
+     * @throws Exception if the request fails
+     */
     @Test
     public void testGetUserByIdSuccess() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", TEST_USER_ID))
@@ -175,6 +211,12 @@ public class UserAccountIntegrationTest {
         assertEquals(TEST_USER_ID, response.getUserAccountId());
     }
 
+    /**
+     * Tests the retrieval of a user account by an invalid ID.
+     * Verifies that a not found response is returned.
+     * 
+     * @throws Exception if the request fails
+     */
     @Test
     public void testGetUserByIdNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", 999))
@@ -182,6 +224,12 @@ public class UserAccountIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("No userAccount has ID"));
     }
 
+    /**
+     * Tests the retrieval of a user account by email.
+     * Verifies that the correct user is returned.
+     * 
+     * @throws Exception if the request fails
+     */
     @Test
     public void testGetUserByEmailSuccess() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/email/{email}", TEST_EMAIL))
@@ -192,6 +240,12 @@ public class UserAccountIntegrationTest {
         assertEquals(TEST_EMAIL, response.getEmail());
     }
 
+    /**
+     * Tests the retrieval of a user account by an invalid email.
+     * Verifies that a not found response is returned.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testGetUserByEmailNotFound() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/users/email/{email}", "unknown@example.com"))
@@ -199,12 +253,24 @@ public class UserAccountIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("No userAccount has email"));
     }
 
+    /**
+     * Tests the deletion of a user account.
+     * Verifies that the user is deleted successfully.
+     * 
+     * @throws Exception if the request fails
+     */
     @Test
     public void testDeleteUserSuccess() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", TEST_USER_ID))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
+    /**
+     * Tests the update of a user account.
+     * Verifies that the user is updated successfully.
+     * 
+     * @throws Exception if the request fails
+     */
     @Test
     public void testUpdateUserSuccess() throws Exception {
         UserAccountResponseDTO dto = new UserAccountResponseDTO();
@@ -219,6 +285,12 @@ public class UserAccountIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
+    /**
+     * Tests the update of a user account with an empty name.
+     * Verifies that a bad request response is returned.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testUpdateUserEmptyName() throws Exception {
         UserAccountResponseDTO dto = new UserAccountResponseDTO();
@@ -237,6 +309,10 @@ public class UserAccountIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors[0]").value("Name cannot be empty"));
     }
 
+    /**
+     * Tests the retrieval of all users.
+     * @throws Exception
+     */
     @Test
     public void testGetAllUsersSuccess() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users"))
@@ -248,6 +324,12 @@ public class UserAccountIntegrationTest {
         assertEquals(TEST_USER_ID, users[0].getUserAccountId());
     }
 
+    /**
+     * Tests the retrieval of all owned games by a user.
+     * Verifies that the correct games are returned.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testGetOwnedGamesSuccess() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/{gameOwnerId}/owned-games", TEST_USER_ID))
@@ -259,6 +341,12 @@ public class UserAccountIntegrationTest {
         assertEquals("Test Game", games[0].getBoardGameName());
     }
 
+    /**
+     * Tests the retrieval of all borrowed games by a user.
+     * Verifies that the correct games are returned.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testGetBorrowedGamesSuccess() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/{userId}/borrowed-games", TEST_USER_ID))
@@ -270,6 +358,12 @@ public class UserAccountIntegrationTest {
         assertEquals("Test Game", games[0].getBoardGameName());
     }
 
+    /**
+     * Tests the retrieval of lending history of a user.
+     * Verifies that the correct history is returned.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testGetLendingHistorySuccess() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/{gameOwnerId}/lending-history", TEST_USER_ID))

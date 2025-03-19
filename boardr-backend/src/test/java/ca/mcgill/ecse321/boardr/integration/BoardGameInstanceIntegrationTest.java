@@ -1,16 +1,11 @@
 package ca.mcgill.ecse321.boardr.integration;
 
-import ca.mcgill.ecse321.boardr.dto.BoardGame.BoardGameCreationDTO;
-import ca.mcgill.ecse321.boardr.dto.BoardGame.BoardGameResponseDTO;
 import ca.mcgill.ecse321.boardr.dto.BoardGameInstance.BoardGameInstanceCreationDTO;
 import ca.mcgill.ecse321.boardr.dto.BoardGameInstance.BoardGameInstanceResponseDTO;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
-import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
-import ca.mcgill.ecse321.boardr.model.GameOwner;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
 import ca.mcgill.ecse321.boardr.repo.BoardGameRepository;
-import ca.mcgill.ecse321.boardr.repo.GameOwnerRepository;
 import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +23,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Integration tests for the BoardGameInstance API.
+ * This class tests the creation, retrieval, and deletion of board game instances.
+ * 
+ * @author Jione Ban
+ * @date 2025-03-19
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BoardGameInstanceIntegrationTest {
+
     @Autowired
     private TestRestTemplate client;
 
@@ -42,10 +45,32 @@ public class BoardGameInstanceIntegrationTest {
     @Autowired
     private BoardGameRepository boardGameRepository;
 
-    private int createGameOwner(String name, String email, String password) { return userAccountRepository.save(new UserAccount(name, email, password)).getGameOwnerRoleId(); }
-    private int createBoardGame(String name, String description) { return boardGameRepository.save(new BoardGame(name, description)).getGameId(); }
+    /**
+     * Helper method to create a game owner in the database.
+     * 
+     * @param name     the name of the game owner
+     * @param email    the email of the game owner
+     * @param password the password of the game owner
+     * @return the ID of the created game owner
+     */
+    private int createGameOwner(String name, String email, String password) {
+        return userAccountRepository.save(new UserAccount(name, email, password)).getGameOwnerRoleId();
+    }
 
+    /**
+     * Helper method to create a board game in the database.
+     * 
+     * @param name        the name of the board game
+     * @param description the description of the board game
+     * @return the ID of the created board game
+     */
+    private int createBoardGame(String name, String description) {
+        return boardGameRepository.save(new BoardGame(name, description)).getGameId();
+    }
 
+    /**
+     * Clears the database before and after each test.
+     */
     @BeforeEach
     @AfterEach
     public void clearDatabase() {
@@ -54,17 +79,22 @@ public class BoardGameInstanceIntegrationTest {
         userAccountRepository.deleteAll();
     }
 
+    /**
+     * Tests the creation of a board game instance.
+     * Verifies that the instance is created successfully and the response contains the correct data.
+     */
     @Test
     public void testCreateBoardGameInstance() {
-        //arrange
+        // arrange
         Integer gameOwnerID = createGameOwner("mark", "m@gmail.com", "123");
         Integer boardGameID = createBoardGame("Catan", "a fun game");
 
         BoardGameInstanceCreationDTO boardGameInstanceCreationDTO = new BoardGameInstanceCreationDTO("fair", boardGameID, gameOwnerID);
-        //act
+
+        // act
         ResponseEntity<BoardGameInstanceResponseDTO> response = client.postForEntity("/boardgameinstances", boardGameInstanceCreationDTO, BoardGameInstanceResponseDTO.class);
 
-        //assert
+        // assert
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         BoardGameInstanceResponseDTO createdInstance = response.getBody();
@@ -73,12 +103,15 @@ public class BoardGameInstanceIntegrationTest {
         assertEquals(boardGameID, createdInstance.getBoardGameId());
         assertEquals(gameOwnerID, createdInstance.getGameOwnerId());
         assertTrue(createdInstance.getIndividualGameId() > 0);
-
     }
 
+    /**
+     * Tests the retrieval of all board game instances.
+     * Verifies that the correct instances are returned and their data matches the expected values.
+     */
     @Test
     public void testGetBoardGameInstance() {
-        //arrange
+        // arrange
         Integer gameOwnerID = createGameOwner("mark", "m@gmail.com", "123");
         Integer boardGameID1 = createBoardGame("Catan", "a fun game");
         Integer boardGameID2 = createBoardGame("Dominion", "a deck building game");
@@ -92,11 +125,10 @@ public class BoardGameInstanceIntegrationTest {
         assertEquals(HttpStatus.CREATED, response1.getStatusCode());
         assertEquals(HttpStatus.CREATED, response2.getStatusCode());
 
-
-        //act
+        // act
         ResponseEntity<BoardGameInstanceResponseDTO[]> responseEntity = client.getForEntity("/boardgameinstances", BoardGameInstanceResponseDTO[].class);
 
-        //assert
+        // assert
         assertNotNull(responseEntity);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
@@ -108,9 +140,13 @@ public class BoardGameInstanceIntegrationTest {
         assertTrue(conditionNames.contains("good"));
     }
 
+    /**
+     * Tests the deletion of a board game instance.
+     * Verifies that the instance is deleted successfully and the response status is OK.
+     */
     @Test
     public void testDeleteBoardGameInstance() {
-        //arrange
+        // arrange
         Integer gameOwnerID = createGameOwner("mark", "m@gmail.com", "123");
         Integer boardGameID = createBoardGame("Catan", "a fun game");
         BoardGameInstanceCreationDTO boardGameInstanceCreationDTO = new BoardGameInstanceCreationDTO("fair", boardGameID, gameOwnerID);
@@ -119,12 +155,10 @@ public class BoardGameInstanceIntegrationTest {
         assertNotNull(response.getBody());
         Integer instanceID = response.getBody().getIndividualGameId();
 
-        //act
+        // act
         ResponseEntity<Void> deleteResponse = client.exchange("/boardgameinstances/{id}", HttpMethod.DELETE, null, Void.class, instanceID);
 
-        //assert
+        // assert
         assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
     }
-
-
 }
