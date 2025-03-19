@@ -20,7 +20,15 @@ import ca.mcgill.ecse321.boardr.repo.BorrowRequestRepository;
 import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
 import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
 import jakarta.validation.Valid;
-
+/**
+ * Service class for managing borrow requests in the Boardr application.
+ * Provides methods for creating, retrieving, updating, and deleting borrow requests.
+ * This class interacts with the BorrowRequestRepository, UserAccountRepository,
+ * and BoardGameInstanceRepository to handle borrow request operations.
+ * @author Yoonjung Choi
+ * @version 1.0
+ * @since 2025-03-12
+ */
 @Service
 @Validated
 public class BorrowRequestService {

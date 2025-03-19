@@ -24,6 +24,19 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for ReviewService.
+ *
+ * Methods tested:
+ * getAllReviews,
+ * createReview,
+ * getReviewById,
+ * deleteReview
+ *
+ * @author Kyujin Chu
+ * @version 1.0
+ * @since 2025-03-18
+ */
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
