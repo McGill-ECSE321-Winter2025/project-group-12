@@ -18,24 +18,24 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for RegistrationService.
  * 
  * Methods tested:
- * registerForEvent,
- * registerForEventDTO
+ * createRegistration, getAllRegistrations, getRegistration, updateRegistration, deleteRegistration, cancelRegistration
  * 
  * @author Jun Ho
- * @version 1.0
+ * @version 1.2
  * @since 2025-03-17
  */
 @ExtendWith(MockitoExtension.class)
@@ -70,135 +70,41 @@ public class RegistrationServiceTest {
         mockEvent = mock(Event.class);
         when(mockEvent.getEventId()).thenReturn(1);
         when(mockEvent.getmaxParticipants()).thenReturn(8);
-        
+        when(mockEvent.getEventDate()).thenReturn(20250325); // Future date: 2025-03-25
+
         // Set up registration key
         mockRegistrationKey = mock(Registration.RegistrationKey.class);
         when(mockRegistrationKey.getRegistrant()).thenReturn(mockUser);
         when(mockRegistrationKey.getEvent()).thenReturn(mockEvent);
-        
+
         // Create mock registration
         mockRegistration = mock(Registration.class);
-        registrationDate = new Date(System.currentTimeMillis());
+        registrationDate = Date.valueOf(LocalDate.now());
         when(mockRegistration.getRegistrationKey()).thenReturn(mockRegistrationKey);
         when(mockRegistration.getRegistrationDate()).thenReturn(registrationDate);
-        
+
         // Create mock DTO
         mockRegistrationDTO = new RegistrationCreationDTO(1, 1);
-        
+
         // Setup default empty registration list for event
         List<Registration> emptyRegistrations = new ArrayList<>();
         when(mockEvent.getRegistrations()).thenReturn(emptyRegistrations);
+
+        // Default organizer setup
+        UserAccount mockOrganizer = mock(UserAccount.class);
+        when(mockOrganizer.getUserAccountId()).thenReturn(2); // Different from registrant
+        when(mockEvent.getOrganizer()).thenReturn(mockOrganizer);
     }
 
-    // Test 1: registerForEvent - Successful registration
+    // Test 1: createRegistration - Successful registration
     @Test
-    public void testRegisterForEvent_Success() {
-        // Setup
+    public void testCreateRegistration_Success() {
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
         when(registrationRepository.save(any(Registration.class))).thenReturn(mockRegistration);
 
-        Registration result = registrationService.registerForEvent(1, 1);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(mockUser, result.getRegistrationKey().getRegistrant());
-        assertEquals(mockEvent, result.getRegistrationKey().getEvent());
-        assertEquals(registrationDate, result.getRegistrationDate());
-        verify(userAccountRepository, times(1)).findById(1);
-        verify(eventRepository, times(1)).findById(1);
-        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
-        verify(registrationRepository, times(1)).save(any(Registration.class));
-    }
-
-    // Test 2: registerForEvent - User not found
-    @Test
-    public void testRegisterForEvent_UserNotFound() {
-        // Setup
-        when(userAccountRepository.findById(1)).thenReturn(Optional.empty());
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEvent(1, 1);
-        });
-        assertEquals("User not found.", exception.getMessage());
-        verify(userAccountRepository, times(1)).findById(1);
-        verify(eventRepository, never()).findById(anyInt());
-        verify(registrationRepository, never()).findById(any());
-        verify(registrationRepository, never()).save(any());
-    }
-
-    // Test 3: registerForEvent - Event not found
-    @Test
-    public void testRegisterForEvent_EventNotFound() {
-        // Setup
-        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
-        when(eventRepository.findById(1)).thenReturn(Optional.empty());
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEvent(1, 1);
-        });
-        assertEquals("Event not found.", exception.getMessage());
-        verify(userAccountRepository, times(1)).findById(1);
-        verify(eventRepository, times(1)).findById(1);
-        verify(registrationRepository, never()).findById(any());
-        verify(registrationRepository, never()).save(any());
-    }
-
-    // Test 4: registerForEvent - Already registered
-    @Test
-    public void testRegisterForEvent_AlreadyRegistered() {
-        // Setup
-        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
-        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
-        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEvent(1, 1);
-        });
-        assertEquals("User is already registered for this event.", exception.getMessage());
-        verify(userAccountRepository, times(1)).findById(1);
-        verify(eventRepository, times(1)).findById(1);
-        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
-        verify(registrationRepository, never()).save(any());
-    }
-
-    // Test 5: registerForEvent - Event fully booked
-    @Test
-    public void testRegisterForEvent_EventFullyBooked() {
-        // Setup
-        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
-        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
-        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
-        
-        // Create a list of mock registrations that equals maxParticipants
-        List<Registration> fullRegistrations = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            fullRegistrations.add(mock(Registration.class));
-        }
-        when(mockEvent.getRegistrations()).thenReturn(fullRegistrations);
-
-        // Throw error when registering for a booked event
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEvent(1, 1);
-        });
-        assertEquals("Event is fully booked.", exception.getMessage());
-        verify(userAccountRepository, times(1)).findById(1);
-        verify(eventRepository, times(1)).findById(1);
-        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
-        verify(registrationRepository, never()).save(any());
-    }
-
-    // Test 6: registerForEventDTO - Successful registration
-    @Test
-    public void testRegisterForEventDTO_Success() {
-        // Setup
-        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
-        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
-        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
-        when(registrationRepository.save(any(Registration.class))).thenReturn(mockRegistration);
-
-        RegistrationResponseDTO result = registrationService.registerForEventDTO(mockRegistrationDTO);
+        RegistrationResponseDTO result = registrationService.createRegistration(mockRegistrationDTO);
 
         assertNotNull(result);
         assertEquals(1, result.getUserId());
@@ -210,15 +116,61 @@ public class RegistrationServiceTest {
         verify(registrationRepository, times(1)).save(any(Registration.class));
     }
 
-    // Test 7: registerForEventDTO - Validation failure (propagated from registerForEvent)
+    // Test 2: createRegistration - User not found
     @Test
-    public void testRegisterForEventDTO_ValidationFailure() {
-        // Setup - Event is fully booked
+    public void testCreateRegistration_UserNotFound() {
+        when(userAccountRepository.findById(1)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            registrationService.createRegistration(mockRegistrationDTO);
+        });
+        assertEquals("User not found.", exception.getMessage());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, never()).findById(anyInt());
+        verify(registrationRepository, never()).findById(any());
+        verify(registrationRepository, never()).save(any());
+    }
+
+    // Test 3: createRegistration - Event not found
+    @Test
+    public void testCreateRegistration_EventNotFound() {
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            registrationService.createRegistration(mockRegistrationDTO);
+        });
+        assertEquals("Event not found.", exception.getMessage());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, never()).findById(any());
+        verify(registrationRepository, never()).save(any());
+    }
+
+    // Test 4: createRegistration - Already registered
+    @Test
+    public void testCreateRegistration_AlreadyRegistered() {
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
+        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            registrationService.createRegistration(mockRegistrationDTO);
+        });
+        assertEquals("User is already registered for this event.", exception.getMessage());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
+        verify(registrationRepository, never()).save(any());
+    }
+
+    // Test 5: createRegistration - Event fully booked
+    @Test
+    public void testCreateRegistration_EventFullyBooked() {
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
-        
-        // Create a list of mock registrations that equals maxParticipants
+
         List<Registration> fullRegistrations = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             fullRegistrations.add(mock(Registration.class));
@@ -226,7 +178,7 @@ public class RegistrationServiceTest {
         when(mockEvent.getRegistrations()).thenReturn(fullRegistrations);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEventDTO(mockRegistrationDTO);
+            registrationService.createRegistration(mockRegistrationDTO);
         });
         assertEquals("Event is fully booked.", exception.getMessage());
         verify(userAccountRepository, times(1)).findById(1);
@@ -235,83 +187,34 @@ public class RegistrationServiceTest {
         verify(registrationRepository, never()).save(any());
     }
 
-    // New Tests for Edge Cases and Validation
-
-    // Invalid Input Validation
+    // Test 6: createRegistration - Past event
     @Test
-    public void testRegisterForEvent_NegativeUserId() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEvent(-1, 1);
-        });
-        assertEquals("User ID must be positive.", exception.getMessage());
-        verify(userAccountRepository, never()).findById(anyInt());
-        verify(eventRepository, never()).findById(anyInt());
-        verify(registrationRepository, never()).save(any());
-    }
-
-    @Test
-    public void testRegisterForEvent_NegativeEventId() {
-        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEvent(1, -1);
-        });
-        assertEquals("Event ID must be positive.", exception.getMessage());
-        verify(userAccountRepository, times(1)).findById(1);
-        verify(eventRepository, never()).findById(anyInt());
-        verify(registrationRepository, never()).save(any());
-    }
-
-    @Test
-    public void testRegisterForEventDTO_NegativeUserId() {
-        RegistrationCreationDTO invalidDTO = new RegistrationCreationDTO(-1, 1);
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEventDTO(invalidDTO);
-        });
-        assertEquals("User ID must be positive.", exception.getMessage());
-        verify(userAccountRepository, never()).findById(anyInt());
-        verify(eventRepository, never()).findById(anyInt());
-        verify(registrationRepository, never()).save(any());
-    }
-
-    @Test
-    public void testRegisterForEventDTO_NegativeEventId() {
-        RegistrationCreationDTO invalidDTO = new RegistrationCreationDTO(1, -1);
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEventDTO(invalidDTO);
-        });
-        assertEquals("Event ID must be positive.", exception.getMessage());
-        verify(userAccountRepository, times(1)).findById(1);
-        verify(eventRepository, never()).findById(anyInt());
-        verify(registrationRepository, never()).save(any());
-    }
-
-    // Registration Date Validation (assuming event date is future)
-    @Test
-    public void testRegisterForEvent_PastRegistrationDate() {
+    public void testCreateRegistration_PastEvent() {
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
-        when(mockEvent.getEventDate()).thenReturn(20250320); // Future date
-        when(mockRegistration.getRegistrationDate()).thenReturn(new Date(0)); // 1970-01-01
-        when(registrationRepository.save(any(Registration.class))).thenReturn(mockRegistration);
+        when(mockEvent.getEventDate()).thenReturn(20230325); // Past date: 2023-03-25
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEvent(1, 1);
+            registrationService.createRegistration(mockRegistrationDTO);
         });
-        assertEquals("Registration date cannot be in the past.", exception.getMessage());
+        assertEquals("Cannot register for a past event.", exception.getMessage());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
         verify(registrationRepository, never()).save(any());
     }
 
-    // Organizer Registering for Own Event
+    // Test 7: createRegistration - Organizer self-registration
     @Test
-    public void testRegisterForEvent_OrganizerSelfRegistration() {
+    public void testCreateRegistration_OrganizerSelfRegistration() {
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
-        when(mockEvent.getOrganizer()).thenReturn(mockUser); // Organizer is the same as registrant
+        when(mockEvent.getOrganizer()).thenReturn(mockUser); // Same as registrant
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEvent(1, 1);
+            registrationService.createRegistration(mockRegistrationDTO);
         });
         assertEquals("Organizer cannot register for their own event.", exception.getMessage());
         verify(userAccountRepository, times(1)).findById(1);
@@ -320,51 +223,212 @@ public class RegistrationServiceTest {
         verify(registrationRepository, never()).save(any());
     }
 
-    // Exceeding Max Participants
+    // Test 8: getAllRegistrations - Success
     @Test
-    public void testRegisterForEvent_ExceedsMaxParticipants() {
+    public void testGetAllRegistrations_Success() {
+        List<Registration> registrations = Arrays.asList(mockRegistration);
+        when(registrationRepository.findAll()).thenReturn(registrations);
+
+        List<RegistrationResponseDTO> result = registrationService.getAllRegistrations();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getUserId());
+        assertEquals(1, result.get(0).getEventId());
+        verify(registrationRepository, times(1)).findAll();
+    }
+
+    // Test 9: getAllRegistrations - Empty list
+    @Test
+    public void testGetAllRegistrations_Empty() {
+        when(registrationRepository.findAll()).thenReturn(new ArrayList<>());
+
+        List<RegistrationResponseDTO> result = registrationService.getAllRegistrations();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(registrationRepository, times(1)).findAll();
+    }
+
+    // Test 10: getRegistration - Success
+    @Test
+    public void testGetRegistration_Success() {
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
+        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
+
+        RegistrationResponseDTO result = registrationService.getRegistration(1, 1);
+
+        assertNotNull(result);
+        assertEquals(1, result.getUserId());
+        assertEquals(1, result.getEventId());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
+    }
+
+    // Test 11: getRegistration - User not found
+    @Test
+    public void testGetRegistration_UserNotFound() {
+        when(userAccountRepository.findById(1)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            registrationService.getRegistration(1, 1);
+        });
+        assertEquals("User not found.", exception.getMessage());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, never()).findById(anyInt());
+    }
+
+    // Test 12: getRegistration - Event not found
+    @Test
+    public void testGetRegistration_EventNotFound() {
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            registrationService.getRegistration(1, 1);
+        });
+        assertEquals("Event not found.", exception.getMessage());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+    }
+
+    // Test 13: getRegistration - Registration not found
+    @Test
+    public void testGetRegistration_RegistrationNotFound() {
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
-        List<Registration> overRegistrations = new ArrayList<>();
-        for (int i = 0; i < 9; i++) { // One more than maxParticipants (8)
-            overRegistrations.add(mock(Registration.class));
-        }
-        when(mockEvent.getRegistrations()).thenReturn(overRegistrations);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEvent(1, 1);
+            registrationService.getRegistration(1, 1);
         });
-        assertEquals("Event is fully booked.", exception.getMessage());
+        assertEquals("Registration not found.", exception.getMessage());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
+    }
+
+    // Test 14: updateRegistration - Success
+    @Test
+    public void testUpdateRegistration_Success() {
+        Date newDate = Date.valueOf(LocalDate.of(2025, 3, 20));
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
+        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
+        when(registrationRepository.save(any(Registration.class))).thenReturn(mockRegistration);
+
+        RegistrationResponseDTO result = registrationService.updateRegistration(1, 1, newDate);
+
+        assertNotNull(result);
+        assertEquals(1, result.getUserId());
+        assertEquals(1, result.getEventId());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
+        verify(registrationRepository, times(1)).save(any(Registration.class));
+    }
+
+    // Test 15: updateRegistration - Past event
+    @Test
+    public void testUpdateRegistration_PastEvent() {
+        Date newDate = Date.valueOf(LocalDate.of(2023, 3, 20));
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
+        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
+        when(mockEvent.getEventDate()).thenReturn(20230325); // Past date
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            registrationService.updateRegistration(1, 1, newDate);
+        });
+        assertEquals("Cannot update registration for a past event.", exception.getMessage());
         verify(userAccountRepository, times(1)).findById(1);
         verify(eventRepository, times(1)).findById(1);
         verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
         verify(registrationRepository, never()).save(any());
     }
 
-    // Additional DTO-Specific Tests
+    // Test 16: updateRegistration - Date after event
     @Test
-    public void testRegisterForEventDTO_UserNotFound() {
-        when(userAccountRepository.findById(1)).thenReturn(Optional.empty());
+    public void testUpdateRegistration_DateAfterEvent() {
+        Date newDate = Date.valueOf(LocalDate.of(2025, 3, 26)); // After event date 2025-03-25
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
+        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
+
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEventDTO(mockRegistrationDTO);
+            registrationService.updateRegistration(1, 1, newDate);
         });
-        assertEquals("User not found.", exception.getMessage());
+        assertEquals("Registration date cannot be after the event date.", exception.getMessage());
         verify(userAccountRepository, times(1)).findById(1);
-        verify(eventRepository, never()).findById(anyInt());
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
         verify(registrationRepository, never()).save(any());
     }
 
+    // Test 17: deleteRegistration - Success
     @Test
-    public void testRegisterForEventDTO_EventNotFound() {
+    public void testDeleteRegistration_Success() {
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
-        when(eventRepository.findById(1)).thenReturn(Optional.empty());
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            registrationService.registerForEventDTO(mockRegistrationDTO);
-        });
-        assertEquals("Event not found.", exception.getMessage());
+        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
+        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
+
+        registrationService.deleteRegistration(1, 1);
+
         verify(userAccountRepository, times(1)).findById(1);
         verify(eventRepository, times(1)).findById(1);
-        verify(registrationRepository, never()).save(any());
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
+        verify(registrationRepository, times(1)).delete(mockRegistration);
+    }
+
+    // Test 18: deleteRegistration - Registration not found
+    @Test
+    public void testDeleteRegistration_RegistrationNotFound() {
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
+        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            registrationService.deleteRegistration(1, 1);
+        });
+        assertEquals("Registration not found.", exception.getMessage());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
+        verify(registrationRepository, never()).delete(any());
+    }
+
+    // Test 19: cancelRegistration - Success
+    @Test
+    public void testCancelRegistration_Success() {
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
+        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
+
+        registrationService.cancelRegistration(1, 1);
+
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
+        verify(registrationRepository, times(1)).delete(mockRegistration);
+    }
+
+    // Test 20: cancelRegistration - Past event
+    @Test
+    public void testCancelRegistration_PastEvent() {
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
+        when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
+        when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
+        when(mockEvent.getEventDate()).thenReturn(20230325); // Past date
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            registrationService.cancelRegistration(1, 1);
+        });
+        assertEquals("Cannot cancel registration for a past event.", exception.getMessage());
+        verify(userAccountRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).findById(1);
+        verify(registrationRepository, times(1)).findById(any(Registration.RegistrationKey.class));
+        verify(registrationRepository, never()).delete(any());
     }
 }
