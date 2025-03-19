@@ -64,6 +64,14 @@ public class BorrowRequestService {
         BorrowRequest borrowRequest = borrowRequestRepo.findById(borrowRequestId)
                 .orElseThrow(() -> new BoardrException(HttpStatus.NOT_FOUND, "Invalid borrow request ID"));
         borrowRequest.setRequestStatus(status);
+
+        if (status == BorrowRequest.RequestStatus.Accepted) {
+            // When borrow request is accepted, mark the associated board game instance as unavailable
+            BoardGameInstance gameInstance = borrowRequest.getBoardGameInstance();
+            gameInstance.setAvailable(false);
+            boardGameInstanceRepo.save(gameInstance);
+        }
+
         return borrowRequestRepo.save(borrowRequest);
     }
 }
