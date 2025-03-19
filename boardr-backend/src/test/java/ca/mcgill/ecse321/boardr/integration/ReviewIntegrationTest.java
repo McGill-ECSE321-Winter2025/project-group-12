@@ -86,10 +86,15 @@ public class ReviewIntegrationTest {
         // Create test review
         testReview = new Review(TEST_RATING, TEST_COMMENT, testUser, testBoardGame);
         try {
-            field = Review.class.getDeclaredField("reviewID");
+            // Ensure the field name is correct
+            field = Review.class.getDeclaredField("reviewId"); // Check if this is the correct field name
             field.setAccessible(true);
             field.set(testReview, TEST_REVIEW_ID);
-        } catch (Exception e) {
+        } catch (NoSuchFieldException e) {
+            System.err.println("Field 'reviewID' not found in Review class.");
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            System.err.println("Cannot access field 'reviewID'.");
             e.printStackTrace();
         }
         
@@ -125,7 +130,6 @@ public class ReviewIntegrationTest {
         // Verify response
         String responseJson = result.getResponse().getContentAsString();
         ReviewResponseDTO responseDTO = objectMapper.readValue(responseJson, ReviewResponseDTO.class);
-        
         assertEquals(TEST_REVIEW_ID, responseDTO.getId());
         assertEquals(TEST_RATING, responseDTO.getRating());
         assertEquals(TEST_COMMENT, responseDTO.getComment());
