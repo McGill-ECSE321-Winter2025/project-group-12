@@ -20,6 +20,17 @@ import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
 import ca.mcgill.ecse321.boardr.repo.BoardGameRepository;
 import jakarta.validation.Valid;
 
+/**
+ * Service class for managing reviews in the Boardr application.
+ * Provides methods for creating, retrieving, and deleting reviews.
+ * This class interacts with the ReviewRepository, UserAccountRepository, and BoardGameRepository
+ * to perform operations related to reviews.
+ *
+ * @author Yoonjung Choi
+ * @version 1.0
+ * @since 2025-03-12
+ */
+
 @Service
 @Validated
 public class ReviewService {

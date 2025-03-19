@@ -22,6 +22,16 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.http.HttpStatus;
 
+/**
+ * Service class for managing user accounts in the Boardr application.
+ * Provides methods for creating, retrieving, updating, and deleting user accounts.
+ * This class interacts with the UserAccountRepository, BoardGameInstanceRepository,
+ * and BorrowRequestRepository to perform operations related to user accounts.
+ *
+ * @author Kyujin Chu
+ * @version 1.0
+ * @since 2025-03-15
+ */
 
 @Service
 public class UserAccountService {
