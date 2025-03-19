@@ -31,6 +31,7 @@ public class BoardGameInstanceController {
 
     // 1.Get all board game instances
     @GetMapping("/boardgameinstances")
+    @ResponseStatus(HttpStatus.OK)
     public List<BoardGameInstanceResponseDTO> getAllBoardGameInstances() {
         return boardGameInstanceService.getAllBoardGameInstances();
     }
@@ -44,6 +45,7 @@ public class BoardGameInstanceController {
 
     // 3.Remove a board game instance
     @DeleteMapping("/boardgameinstances/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void removeBoardGameInstance(@PathVariable int id) {
         boardGameInstanceService.removeBoardGameInstance(id);
     }
