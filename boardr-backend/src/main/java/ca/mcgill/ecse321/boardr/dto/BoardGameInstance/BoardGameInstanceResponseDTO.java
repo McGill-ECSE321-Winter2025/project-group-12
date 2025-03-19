@@ -14,6 +14,7 @@ import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
 public class BoardGameInstanceResponseDTO {
 
     private int individualGameId;
+    private String boardGameName;
     private String condition;
     private boolean isAvailable;
     private int boardGameId;
@@ -25,6 +26,7 @@ public class BoardGameInstanceResponseDTO {
 
     public BoardGameInstanceResponseDTO(BoardGameInstance boardGameInstance) {
         this.individualGameId = boardGameInstance.getindividualGameId();
+        this.boardGameName = boardGameInstance.getBoardGame().getName();
         this.condition = boardGameInstance.getCondition();
         this.isAvailable = boardGameInstance.isAvailable();
         this.boardGameId = boardGameInstance.getBoardGame().getGameId();
@@ -33,6 +35,14 @@ public class BoardGameInstanceResponseDTO {
 
     public int getIndividualGameId() {
         return individualGameId;
+    }
+
+    public String getBoardGameName() {
+        return boardGameName;
+    }
+
+    public void setBoardGameName(String boardGameName) {
+        this.boardGameName = boardGameName;
     }
 
     public String getCondition() {

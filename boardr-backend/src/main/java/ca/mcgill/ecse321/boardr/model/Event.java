@@ -16,8 +16,8 @@ import jakarta.persistence.OneToMany;
  * Represents an event with a date, time, location, description, and associated board game instance and organizer.
  * 
  * @author Eric, David Zhou, Junho, Jione, David Vo
- * @version 1.1
- * @since 2023-10-05
+ * @version 1.2
+ * @since 2025-03-18
  */
 @Entity
 public class Event {
@@ -89,7 +89,28 @@ public class Event {
         return this.registrations;
     }
 
+    // Setter methods for update functionality
+    public void setEventDate(int eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public void setEventTime(int eventTime) {
+        this.eventTime = eventTime;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setmaxParticipants(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
+
+    public void setboardGameInstance(BoardGameInstance boardGameInstance) {
+        this.boardGameInstance = boardGameInstance;
     }
 }
