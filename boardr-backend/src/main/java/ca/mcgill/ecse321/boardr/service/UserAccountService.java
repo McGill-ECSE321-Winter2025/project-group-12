@@ -48,23 +48,33 @@ public class UserAccountService {
 
 
     @Transactional
-    public UserAccount createUser(@Valid UserAccountCreationDTO userAccountToCreate) {
-        Optional<UserAccount> existingUserWithSameEmail =
-                userAccountRepository.findByEmail(userAccountToCreate.getEmail());
-
-        // Check for duplicate email
-        if (existingUserWithSameEmail.isPresent()) {
-            throw new BoardrException(HttpStatus.CONFLICT, "Email is already in use.");
-        }
-
-        // Create and save user
-        UserAccount user = new UserAccount(
-            userAccountToCreate.getName(),
-            userAccountToCreate.getEmail(),
-            userAccountToCreate.getPassword()
-        );
-        return userAccountRepository.save(user);
+public UserAccount createUser(@Valid UserAccountCreationDTO userAccountToCreate) {
+  
+    if (userAccountToCreate.getName() == null || userAccountToCreate.getName().trim().isEmpty()) {
+        throw new BoardrException(HttpStatus.BAD_REQUEST, "Name cannot be empty");
     }
+    if (userAccountToCreate.getEmail() == null || userAccountToCreate.getEmail().trim().isEmpty()) {
+        throw new BoardrException(HttpStatus.BAD_REQUEST, "Email cannot be empty");
+    }
+    if (userAccountToCreate.getPassword() == null || userAccountToCreate.getPassword().trim().isEmpty()) {
+        throw new BoardrException(HttpStatus.BAD_REQUEST, "Password cannot be empty");
+    }
+
+ 
+    Optional<UserAccount> existingUserWithSameEmail =
+            userAccountRepository.findByEmail(userAccountToCreate.getEmail());
+    if (existingUserWithSameEmail.isPresent()) {
+        throw new BoardrException(HttpStatus.CONFLICT, "Email is already in use.");
+    }
+
+    UserAccount user = new UserAccount(
+        userAccountToCreate.getName(),
+        userAccountToCreate.getEmail(),
+        userAccountToCreate.getPassword()
+    );
+    return userAccountRepository.save(user);
+}
+
 
     @Transactional
     public UserAccount getUserById(int id) {
