@@ -35,8 +35,10 @@ import static org.mockito.Mockito.*;
  * Methods tested:
  * createEvent, createEventFromDTO, deleteEvent, updateEvent, getAllEvents, getEventById
  * 
+ * Description of tests: Validate logic and inputs to functions of service layer
+ * 
  * @author Jun Ho
- * @version 1.1
+ * @version 1.3
  * @since 2025-03-17
  */
 @ExtendWith(MockitoExtension.class)
@@ -102,6 +104,7 @@ public class EventServiceTest {
     // Test 1: createEvent - Successful creation
     @Test
     public void testCreateEvent_Success() {
+        // Creation of event succeeds
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
         when(eventRepository.save(any(Event.class))).thenReturn(mockEvent);
 
@@ -119,6 +122,7 @@ public class EventServiceTest {
     // Test 2: createEvent - Missing Organizer
     @Test
     public void testCreateEvent_MissingOrganizer() {
+        // Organizer is missing when creating an event
         when(mockEvent.getOrganizer()).thenReturn(null);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -131,6 +135,7 @@ public class EventServiceTest {
     // Test 3: createEvent - Missing Board Game Instance
     @Test
     public void testCreateEvent_MissingBoardGameInstance() {
+        // Board game instance is not provided (null)
         when(mockEvent.getboardGameInstance()).thenReturn(null);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -143,6 +148,8 @@ public class EventServiceTest {
     // Test 4: createEvent - Board Game Instance has no owner
     @Test
     public void testCreateEvent_BoardGameInstanceNoOwner() {
+        // Board game instance's owner does not exist
+        // This is simply ensuring that if we happen to delete game owner account, then board game instance is deleted as well
         when(mockGameInstance.getGameOwner()).thenReturn(null);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -155,6 +162,7 @@ public class EventServiceTest {
     // Test 5: createEvent - Missing required fields
     @Test
     public void testCreateEvent_MissingRequiredFields() {
+        // Fields are missing for creating an event
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
 
         // Case 1: Missing description
@@ -186,29 +194,31 @@ public class EventServiceTest {
     // Test 6: createEventFromDTO - Successful creation
     @Test
     public void testCreateEventFromDTO_Success() {
-    when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
-    when(boardGameInstanceRepository.findById(1)).thenReturn(Optional.of(mockGameInstance));
-    when(eventRepository.save(any(Event.class))).thenReturn(mockEvent);
+        // Creating event from DTO is succeeded
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
+        when(boardGameInstanceRepository.findById(1)).thenReturn(Optional.of(mockGameInstance));
+        when(eventRepository.save(any(Event.class))).thenReturn(mockEvent);
 
-    EventResponseDTO result = eventService.createEventFromDTO(mockEventDTO);
+        EventResponseDTO result = eventService.createEventFromDTO(mockEventDTO);
 
-    assertNotNull(result);
-    assertEquals(1, result.getEventId());
-    assertEquals(20250320, result.getEventDate());
-    assertEquals(1800, result.getEventTime());
-    assertEquals("Board Game Cafe", result.getLocation());
-    assertEquals("Settlers of Catan Tournament", result.getDescription());
-    assertEquals(8, result.getMaxParticipants());
-    assertEquals(1, result.getBoardGameInstanceId());
-    assertEquals(1, result.getOrganizerId());
-    verify(userAccountRepository, times(2)).findById(1); // Expect 2 calls
-    verify(boardGameInstanceRepository, times(1)).findById(1);
-    verify(eventRepository, times(1)).save(any(Event.class));
-}
+        assertNotNull(result);
+        assertEquals(1, result.getEventId());
+        assertEquals(20250320, result.getEventDate());
+        assertEquals(1800, result.getEventTime());
+        assertEquals("Board Game Cafe", result.getLocation());
+        assertEquals("Settlers of Catan Tournament", result.getDescription());
+        assertEquals(8, result.getMaxParticipants());
+        assertEquals(1, result.getBoardGameInstanceId());
+        assertEquals(1, result.getOrganizerId());
+        verify(userAccountRepository, times(2)).findById(1); // Expect 2 calls
+        verify(boardGameInstanceRepository, times(1)).findById(1);
+        verify(eventRepository, times(1)).save(any(Event.class));
+        }
 
     // Test 7: createEventFromDTO - Organizer not found
     @Test
     public void testCreateEventFromDTO_OrganizerNotFound() {
+        // Creating event from DTO with missing organizer (failure)
         when(userAccountRepository.findById(1)).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -223,6 +233,7 @@ public class EventServiceTest {
     // Test 8: createEventFromDTO - Board game instance not found
     @Test
     public void testCreateEventFromDTO_BoardGameInstanceNotFound() {
+        // Board game instance not found (failure) when creating event from DTO
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
         when(boardGameInstanceRepository.findById(1)).thenReturn(Optional.empty());
 
@@ -238,6 +249,7 @@ public class EventServiceTest {
     // Test 9: deleteEvent - Successful deletion
     @Test
     public void testDeleteEvent_Success() {
+        // Deletion of event is succeeded
         int eventId = 1;
         int userId = 1;
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(mockEvent));
@@ -253,6 +265,7 @@ public class EventServiceTest {
     // Test 10: deleteEvent - Event not found
     @Test
     public void testDeleteEvent_EventNotFound() {
+        // Deletion of not existing event results in failure
         int eventId = 1;
         int userId = 1;
         when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
@@ -268,6 +281,7 @@ public class EventServiceTest {
     // Test 11: deleteEvent - User not the organizer
     @Test
     public void testDeleteEvent_UserNotOrganizer() {
+        // deletion of event by non organizer results in failure
         int eventId = 1;
         int userId = 2; // Different from organizer's ID
         UserAccount differentUser = mock(UserAccount.class);
@@ -288,6 +302,7 @@ public class EventServiceTest {
     // Test 12: getAllEvents - Successful retrieval
     @Test
     public void testGetAllEvents_Success() {
+        // Retrieving all events
         List<Event> events = Arrays.asList(mockEvent);
         when(eventRepository.findAll()).thenReturn(events);
 
@@ -301,6 +316,7 @@ public class EventServiceTest {
     // Test 13: getAllEvents - Empty list
     @Test
     public void testGetAllEvents_Empty() {
+        // Retrieving an empty list of events
         when(eventRepository.findAll()).thenReturn(new ArrayList<>());
 
         Iterable<Event> result = eventService.getAllEvents();
@@ -313,6 +329,7 @@ public class EventServiceTest {
     // Test 14: Ownership Validation - Organizer does not own game instance (failing)
     @Test
     public void testCreateEvent_OrganizerDoesNotOwnGameInstance() {
+        // Event should be created with organizer owning or having a borrowed game
         when(mockGameOwner.getId()).thenReturn(2); // Different from organizer's ID (1)
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
         when(mockOrganizer.getGameOwnerRoleId()).thenReturn(null); // Not a game owner
@@ -328,23 +345,25 @@ public class EventServiceTest {
     // Test 15: Ownership Validation - Organizer does not own game instance (failing)
     @Test
     public void testCreateEventFromDTO_OrganizerDoesNotOwnGameInstance() {
-    when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
-    when(boardGameInstanceRepository.findById(1)).thenReturn(Optional.of(mockGameInstance));
-    when(mockGameOwner.getId()).thenReturn(2); // Different from organizer's ID (1)
-    when(mockOrganizer.getGameOwnerRoleId()).thenReturn(null); // Not a game owner
+        // Event should be created with organizer owning or having a borrowed game (DTO)
+        when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
+        when(boardGameInstanceRepository.findById(1)).thenReturn(Optional.of(mockGameInstance));
+        when(mockGameOwner.getId()).thenReturn(2); // Different from organizer's ID (1)
+        when(mockOrganizer.getGameOwnerRoleId()).thenReturn(null); // Not a game owner
 
-    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-        eventService.createEventFromDTO(mockEventDTO);
-    });
-    assertEquals("Organizer must be the owner of the board game instance.", exception.getMessage());
-    verify(userAccountRepository, times(2)).findById(1); // Expect 2 calls
-    verify(boardGameInstanceRepository, times(1)).findById(1);
-    verify(eventRepository, never()).save(any());
-}
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            eventService.createEventFromDTO(mockEventDTO);
+        });
+        assertEquals("Organizer must be the owner of the board game instance.", exception.getMessage());
+        verify(userAccountRepository, times(2)).findById(1); // Expect 2 calls
+        verify(boardGameInstanceRepository, times(1)).findById(1);
+        verify(eventRepository, never()).save(any());
+    }
 
     // Test 16: Date and Time Validation - Invalid date (failing)
     @Test
     public void testCreateEvent_InvalidDate() {
+        // Cannot create an event with invalid dates
         when(mockEvent.getEventDate()).thenReturn(-20250320); // Negative date
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
         when(eventRepository.save(any(Event.class))).thenReturn(mockEvent);
@@ -358,6 +377,7 @@ public class EventServiceTest {
     // Test 17: Date and Time Validation - Invalid time (failing)
     @Test
     public void testCreateEvent_InvalidTime() {
+        // Different invalid date/time input
         when(mockEvent.getEventTime()).thenReturn(2500); // Beyond 2359
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
         when(eventRepository.save(any(Event.class))).thenReturn(mockEvent);
@@ -371,6 +391,7 @@ public class EventServiceTest {
     // Test 18: Date and Time Validation - Invalid date (failing)
     @Test
     public void testCreateEventFromDTO_InvalidDate() {
+        // Different invalid date/time input
         EventCreationDTO invalidDateDTO = new EventCreationDTO(
             -20250320, 1800, "Board Game Cafe", "Settlers of Catan Tournament", 8, 1, 1
         );
@@ -387,6 +408,7 @@ public class EventServiceTest {
     // Test 19: Date and Time Validation - Invalid time (failing)
     @Test
     public void testCreateEventFromDTO_InvalidTime() {
+        // Different invalid date/time input
         EventCreationDTO invalidTimeDTO = new EventCreationDTO(
             20250320, -1800, "Board Game Cafe", "Settlers of Catan Tournament", 8, 1, 1
         );
@@ -403,6 +425,7 @@ public class EventServiceTest {
     // Test 20: Max Participants Edge Cases - Negative max participants (failing)
     @Test
     public void testCreateEvent_NegativeMaxParticipants() {
+        // Event cannot have a negative max participants number
         when(mockEvent.getmaxParticipants()).thenReturn(-1);
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockOrganizer));
 
@@ -416,6 +439,7 @@ public class EventServiceTest {
     // Test 21: Max Participants Edge Cases - Negative max participants (failing)
     @Test
     public void testCreateEventFromDTO_NegativeMaxParticipants() {
+        // Same as above test but for DTO
         EventCreationDTO invalidMaxDTO = new EventCreationDTO(
             20250320, 1800, "Board Game Cafe", "Settlers of Catan Tournament", -1, 1, 1
         );
@@ -432,6 +456,7 @@ public class EventServiceTest {
     // Test 22: updateEvent - Successful update
     @Test
     public void testUpdateEvent_Success() {
+        // Update an event is succeeded
         int eventId = 1;
         int userId = 1;
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(mockEvent));
@@ -452,6 +477,7 @@ public class EventServiceTest {
     // Test 23: updateEvent - Event not found
     @Test
     public void testUpdateEvent_EventNotFound() {
+        // Cannot update an event if event not found
         int eventId = 1;
         int userId = 1;
         when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
@@ -467,6 +493,7 @@ public class EventServiceTest {
     // Test 24: updateEvent - User not the organizer
     @Test
     public void testUpdateEvent_UserNotOrganizer() {
+        // Cannot update an event if you are not the organizer
         int eventId = 1;
         int userId = 2;
         UserAccount differentUser = mock(UserAccount.class);
@@ -487,6 +514,7 @@ public class EventServiceTest {
     // Test 25: updateEvent - Change board game instance
     @Test
     public void testUpdateEvent_ChangeBoardGameInstance() {
+        // Updating an event to include a different board game instance
         int eventId = 1;
         int userId = 1;
         BoardGameInstance newGameInstance = mock(BoardGameInstance.class);
@@ -519,6 +547,7 @@ public class EventServiceTest {
     // Test 26: getEventById - Success
     @Test
     public void testGetEventById_Success() {
+        // Retrieving an event by id
         int eventId = 1;
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(mockEvent));
 
@@ -532,6 +561,7 @@ public class EventServiceTest {
     // Test 27: getEventById - Event not found
     @Test
     public void testGetEventById_EventNotFound() {
+        // Cannot get an event that does not exist
         int eventId = 1;
         when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
 

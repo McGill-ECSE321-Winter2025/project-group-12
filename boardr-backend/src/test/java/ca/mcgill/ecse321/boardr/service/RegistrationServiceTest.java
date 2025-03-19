@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 /**
@@ -34,8 +35,10 @@ import static org.mockito.Mockito.*;
  * Methods tested:
  * createRegistration, getAllRegistrations, getRegistration, updateRegistration, deleteRegistration, cancelRegistration
  * 
+ * Description of tests: Validate logic and inputs to functions of service layer
+ * 
  * @author Jun Ho
- * @version 1.2
+ * @version 1.3
  * @since 2025-03-17
  */
 @ExtendWith(MockitoExtension.class)
@@ -99,6 +102,7 @@ public class RegistrationServiceTest {
     // Test 1: createRegistration - Successful registration
     @Test
     public void testCreateRegistration_Success() {
+        // Registration created successfully
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
@@ -119,6 +123,7 @@ public class RegistrationServiceTest {
     // Test 2: createRegistration - User not found
     @Test
     public void testCreateRegistration_UserNotFound() {
+        // Cannot register without existing user
         when(userAccountRepository.findById(1)).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -134,6 +139,7 @@ public class RegistrationServiceTest {
     // Test 3: createRegistration - Event not found
     @Test
     public void testCreateRegistration_EventNotFound() {
+        // Cannot register to event if event is not found
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.empty());
 
@@ -150,6 +156,7 @@ public class RegistrationServiceTest {
     // Test 4: createRegistration - Already registered
     @Test
     public void testCreateRegistration_AlreadyRegistered() {
+        // Cannot register to event if already registered to it
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
@@ -167,6 +174,7 @@ public class RegistrationServiceTest {
     // Test 5: createRegistration - Event fully booked
     @Test
     public void testCreateRegistration_EventFullyBooked() {
+        // Cannot register to event if fully booked
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
@@ -190,6 +198,7 @@ public class RegistrationServiceTest {
     // Test 6: createRegistration - Past event
     @Test
     public void testCreateRegistration_PastEvent() {
+        // Cannot register to event if dates/time is passed
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
@@ -208,6 +217,7 @@ public class RegistrationServiceTest {
     // Test 7: createRegistration - Organizer self-registration
     @Test
     public void testCreateRegistration_OrganizerSelfRegistration() {
+        // Cannot register to the same event you organized
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
@@ -226,6 +236,7 @@ public class RegistrationServiceTest {
     // Test 8: getAllRegistrations - Success
     @Test
     public void testGetAllRegistrations_Success() {
+        // Getting all registration
         List<Registration> registrations = Arrays.asList(mockRegistration);
         when(registrationRepository.findAll()).thenReturn(registrations);
 
@@ -241,6 +252,7 @@ public class RegistrationServiceTest {
     // Test 9: getAllRegistrations - Empty list
     @Test
     public void testGetAllRegistrations_Empty() {
+        // Getting an empty list of registrations
         when(registrationRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<RegistrationResponseDTO> result = registrationService.getAllRegistrations();
@@ -253,6 +265,7 @@ public class RegistrationServiceTest {
     // Test 10: getRegistration - Success
     @Test
     public void testGetRegistration_Success() {
+        // Getting a registration succeeded
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
@@ -270,6 +283,7 @@ public class RegistrationServiceTest {
     // Test 11: getRegistration - User not found
     @Test
     public void testGetRegistration_UserNotFound() {
+        // Cannot registration for an unexisting user
         when(userAccountRepository.findById(1)).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -283,6 +297,7 @@ public class RegistrationServiceTest {
     // Test 12: getRegistration - Event not found
     @Test
     public void testGetRegistration_EventNotFound() {
+        // Cannot get registration for unexisting event
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.empty());
 
@@ -297,6 +312,7 @@ public class RegistrationServiceTest {
     // Test 13: getRegistration - Registration not found
     @Test
     public void testGetRegistration_RegistrationNotFound() {
+        // Cannot get an unexisting registration
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
@@ -313,6 +329,7 @@ public class RegistrationServiceTest {
     // Test 14: updateRegistration - Success
     @Test
     public void testUpdateRegistration_Success() {
+        // Updating registration success
         Date newDate = Date.valueOf(LocalDate.of(2025, 3, 20));
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
@@ -333,6 +350,7 @@ public class RegistrationServiceTest {
     // Test 15: updateRegistration - Past event
     @Test
     public void testUpdateRegistration_PastEvent() {
+        // Cannot update registration for a passed event (finished event)
         Date newDate = Date.valueOf(LocalDate.of(2023, 3, 20));
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
@@ -352,6 +370,7 @@ public class RegistrationServiceTest {
     // Test 16: updateRegistration - Date after event
     @Test
     public void testUpdateRegistration_DateAfterEvent() {
+        // Cannot update registration if event is passed
         Date newDate = Date.valueOf(LocalDate.of(2025, 3, 26)); // After event date 2025-03-25
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
@@ -370,6 +389,7 @@ public class RegistrationServiceTest {
     // Test 17: deleteRegistration - Success
     @Test
     public void testDeleteRegistration_Success() {
+        // Deleting registration successful
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
@@ -385,6 +405,7 @@ public class RegistrationServiceTest {
     // Test 18: deleteRegistration - Registration not found
     @Test
     public void testDeleteRegistration_RegistrationNotFound() {
+        // Cannot delete registration if registration not found
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.empty());
@@ -402,6 +423,7 @@ public class RegistrationServiceTest {
     // Test 19: cancelRegistration - Success
     @Test
     public void testCancelRegistration_Success() {
+        // Canceling a registration is success
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
@@ -417,6 +439,7 @@ public class RegistrationServiceTest {
     // Test 20: cancelRegistration - Past event
     @Test
     public void testCancelRegistration_PastEvent() {
+        // Cannot cancel registration for passed event
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
