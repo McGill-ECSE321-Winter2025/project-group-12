@@ -2,12 +2,10 @@ package ca.mcgill.ecse321.boardr.controller;
 
 import ca.mcgill.ecse321.boardr.dto.BoardGame.*;
 import ca.mcgill.ecse321.boardr.service.BoardGameService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
-import java.util.List;
 
 /**
  * REST controller class for managing Board Game in the Boardr application.

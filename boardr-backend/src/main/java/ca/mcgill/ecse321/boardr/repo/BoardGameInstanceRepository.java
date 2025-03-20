@@ -1,10 +1,6 @@
 package ca.mcgill.ecse321.boardr.repo;
 
 import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
-import ca.mcgill.ecse321.boardr.model.GameOwner;
-import ca.mcgill.ecse321.boardr.model.UserAccount;
-
-
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

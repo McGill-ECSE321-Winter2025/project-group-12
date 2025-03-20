@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ca.mcgill.ecse321.boardr.model.BoardGame;
 import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
-import ca.mcgill.ecse321.boardr.model.Event;
 import ca.mcgill.ecse321.boardr.model.GameOwner;
 import ca.mcgill.ecse321.boardr.model.UserAccount;
 
