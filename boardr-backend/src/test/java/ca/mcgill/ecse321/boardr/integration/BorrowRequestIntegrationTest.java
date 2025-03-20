@@ -2,7 +2,9 @@ package ca.mcgill.ecse321.boardr.integration;
 
 import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestCreationDTO;
 import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestResponseDTO;
+import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestStatusUpdateDTO;
 import ca.mcgill.ecse321.boardr.model.*;
+import ca.mcgill.ecse321.boardr.model.BorrowRequest.RequestStatus;
 import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
 import ca.mcgill.ecse321.boardr.repo.BorrowRequestRepository;
 import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
@@ -197,6 +199,22 @@ public class BorrowRequestIntegrationTest {
         
         assertEquals(TEST_BOARD_GAME_INSTANCE_ID, responseDTO.getBoardGameInstanceId());
         assertEquals(TEST_USER_ID, responseDTO.getUserAccountId());
+    }
+
+    @Test
+    public void testUpdateBorrowRequestStatus() throws Exception {
+        // Arrange
+        BorrowRequestStatusUpdateDTO statusUpdateDTO = new BorrowRequestStatusUpdateDTO(RequestStatus.Accepted);
+        String requestJson = objectMapper.writeValueAsString(statusUpdateDTO);
+
+        // Act and Assert
+        mockMvc.perform(MockMvcRequestBuilders.put("/borrowRequests/{borrowRequestId}/status", TEST_BORROW_REQUEST_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        // Verify that the repository was called to update the borrow request status
+        verify(borrowRequestRepository).save(any(BorrowRequest.class));
     }
 
     /**
