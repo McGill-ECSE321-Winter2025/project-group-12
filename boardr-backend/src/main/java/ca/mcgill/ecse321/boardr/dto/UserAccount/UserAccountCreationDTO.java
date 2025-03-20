@@ -1,12 +1,8 @@
 package ca.mcgill.ecse321.boardr.dto.UserAccount;
 
 import ca.mcgill.ecse321.boardr.model.UserAccount;
-import ca.mcgill.ecse321.boardr.model.UserRole;
 
 import java.sql.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 public class UserAccountCreationDTO {
 
     private String name;
