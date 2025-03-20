@@ -204,7 +204,7 @@ public class BorrowRequestIntegrationTest {
     @Test
     public void testUpdateBorrowRequestStatus() throws Exception {
         // Arrange
-        BorrowRequestStatusUpdateDTO statusUpdateDTO = new BorrowRequestStatusUpdateDTO(RequestStatus.APPROVED);
+        BorrowRequestStatusUpdateDTO statusUpdateDTO = new BorrowRequestStatusUpdateDTO(RequestStatus.Accepted);
         String requestJson = objectMapper.writeValueAsString(statusUpdateDTO);
 
         // Act and Assert
