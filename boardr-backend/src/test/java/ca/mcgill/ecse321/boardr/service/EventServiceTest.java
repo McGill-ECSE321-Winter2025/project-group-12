@@ -3,7 +3,6 @@ package ca.mcgill.ecse321.boardr.service;
 import ca.mcgill.ecse321.boardr.dto.Event.EventCreationDTO;
 import ca.mcgill.ecse321.boardr.dto.Event.EventResponseDTO;
 import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
-import ca.mcgill.ecse321.boardr.model.BorrowRequest;
 import ca.mcgill.ecse321.boardr.model.Event;
 import ca.mcgill.ecse321.boardr.model.GameOwner;
 import ca.mcgill.ecse321.boardr.model.UserAccount;

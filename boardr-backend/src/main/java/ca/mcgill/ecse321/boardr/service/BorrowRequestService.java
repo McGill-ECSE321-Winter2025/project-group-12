@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestCreationDTO;
-import ca.mcgill.ecse321.boardr.dto.BorrowRequest.BorrowRequestStatusUpdateDTO;
 import ca.mcgill.ecse321.boardr.exceptions.BoardrException;
 import ca.mcgill.ecse321.boardr.model.BorrowRequest;
 import ca.mcgill.ecse321.boardr.model.UserAccount;

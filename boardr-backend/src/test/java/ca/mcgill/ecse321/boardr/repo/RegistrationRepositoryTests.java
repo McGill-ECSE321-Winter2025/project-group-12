@@ -2,8 +2,6 @@ package ca.mcgill.ecse321.boardr.repo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
