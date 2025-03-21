@@ -14,6 +14,7 @@ import ca.mcgill.ecse321.boardr.model.Registration;
  */
 public class RegistrationResponseDTO {
 
+    private int registrationKey;
     private int userId;
     private int eventId;
     private Date registrationDate;
@@ -22,6 +23,7 @@ public class RegistrationResponseDTO {
     private RegistrationResponseDTO() {}
 
     public RegistrationResponseDTO(Registration registration) {
+        this.registrationKey = registration.getRegistrationKey().hashCode();
         this.userId = registration.getRegistrationKey().getRegistrant().getUserAccountId();
         this.eventId = registration.getRegistrationKey().getEvent().getEventId();
         this.registrationDate = registration.getRegistrationDate();
@@ -37,5 +39,9 @@ public class RegistrationResponseDTO {
 
     public Date getRegistrationDate() {
         return registrationDate;
+    }
+    
+    public int getRegistrationKey() {
+        return registrationKey;
     }
 }
