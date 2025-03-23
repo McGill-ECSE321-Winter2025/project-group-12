@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-[#121212]">
+  <div class="min-h-screen w-full bg-gray-100 dark:bg-[#121212] flex items-center justify-center">
     <Card class="w-full max-w-md p-6 bg-[#181818] text-[#e0e0e0]">
       <template #title>
         <h2 class="text-2xl font-bold text-center">Log in to your account</h2>
@@ -76,20 +76,10 @@ export default {
           localStorage.setItem('user', JSON.stringify(user))
           this.$router.push('/account')
         } else {
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Login Failed',
-            detail: 'Invalid credentials',
-            life: 3000,
-          })
+          this.$toast.add({ severity: 'error', summary: 'Login Failed', detail: 'Invalid credentials', life: 3000 })
         }
       } catch (error) {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Login failed. Please try again.',
-          life: 3000,
-        })
+        this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Login failed. Please try again.', life: 3000 })
         console.error(error)
       } finally {
         this.loading = false
@@ -98,7 +88,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-/* Tailwind and PrimeVue handle styling; scoped CSS can be added if needed */
-</style>
