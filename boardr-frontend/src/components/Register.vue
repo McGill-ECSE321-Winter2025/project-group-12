@@ -8,6 +8,7 @@
         <form @submit.prevent="register" class="space-y-6">
           <div>
             <label for="name" class="block text-sm font-medium text-[#e0e0e0]">Name *</label>
+            <div></div>
             <InputText
               id="name"
               v-model="name"
@@ -18,6 +19,7 @@
           </div>
           <div>
             <label for="email" class="block text-sm font-medium text-[#e0e0e0]">Email *</label>
+            <div></div>
             <InputText
               id="email"
               v-model="email"
@@ -29,6 +31,7 @@
           </div>
           <div>
             <label for="password" class="block text-sm font-medium text-[#e0e0e0]">Password *</label>
+            <div></div>
             <Password
               id="password"
               v-model="password"
@@ -112,7 +115,7 @@ export default {
         let errorMessage = 'Registration failed. Please try again.'
         if (error.response) {
           // Server responded with a status other than 2xx
-          errorMessage = error.response.data?.message || `Server error: ${error.response.status}`
+          errorMessage = error.response.data?.message || `Server error: ${error.response.data.errors}`
         } else if (error.request) {
           // Request was made but no response received (network error)
           errorMessage = error

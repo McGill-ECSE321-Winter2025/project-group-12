@@ -11,6 +11,7 @@
         <form @submit.prevent="login" class="space-y-6">
           <div>
             <label for="email" class="block text-sm font-medium text-[#e0e0e0]">Email *</label>
+            <div></div>
             <InputText
               id="email"
               v-model="email"
@@ -22,6 +23,7 @@
           </div>
           <div>
             <label for="password" class="block text-sm font-medium text-[#e0e0e0]">Password *</label>
+            <div></div>
             <Password
               id="password"
               v-model="password"
