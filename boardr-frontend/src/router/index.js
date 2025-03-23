@@ -4,10 +4,12 @@ import Account from '../views/Account.vue'
 import Games from '../views/Games.vue'
 import Events from '../views/Events.vue'
 import Login from '../components/Login.vue'
+import Register from '../components/Register.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/login', name: 'Login', component: Login },
+  { path: '/register', name: 'Register', component: Register },
   { path: '/account', name: 'Account', component: Account },
   { path: '/games', name: 'Games', component: Games },
   { path: '/events', name: 'Events', component: Events },
