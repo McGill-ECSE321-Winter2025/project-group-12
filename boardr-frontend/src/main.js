@@ -11,7 +11,17 @@ import './assets/main.css'
 const app = createApp(App)
 const pinia = createPinia()
 
-app.use(PrimeVue, { theme: { preset: Aura } })
+app.use(PrimeVue, { 
+    theme: {
+        preset: Aura,
+        options: {
+            prefix: 'p',
+            darkModeSelector: '.my-app-dark',
+            cssLayer: false
+        }
+    } 
+    
+})
 app.use(ToastService)
 app.use(router)
 app.use(pinia) // Add Pinia

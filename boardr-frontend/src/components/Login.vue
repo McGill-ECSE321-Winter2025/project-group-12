@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen w-full bg-gray-100 dark:bg-[#121212] flex items-center justify-center">
+  <div class="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-[#121212]">
     <Card class="w-full max-w-md p-6 bg-[#181818] text-[#e0e0e0]">
       <template #title>
         <h2 class="text-2xl font-bold text-center">Log in to your account</h2>
@@ -10,7 +10,7 @@
       <template #content>
         <form @submit.prevent="login" class="space-y-6">
           <div>
-            <label for="email" class="block text-sm font-medium text-[#e0e0e0]">Email</label>
+            <label for="email" class="block text-sm font-medium text-[#e0e0e0]">Email *</label>
             <InputText
               id="email"
               v-model="email"
@@ -21,7 +21,7 @@
             />
           </div>
           <div>
-            <label for="password" class="block text-sm font-medium text-[#e0e0e0]">Password</label>
+            <label for="password" class="block text-sm font-medium text-[#e0e0e0]">Password *</label>
             <Password
               id="password"
               v-model="password"
@@ -70,17 +70,60 @@ export default {
     async login() {
       this.loading = true
       try {
+        // Validate inputs
+        if (!this.email || !this.password) {
+          this.$toast.add({
+            severity: 'warn',
+            summary: 'Validation Error',
+            detail: 'Email and password are required.',
+            life: 3000,
+          })
+          return
+        }
+
+        // Fetch user by email via API
         const response = await api.get(`/users/email/${this.email}`)
         const user = response.data
+
+        // Check password match
         if (user.password === this.password) {
           localStorage.setItem('user', JSON.stringify(user))
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Login Successful',
+            detail: `Welcome back, ${user.name}!`,
+            life: 3000,
+          })
           this.$router.push('/account')
         } else {
-          this.$toast.add({ severity: 'error', summary: 'Login Failed', detail: 'Invalid credentials', life: 3000 })
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Login Failed',
+            detail: 'Invalid email or password.',
+            life: 3000,
+          })
         }
       } catch (error) {
-        this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Login failed. Please try again.', life: 3000 })
-        console.error(error)
+        // Enhanced error handling
+        let errorMessage = 'Login failed. Please try again.'
+        if (error.response) {
+          // Server responded with a status other than 2xx
+          errorMessage = error.response.data?.message || `Server error: ${error.response.status}`
+          if (error.response.status === 404) {
+            errorMessage = 'Email not found.'
+          }
+        } else if (error.request) {
+          // Network error (no response)
+          errorMessage = 'Network error: Could not connect to the server.'
+          console.error('Request details:', error.request)
+        }
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: errorMessage,
+          life: 3000,
+        })
+        console.error('Login error:', error)
       } finally {
         this.loading = false
       }
@@ -88,3 +131,7 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* Tailwind and PrimeVue handle styling */
+</style>

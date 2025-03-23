@@ -1,10 +1,10 @@
 <template>
-  <div class="app-container flex flex-col min-h-screen" :class="themeClass">
+  <div class="app-container flex flex-col min-h-screen">
     <!-- Global Loading Indicator -->
     <ProgressBar v-if="isLoading" mode="indeterminate" class="fixed top-0 left-0 w-full z-50" style="height: 4px" />
 
     <!-- Navbar -->
-    <Navbar @toggle-theme="toggleTheme" class="flex-shrink-0" />
+    <Navbar class="flex-shrink-0" />
 
     <!-- Main Content -->
     <div class="main-content flex-grow w-full overflow-hidden">
@@ -34,22 +34,10 @@ export default {
   components: { Navbar, Toast, ProgressBar },
   data() {
     return {
-      isDarkMode: true,
       isLoading: false,
     }
   },
-  computed: {
-    themeClass() {
-      return this.isDarkMode
-        ? 'bg-gradient-to-b from-[#121212] to-[#1a1a1a] text-[#e0e0e0]'
-        : 'bg-gradient-to-b from-[#f5f5f5] to-[#e0e0e0] text-[#1a1a1a]'
-    },
-  },
   methods: {
-    toggleTheme() {
-      this.isDarkMode = !this.isDarkMode
-      localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light')
-    },
     startLoading() {
       this.isLoading = true
     },
@@ -58,8 +46,6 @@ export default {
     },
   },
   created() {
-    const savedTheme = localStorage.getItem('theme')
-    this.isDarkMode = savedTheme ? savedTheme === 'dark' : true
     this.$router.beforeEach((to, from, next) => {
       this.startLoading()
       next()
