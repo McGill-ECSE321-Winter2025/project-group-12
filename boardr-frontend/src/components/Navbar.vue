@@ -1,6 +1,16 @@
 <template>
   <nav class="bg-[#181818] text-[#e0e0e0] p-4 sticky top-0 z-10 shadow-md w-full">
-    <div class="flex items-center w-full px-4">
+    <div class="flex items-center justify-between w-full px-4">
+      <!-- Logo and App Name -->
+      <div class="flex items-center gap-2">
+        <img 
+          src="@/assets/boardr-logo.png" 
+          alt="Boardr Logo" 
+          class="h-8 w-auto"
+        >
+        <span class="text-xl font-semibold"> Boardr </span>
+      </div>
+      
       <!-- All Menu Items -->
       <MenuBarItem :items="menuItems" :is-logged-in="isLoggedIn" />
     </div>
@@ -15,24 +25,19 @@ export default {
   components: { MenuBarItem },
   data() {
     return {
-      isDarkMode: false, // Theme state
-      user: null, // Reactive user state
+      isDarkMode: false,
+      user: null,
     }
   },
   computed: {
     isLoggedIn() {
-      return !!this.user // Use reactive user instead of direct localStorage check
+      return !!this.user
     },
     username() {
       return this.user?.name || 'User'
     },
     menuItems() {
       const baseItems = [
-      {
-          label: 'Boardr',
-          icon: 'boardr-logo', // Custom class for the JPG
-          command: () => this.$router.push('/'),
-        },
         { label: 'Home', icon: 'pi pi-home', command: () => this.$router.push('/') },
         {
           label: 'Events',
@@ -86,7 +91,7 @@ export default {
     },
     logout() {
       localStorage.removeItem('user')
-      this.user = null // Clear reactive user state
+      this.user = null
       this.$router.push('/')
       this.$toast.add({
         severity: 'info',
@@ -101,7 +106,6 @@ export default {
     },
   },
   created() {
-    // Initial state setup
     this.updateUserState()
     const savedTheme = localStorage.getItem('theme')
     if (savedTheme) {
@@ -116,7 +120,6 @@ export default {
       }
     }
 
-    // Watch for route changes to refresh user state
     this.$router.afterEach(() => {
       this.updateUserState()
     })
@@ -131,5 +134,11 @@ export default {
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
+}
+.gap-2 {
+  gap: 0.5rem;
+}
+.h-8 {
+  height: 2rem;
 }
 </style>
