@@ -11,9 +11,9 @@
   font-weight: 400;
   font-size: 16px; /* Base font size for scalability */
 
-  /* Color Scheme: Dark mode  */
-  color: #e0e0e0; /* Light gray text for readability */
-  background-color: #121212; /* Deep black background  */
+  /* Default Light Mode */
+  color: #1a1a1a; /* Dark text for contrast */
+  background-color: #f5f5f5; /* Light gray background */
 
   /* Rendering Optimizations */
   font-synthesis: none;
@@ -22,12 +22,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Light Mode (Accessibility) */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #1a1a1a; /* Dark text for contrast */
-    background-color: #f5f5f5; /* Light gray background */
-  }
+/* Dark Mode when my-app-dark is applied */
+:root.my-app-dark {
+  color: #e0e0e0; /* Light gray text for readability */
+  background-color: #121212; /* Deep black background */
 }
 
 /* Reset Defaults */
