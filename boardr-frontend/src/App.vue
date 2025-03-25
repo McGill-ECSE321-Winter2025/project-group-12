@@ -17,7 +17,7 @@
 
     <!-- Footer -->
     <footer class="bg-[#181818] text-[#e0e0e0] p-4 text-center text-sm flex-shrink-0 w-full">
-      <p>© 2025 Boardr. Built by Group 12.</p>
+      <p>© 2025 Boardr. Built with <i class="pi pi-heart text-[#1db954]"></i> by Group 12.</p>
     </footer>
 
     <!-- Global Toast -->
