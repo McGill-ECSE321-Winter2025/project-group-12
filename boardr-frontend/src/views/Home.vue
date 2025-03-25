@@ -13,7 +13,7 @@
       <Card class="info-section">
         <template #title>About Boardr</template>
         <template #content>
-          <p>A platform for board game lovers to connect and play.</p>
+          <p>Your favorite web application to connect, share board game collections, and organize events!</p>
         </template>
       </Card>
       <Card class="events-section col-span-2">

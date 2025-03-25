@@ -1,7 +1,7 @@
 <template>
   <div class="app-container flex flex-col min-h-screen">
     <!-- Global Loading Indicator -->
-    <ProgressBar v-if="isLoading" mode="indeterminate" class="fixed top-0 left-0 w-full z-50" style="height: 4px" />
+    <!-- TO SEE IF WE WANT TO USE IT?--<ProgressBar v-if="isLoading" mode="indeterminate" class="fixed top-0 left-0 w-full z-50" style="height: 4px" /> >
 
     <!-- Navbar -->
     <Navbar class="flex-shrink-0" />
@@ -17,7 +17,7 @@
 
     <!-- Footer -->
     <footer class="bg-[#181818] text-[#e0e0e0] p-4 text-center text-sm flex-shrink-0 w-full">
-      <p>© 2025 Boardr. Built with <i class="pi pi-heart text-[#1db954]"></i> by Group 12.</p>
+      <p>© 2025 Boardr. Built by Group 12.</p>
     </footer>
 
     <!-- Global Toast -->
