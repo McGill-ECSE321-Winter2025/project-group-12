@@ -5,10 +5,9 @@
         <h2 class="text-2xl font-bold text-center">Create an account</h2>
       </template>
       <template #content>
-        <form @submit.prevent="register" class="space-y-6">
+        <form @submit.prevent="handleRegister" class="space-y-6">
           <div>
             <label for="name" class="block text-sm font-medium text-[#e0e0e0]">Name *</label>
-            <div></div>
             <InputText
               id="name"
               v-model="name"
@@ -19,7 +18,6 @@
           </div>
           <div>
             <label for="email" class="block text-sm font-medium text-[#e0e0e0]">Email *</label>
-            <div></div>
             <InputText
               id="email"
               v-model="email"
@@ -31,7 +29,6 @@
           </div>
           <div>
             <label for="password" class="block text-sm font-medium text-[#e0e0e0]">Password *</label>
-            <div></div>
             <Password
               id="password"
               v-model="password"
@@ -64,10 +61,10 @@ import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
-import api from '../services/api'
+import { registerUser } from '../services/registerService'
 
 export default {
-  name: 'Register',
+  name: 'RegisterView',
   components: { Card, InputText, Password, Button },
   data() {
     return {
@@ -78,31 +75,10 @@ export default {
     }
   },
   methods: {
-    async register() {
+    async handleRegister() {
       this.loading = true
       try {
-        // Validate inputs
-        if (!this.name || !this.email || !this.password) {
-          this.$toast.add({
-            severity: 'warn',
-            summary: 'Validation Error',
-            detail: 'All fields are required.',
-            life: 3000,
-          })
-          return
-        }
-
-        // Register user via API
-        const userData = {
-          name: this.name,
-          email: this.email,
-          password: this.password,
-        }
-        const response = await api.post('/users', userData)
-        const user = response.data
-
-        // Auto-login after registration
-        localStorage.setItem('user', JSON.stringify(user))
+        const user = await registerUser(this.name, this.email, this.password)
         this.$toast.add({
           severity: 'success',
           summary: 'Registration Successful',
@@ -111,22 +87,12 @@ export default {
         })
         this.$router.push('/account')
       } catch (error) {
-        // Enhanced error handling
-        let errorMessage = 'Registration failed. Please try again.'
-        if (error.response) {
-          // Server responded with a status other than 2xx
-          errorMessage = error.response.data?.message || `Server error: ${error.response.data.errors}`
-        } else if (error.request) {
-          // Request was made but no response received (network error)
-          errorMessage = error
-        }
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: errorMessage,
+          detail: error.message,
           life: 3000,
         })
-        console.error('Registration error:', error)
       } finally {
         this.loading = false
       }

@@ -8,7 +8,7 @@
         <p class="text-center text-sm text-[#e0e0e0] mb-6">Welcome back! Please enter your details</p>
       </template>
       <template #content>
-        <form @submit.prevent="login" class="space-y-6">
+        <form @submit.prevent="handleLogin" class="space-y-6">
           <div>
             <label for="email" class="block text-sm font-medium text-[#e0e0e0]">Email *</label>
             <div></div>
@@ -56,10 +56,10 @@ import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
-import api from '../services/api'
+import { loginUser } from '../services/loginService'
 
 export default {
-  name: 'Login',
+  name: 'LoginView',
   components: { Card, InputText, Password, Button },
   data() {
     return {
@@ -69,63 +69,24 @@ export default {
     }
   },
   methods: {
-    async login() {
+    async handleLogin() {
       this.loading = true
       try {
-        // Validate inputs
-        if (!this.email || !this.password) {
-          this.$toast.add({
-            severity: 'warn',
-            summary: 'Validation Error',
-            detail: 'Email and password are required.',
-            life: 3000,
-          })
-          return
-        }
-
-        // Fetch user by email via API
-        const response = await api.get(`/users/email/${this.email}`)
-        const user = response.data
-
-        // Check password match
-        if (user.password === this.password) {
-          localStorage.setItem('user', JSON.stringify(user))
-          this.$toast.add({
-            severity: 'success',
-            summary: 'Login Successful',
-            detail: `Welcome back, ${user.name}!`,
-            life: 3000,
-          })
-          this.$router.push('/account')
-        } else {
-          this.$toast.add({
-            severity: 'error',
-            summary: 'Login Failed',
-            detail: 'Invalid email or password.',
-            life: 3000,
-          })
-        }
+        const user = await loginUser(this.email, this.password)
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Login Successful',
+          detail: `Welcome back, ${user.name}!`,
+          life: 3000,
+        })
+        this.$router.push('/account')
       } catch (error) {
-        // Enhanced error handling
-        let errorMessage = 'Login failed. Please try again.'
-        if (error.response) {
-          // Server responded with a status other than 2xx
-          errorMessage = error.response.data?.message || `Server error: ${error.response.status}`
-          if (error.response.status === 404) {
-            errorMessage = 'Email not found.'
-          }
-        } else if (error.request) {
-          // Network error (no response)
-          errorMessage = 'Network error: Could not connect to the server.'
-          console.error('Request details:', error.request)
-        }
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: errorMessage,
+          detail: error.message,
           life: 3000,
         })
-        console.error('Login error:', error)
       } finally {
         this.loading = false
       }
