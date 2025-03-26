@@ -1,21 +1,31 @@
 <template>
   <div class="py-6">
-    <h1 class="text-3xl font-bold mb-6">Browse Available Events</h1>
-    <Button
+    <h1 class="text-3xl font-bold mb-6">Browse Available Events
+      <Button
       label="Create Event"
       icon="pi pi-plus"
       class="mb-6 bg-blue-600 hover:bg-blue-700"
       @click="showCreateEventDialog = true"
-    />
+      />
+    </h1>
 
     <!-- DataTable for events -->
     <DataTable :value="events" class="p-datatable-sm" responsiveLayout="scroll">
       <Column field="eventId" header="#" align="center" style="width: 5%"></Column>
       <Column field="description" header="Name" style="width: 20%"></Column>
-      <Column field="eventDate" header="Date" style="width: 10%"></Column>
-      <Column field="eventTime" header="Time" style="width: 10%"></Column>
+      <!-- Format the eventDate -->
+      <Column header="Date" style="width: 10%">
+        <template #body="slotProps">
+          {{ formatDate(slotProps.data.eventDate) }}
+        </template>
+      </Column>
+      <!-- Format the eventTime -->
+      <Column header="Time" style="width: 10%">
+        <template #body="slotProps">
+          {{ formatTime(slotProps.data.eventTime) }}
+        </template>
+      </Column>
       <Column field="location" header="Location" style="width: 20%"></Column>
-      <!-- Simply display organizerId -->
       <Column header="Organizer" style="width: 20%">
         <template #body="slotProps">
           {{ slotProps.data.organizerId }}
@@ -115,6 +125,20 @@ export default {
     }
   },
   methods: {
+    formatDate(date) {
+      const dateStr = String(date);
+      if (dateStr.length === 8) {
+        return `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`;
+      }
+      return date;
+    },
+    formatTime(time) {
+      const timeStr = String(time).padStart(4, '0');
+      if (timeStr.length === 4) {
+        return `${timeStr.slice(0, 2)}:${timeStr.slice(2, 4)}`;
+      }
+      return time;
+    },
     async createEvent() {
       const user = JSON.parse(localStorage.getItem('user') || '{}')
       if (!user.userAccountId) {
@@ -160,7 +184,7 @@ export default {
     },
     async registerForEvent() {
       try {
-        // Simulate a registration action
+        // Simulate registration action
         this.$toast.add({
           severity: 'success',
           summary: 'Registered',
