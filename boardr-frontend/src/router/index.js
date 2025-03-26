@@ -5,6 +5,7 @@ import Games from '../views/Games.vue'
 import Events from '../views/Events.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
+import History from '../views/History.vue'
 
 //might need to add auth here ex: meta: { requiresAuth: true },
 const routes = [
@@ -14,6 +15,7 @@ const routes = [
   { path: '/account', name: 'Account', component: Account },
   { path: '/games', name: 'Games', component: Games },
   { path: '/events', name: 'Events', component: Events },
+  { path: '/history', name: 'History', component: History },
 ]
 
 const router = createRouter({

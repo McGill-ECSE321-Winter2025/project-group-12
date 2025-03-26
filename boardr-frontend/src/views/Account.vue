@@ -1,6 +1,12 @@
 <template>
     <div class="py-6">
       <h1 class="text-3xl font-bold mb-6">My Account</h1>
+      <Button
+        label="History"
+        icon="pi pi-history"
+        class="mb-6 bg-blue-600 hover:bg-blue-700"
+        @click="goToHistory"
+      />
       <Card v-if="user" class="mb-6">
         <template #title>
           <h2 class="text-xl font-semibold">{{ user.name }}</h2>
@@ -33,18 +39,6 @@
           <Column field="eventDate" header="Date" :body="row => formatDate(row.eventDate)" />
           <Column field="eventTime" header="Time" :body="row => formatTime(row.eventTime)" />
           <Column field="location" header="Location" />
-        </DataTable>
-      </div>
-  
-      <!-- Lending History (Game Owners Only) -->
-      <div v-if="user?.gameOwnerRoleId">
-        <h2 class="text-2xl font-semibold mb-4">Lending History</h2>
-        <DataTable :value="lendingHistory" class="p-datatable-sm">
-          <Column field="boardGameInstanceId" header="Game ID" />
-          <Column field="userAccountId" header="Borrower ID" />
-          <Column field="requestDate" header="Request Date" />
-          <Column field="returnDate" header="Return Date" />
-          <Column field="requestStatus" header="Status" />
         </DataTable>
       </div>
   
@@ -152,6 +146,9 @@
           console.error(error)
         }
       },
+      goToHistory() {
+        this.$router.push('/history')
+      }
     },
   }
   </script>
