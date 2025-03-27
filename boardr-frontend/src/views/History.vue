@@ -18,11 +18,11 @@
     <div>
       <h2 class="text-2xl font-semibold mb-4">Borrowing History</h2>
       <DataTable :value="borrowingHistory" class="p-datatable-sm" responsiveLayout="scroll">
-        <Column field="boardGameInstanceId" header="Game ID" style="width: 10%;" />
-        <Column field="lenderId" header="Lender ID" style="width: 15%;" />
-        <Column field="borrowDate" header="Borrow Date" style="width: 15%;" />
-        <Column field="returnDate" header="Return Date" style="width: 15%;" />
-        <Column field="borrowStatus" header="Status" style="width: 10%;" />
+        <Column field="individualGameId" header="Instance ID" style="width: 10%;" />
+        <Column field="boardGameName" header="Board Game" style="width: 15%;" />
+        <Column field="condition" header="Condition" style="width: 15%;" />
+        <Column field="gameOwnerId" header="Owner ID" style="width: 10%;" />
+        <Column field="available" header="Available" style="width: 10%;" />
       </DataTable>
     </div>
   </div>
