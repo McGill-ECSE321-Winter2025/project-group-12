@@ -21,32 +21,62 @@
         <template #content>
           <p><strong>Email:</strong> {{ user.email }}</p>
           <p><strong>Account Type:</strong> {{ user.gameOwnerRoleId ? 'Game Owner' : 'Player' }}</p>
+          <p><strong>Account ID:</strong> {{ user.userAccountId }}</p>
+          <p v-if="user.gameOwnerRoleId"><strong>Game Owner ID:</strong> {{ user.gameOwnerRoleId }}</p>
         </template>
       </Card>
   
       <!-- Owned Games (Game Owners Only) -->
       <div v-if="user?.gameOwnerRoleId" class="mb-6">
         <h2 class="text-2xl font-semibold mb-4">My Games</h2>
-        <DataTable :value="participatedEvents" class="p-datatable-sm">
-          <Column field="gameId" header="Id" />
-          <Column field="name" header="Name" :body="row => formatDate(row.eventDate)" />
-          <Column field="description" header="Description" :body="row => formatTime(row.eventTime)" />
-          <Column field="status" header="Status" />
-          <Column field="requests" header="View Requests" />
+        <DataTable :value="ownedGames" class="p-datatable-sm">
+          <Column field="individualGameId" header="Game ID" />
+          <Column field="boardGameName" header="Name" />
+          <Column field="condition" header="Condition" />
+          <Column field="available" header="Status">
+            <template #body="slotProps">
+              {{ slotProps.data.available ? 'Available' : 'Not Available' }}
+            </template>
+          </Column>
+          <Column header="View Requests">
+            <template #body>
+              <Button icon="pi pi-eye" class="p-button-text" />
+            </template>
+          </Column>
         </DataTable>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <GameCard v-for="game in ownedGames" :key="game.individualGameId" :game="game" />
-        </div>
       </div>
   
-      <!-- Event History -->
+      <!-- Created Event History -->
       <div class="mb-6">
-        <h2 class="text-2xl font-semibold mb-4">My Events</h2>
+        <h2 class="text-2xl font-semibold mb-4">Created Events</h2>
         <DataTable :value="participatedEvents" class="p-datatable-sm">
+          <Column field="eventId" header="Event ID" />
           <Column field="description" header="Description" />
           <Column field="eventDate" header="Date" :body="row => formatDate(row.eventDate)" />
           <Column field="eventTime" header="Time" :body="row => formatTime(row.eventTime)" />
           <Column field="location" header="Location" />
+          <Column header="View Details">
+            <template #body>
+              <Button icon="pi pi-info-circle" class="p-button-text" />
+            </template>
+          </Column>
+        </DataTable>
+      </div>
+  
+      <!-- Registered Events -->
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold mb-4">Registered Events</h2>
+        <DataTable :value="registeredEvents" class="p-datatable-sm">
+          <Column field="eventId" header="Event ID" />
+          <Column field="description" header="Description" />
+          <Column field="eventDate" header="Date" :body="row => formatDate(row.eventDate)" />
+          <Column field="eventTime" header="Time" :body="row => formatTime(row.eventTime)" />
+          <Column field="location" header="Location" />
+          <Column header="View Details">
+            <template #body>
+              <Button icon="pi pi-info-circle" class="p-button-text" />
+            </template>
+          </Column>
         </DataTable>
       </div>
   
@@ -88,6 +118,7 @@
         user: null,
         ownedGames: [],
         participatedEvents: [],
+        registeredEvents: [],
         lendingHistory: [],
         showAddGameDialog: false,
         newGame: { name: '', condition: '' },
@@ -114,8 +145,13 @@
           this.lendingHistory = lendingRes.data
         }
   
-        const eventsRes = await api.get('/events') // Simplified; filter by user registrations in production
+        const eventsRes = await api.get('/events')
+        // Filter events where user is the organizer
         this.participatedEvents = eventsRes.data.filter(e => e.organizerId === user.userAccountId)
+        // Filter events where user is registered (but not the organizer)
+        this.registeredEvents = eventsRes.data.filter(e => 
+          e.registeredUsers?.includes(user.userAccountId)
+        )
       },
       formatDate(date) {
         const str = date.toString()
