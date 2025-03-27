@@ -145,13 +145,21 @@
           this.lendingHistory = lendingRes.data
         }
   
-        const eventsRes = await api.get('/events')
+        const [eventsRes, registrationsRes] = await Promise.all([
+          api.get('/events'),
+          api.get('/registrations')
+        ])
+        
         // Filter events where user is the organizer
         this.participatedEvents = eventsRes.data.filter(e => e.organizerId === user.userAccountId)
-        // Filter events where user is registered (but not the organizer)
-        this.registeredEvents = eventsRes.data.filter(e => 
-          e.registeredUsers?.includes(user.userAccountId)
-        )
+        
+        // Get registered events by filtering registrations for this user
+        const userRegistrations = registrationsRes.data.filter(r => r.userId === user.userAccountId)
+        // Map registration data to event data
+        this.registeredEvents = userRegistrations.map(reg => {
+          const event = eventsRes.data.find(e => e.eventId === reg.eventId)
+          return event
+        }).filter(Boolean) // Remove any undefined events
       },
       formatDate(date) {
         const str = date.toString()
