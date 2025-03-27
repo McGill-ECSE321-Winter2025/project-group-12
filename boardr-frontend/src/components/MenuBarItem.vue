@@ -25,7 +25,7 @@
         />
         <Button
           v-if="isLoggedIn"
-          :label="'Hi, ' + username"
+          :label="'Welcome, ' + username + '!'"
           class="p-button-text end-action-button"
           @click="$router.push('/account')"
           aria-label="Account"
