@@ -1,12 +1,19 @@
 <template>
     <div class="py-6">
-      <h1 class="text-3xl font-bold mb-6">My Account</h1>
-      <Button
+      <h1 class="text-3xl font-bold mb-6">My Account
+        <Button
         label="History"
         icon="pi pi-history"
         class="mb-6 bg-blue-600 hover:bg-blue-700"
         @click="goToHistory"
       />
+      <Button
+          label="Add Game"
+          icon="pi pi-plus"
+          class="mt-4 bg-blue-600 hover:bg-blue-700"
+          @click="showAddGameDialog = true"
+        />
+      </h1>
       <Card v-if="user" class="mb-6">
         <template #title>
           <h2 class="text-xl font-semibold">{{ user.name }}</h2>
@@ -20,15 +27,16 @@
       <!-- Owned Games (Game Owners Only) -->
       <div v-if="user?.gameOwnerRoleId" class="mb-6">
         <h2 class="text-2xl font-semibold mb-4">My Games</h2>
+        <DataTable :value="participatedEvents" class="p-datatable-sm">
+          <Column field="gameId" header="Id" />
+          <Column field="name" header="Name" :body="row => formatDate(row.eventDate)" />
+          <Column field="description" header="Description" :body="row => formatTime(row.eventTime)" />
+          <Column field="status" header="Status" />
+          <Column field="requests" header="View Requests" />
+        </DataTable>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <GameCard v-for="game in ownedGames" :key="game.individualGameId" :game="game" />
         </div>
-        <Button
-          label="Add Game"
-          icon="pi pi-plus"
-          class="mt-4 bg-blue-600 hover:bg-blue-700"
-          @click="showAddGameDialog = true"
-        />
       </div>
   
       <!-- Event History -->

@@ -9,7 +9,6 @@
       <Column field="userAccountId" header="Borrower ID" style="width: 15%;" />
       <Column field="requestDate" header="Request Date" style="width: 15%;" />
       <Column field="returnDate" header="Return Date" style="width: 15%;" />
-      <Column field="requestStatus" header="Status" style="width: 10%;" />
     </DataTable>
 
     <!-- Borrowing History Table -->
@@ -19,7 +18,6 @@
       <Column field="lenderId" header="Lender ID" style="width: 15%;" />
       <Column field="borrowDate" header="Borrow Date" style="width: 15%;" />
       <Column field="returnDate" header="Return Date" style="width: 15%;" />
-      <Column field="borrowStatus" header="Status" style="width: 10%;" />
     </DataTable>
   </div>
 </template>
