@@ -1,26 +1,34 @@
 <template>
     <div class="py-6">
       <h1 class="text-3xl font-bold mb-6">My Account</h1>
-      <div class="flex justify-end mb-4">
-        <Button
-          label="History"
-          icon="pi pi-history"
-          class="mb-6 bg-blue-600 hover:bg-blue-700"
-          @click="goToHistory"
-        />
-        <Button
-          label="Add Game"
-          icon="pi pi-plus"
-          class="mt-4 bg-blue-600 hover:bg-blue-700"
-          @click="showAddGameDialog = true"
-        />
-        <Button
-          :label="isGameOwner ? 'Switch to Player' : 'Switch to Game Owner'"
-          :icon="isGameOwner ? 'pi pi-user' : 'pi pi-briefcase'"
-          class="bg-purple-600 hover:bg-purple-700"
-          @click="toggleView"
-        />
-      </div>
+      <table class="mb-4" style="width: auto; margin-left: auto;">
+        <tr>
+          <td style="padding-right: 24px;">
+            <Button
+              label="History"
+              icon="pi pi-history"
+              class="bg-blue-600 hover:bg-blue-700"
+              @click="goToHistory"
+            />
+          </td>
+          <td style="padding-right: 24px;">
+            <Button
+              label="Add Game"
+              icon="pi pi-plus"
+              class="bg-blue-600 hover:bg-blue-700"
+              @click="showAddGameDialog = true"
+            />
+          </td>
+          <td>
+            <Button
+              :label="isGameOwner ? 'Switch to Player' : 'Switch to Game Owner'"
+              :icon="isGameOwner ? 'pi pi-user' : 'pi pi-briefcase'"
+              class="bg-purple-600 hover:bg-purple-700"
+              @click="toggleView"
+            />
+          </td>
+        </tr>
+      </table>
       <Card v-if="user" class="mb-6">
         <template #title>
           <h2 class="text-xl font-semibold">{{ user.name }}</h2>
