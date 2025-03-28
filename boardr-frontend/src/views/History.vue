@@ -10,7 +10,7 @@
         <Column field="userAccountId" header="Borrower ID" style="width: 15%;" />
         <Column field="requestDate" header="Request Date" style="width: 15%;" />
         <Column field="returnDate" header="Return Date" style="width: 15%;" />
-        <Column field="requestStatus" header="Status" style="width: 10%;" />
+        <!-- <Column field="requestStatus" header="Status" style="width: 10%;" /> -->
       </DataTable>
     </div>
 
@@ -18,11 +18,9 @@
     <div>
       <h2 class="text-2xl font-semibold mb-4">Borrowing History</h2>
       <DataTable :value="borrowingHistory" class="p-datatable-sm" responsiveLayout="scroll">
-        <Column field="individualGameId" header="Instance ID" style="width: 10%;" />
-        <Column field="boardGameName" header="Board Game" style="width: 15%;" />
-        <Column field="condition" header="Condition" style="width: 15%;" />
-        <Column field="gameOwnerId" header="Owner ID" style="width: 10%;" />
-        <Column field="available" header="Available" style="width: 10%;" />
+        <Column field="boardGameInstanceId" header="Game ID" style="width: 15%;" />
+        <Column field="requestDate" header="Request Date" style="width: 15%;" />
+        <Column field="returnDate" header="Return Date" style="width: 15%;" />
       </DataTable>
     </div>
   </div>
@@ -58,8 +56,8 @@ export default {
         const lendingRes = await api.get(`/users/${user.gameOwnerRoleId}/lending-history`)
         this.lendingHistory = lendingRes.data
       }
-      // Fetch borrowing history for the logged in user
-      const borrowingRes = await api.get(`/users/${user.userAccountId}/borrowed-games`)
+      // Fetch borrowing history for the logged in user using the new API endpoint
+      const borrowingRes = await api.get(`/borrowRequests/${user.userAccountId}/borrowing-history`)
       this.borrowingHistory = borrowingRes.data
     } catch (error) {
       console.error(error)
