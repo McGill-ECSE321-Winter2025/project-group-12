@@ -203,13 +203,14 @@ export default {
           life: 3000,
         })
       } catch (error) {
+        console.error('Registration error:', error.response?.data)
+        const errorMessage = error.response?.data?.errors?.[0] || 'Failed to register for the event. Please try again.'
         this.$toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: error.response?.data?.message || 'Registration failed.',
-          life: 3000,
+          summary: 'Registration Failed',
+          detail: errorMessage,
+          life: 5000,
         })
-        console.error(error)
       }
       this.showRegisterConfirmDialog = false
       this.selectedEvent = null
