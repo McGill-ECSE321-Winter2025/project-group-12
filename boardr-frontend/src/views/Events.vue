@@ -19,7 +19,6 @@
 
     <!-- DataTable for events -->
     <DataTable :value="events" class="p-datatable-sm" responsiveLayout="scroll">
-      <Column field="eventId" header="#" align="center" style="width: 5%"></Column>
       <Column field="description" header="Name" style="width: 20%"></Column>
       <!-- Format the eventDate -->
       <Column header="Date" style="width: 10%">
