@@ -126,7 +126,7 @@ export default {
 }
 
 :deep(.p-menuitem-link:hover) {
-  color: #1ed760;
+  color: #0d8aec;
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -136,11 +136,13 @@ export default {
 }
 
 .end-action-button {
-  color: #e0e0e0;
+  color: v-bind('isDarkMode ? "#e0e0e0" : "#1a1a1a"'); /* Dark text in light mode, light text in dark mode */
+  transition: color 0.2s ease;
 }
 
 .end-action-button:hover {
-  color: #1ed760;
+  color: #0d8aec; /* Matches .p-menuitem-link:hover */
+  background: rgba(255, 255, 255, 0.1); /* Matches .p-menuitem-link:hover */
 }
 
 :deep(.p-button-text) {
