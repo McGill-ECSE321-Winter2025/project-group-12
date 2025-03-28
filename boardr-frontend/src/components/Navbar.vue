@@ -1,18 +1,14 @@
 <template>
   <nav class="bg-[#181818] text-[#e0e0e0] p-4 sticky top-0 z-10 shadow-md w-full">
     <div class="flex items-center justify-between w-full px-4">
-      <!-- Logo and App Name -->
-      <div class="flex items-center gap-2">
-        <img 
-          src="@/assets/boardr-logo.png" 
-          alt="Boardr Logo" 
-          class="h-8 w-auto"
-        >
-        <span class="text-xl font-semibold"> Boardr </span>
-      </div>
-      
-      <!-- All Menu Items -->
-      <MenuBarItem :items="menuItems" :is-logged-in="isLoggedIn" />
+      <MenuBarItem 
+        :items="menuItems" 
+        :is-logged-in="isLoggedIn" 
+        :username="username" 
+        :is-dark-mode="isDarkMode"
+        @logout="logout"
+        @toggle-dark-mode="toggleDarkMode"
+      />
     </div>
   </nav>
 </template>
@@ -53,33 +49,8 @@ export default {
           ],
         },
         { label: 'Games', icon: 'pi pi-desktop', command: () => this.$router.push('/games') },
-        {
-          label: 'Toggle Theme',
-          icon: this.isDarkMode ? 'pi pi-sun' : 'pi pi-moon',
-          command: () => this.toggleDarkMode(),
-        },
+        // Removed Toggle Theme from here
       ]
-
-      if (this.isLoggedIn) {
-        baseItems.push(
-          {
-            label: `Hi, ${this.username}!`,
-            icon: 'pi pi-user',
-            command: () => this.$router.push('/account'),
-          },
-          {
-            label: 'Settings',
-            icon: 'pi pi-cog',
-            command: () => this.$router.push('/settings'),
-          },
-          {
-            label: 'Logout',
-            icon: 'pi pi-sign-out',
-            command: () => this.logout(),
-          }
-        )
-      }
-
       return baseItems
     },
   },

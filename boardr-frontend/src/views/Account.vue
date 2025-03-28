@@ -1,12 +1,36 @@
 <template>
     <div class="py-6">
       <h1 class="text-3xl font-bold mb-6">My Account</h1>
-      <Button
-        label="History"
-        icon="pi pi-history"
-        class="mb-6 bg-blue-600 hover:bg-blue-700"
-        @click="goToHistory"
-      />
+      <table class="mb-4" style="width: auto; margin-left: auto;">
+        <tbody>
+          <tr>
+            <td style="padding-right: 24px;">
+              <Button
+                label="History"
+                icon="pi pi-history"
+                class="bg-blue-600 hover:bg-blue-700"
+                @click="goToHistory"
+              />
+            </td>
+            <td style="padding-right: 24px;">
+              <Button
+                label="Add Game"
+                icon="pi pi-plus"
+                class="bg-blue-600 hover:bg-blue-700"
+                @click="showAddGameDialog = true"
+              />
+            </td>
+            <td>
+              <Button
+                :label="isGameOwner ? 'Switch to Player' : 'Switch to Game Owner'"
+                :icon="isGameOwner ? 'pi pi-user' : 'pi pi-briefcase'"
+                class="bg-purple-600 hover:bg-purple-700"
+                @click="toggleView"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <Card v-if="user" class="mb-6">
         <template #title>
           <h2 class="text-xl font-semibold">{{ user.name }}</h2>
@@ -14,31 +38,62 @@
         <template #content>
           <p><strong>Email:</strong> {{ user.email }}</p>
           <p><strong>Account Type:</strong> {{ user.gameOwnerRoleId ? 'Game Owner' : 'Player' }}</p>
+          <p><strong>Account ID:</strong> {{ user.userAccountId }}</p>
+          <p v-if="user.gameOwnerRoleId"><strong>Game Owner ID:</strong> {{ user.gameOwnerRoleId }}</p>
         </template>
       </Card>
   
       <!-- Owned Games (Game Owners Only) -->
-      <div v-if="user?.gameOwnerRoleId" class="mb-6">
+      <div v-if="isGameOwner && user?.gameOwnerRoleId" class="mb-6">
         <h2 class="text-2xl font-semibold mb-4">My Games</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <GameCard v-for="game in ownedGames" :key="game.individualGameId" :game="game" />
-        </div>
-        <Button
-          label="Add Game"
-          icon="pi pi-plus"
-          class="mt-4 bg-blue-600 hover:bg-blue-700"
-          @click="showAddGameDialog = true"
-        />
+        <DataTable :value="ownedGames" class="p-datatable-sm">
+          <Column field="individualGameId" header="Game ID" />
+          <Column field="boardGameName" header="Name" />
+          <Column field="condition" header="Condition" />
+          <Column field="available" header="Status">
+            <template #body="slotProps">
+              {{ slotProps.data.available ? 'Available' : 'Not Available' }}
+            </template>
+          </Column>
+          <Column header="View Requests">
+            <template #body>
+              <Button icon="pi pi-eye" class="p-button-text" />
+            </template>
+          </Column>
+        </DataTable>
       </div>
   
-      <!-- Event History -->
+      <!-- Created Event History -->
       <div class="mb-6">
-        <h2 class="text-2xl font-semibold mb-4">My Events</h2>
+        <h2 class="text-2xl font-semibold mb-4">Created Events</h2>
         <DataTable :value="participatedEvents" class="p-datatable-sm">
+          <Column field="eventId" header="Event ID" />
           <Column field="description" header="Description" />
           <Column field="eventDate" header="Date" :body="row => formatDate(row.eventDate)" />
           <Column field="eventTime" header="Time" :body="row => formatTime(row.eventTime)" />
           <Column field="location" header="Location" />
+          <Column header="View Details">
+            <template #body>
+              <Button icon="pi pi-info-circle" class="p-button-text" />
+            </template>
+          </Column>
+        </DataTable>
+      </div>
+  
+      <!-- Registered Events -->
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold mb-4">Registered Events</h2>
+        <DataTable :value="registeredEvents" class="p-datatable-sm">
+          <Column field="eventId" header="Event ID" />
+          <Column field="description" header="Description" />
+          <Column field="eventDate" header="Date" :body="row => formatDate(row.eventDate)" />
+          <Column field="eventTime" header="Time" :body="row => formatTime(row.eventTime)" />
+          <Column field="location" header="Location" />
+          <Column header="View Details">
+            <template #body>
+              <Button icon="pi pi-info-circle" class="p-button-text" />
+            </template>
+          </Column>
         </DataTable>
       </div>
   
@@ -47,7 +102,16 @@
         <div class="space-y-4">
           <div>
             <label for="gameName" class="block text-sm font-medium">Game Name</label>
-            <InputText id="gameName" v-model="newGame.name" class="w-full" />
+            <Dropdown
+              id="gameName"
+              v-model="newGame.name"
+              :options="boardGames"
+              optionLabel="name"
+              placeholder="Select or enter a game"
+              class="w-full"
+              :editable="true"
+              :filter="true"
+            />
           </div>
           <div>
             <label for="condition" class="block text-sm font-medium">Condition</label>
@@ -69,24 +133,29 @@
   import Column from 'primevue/column'
   import Dialog from 'primevue/dialog'
   import InputText from 'primevue/inputtext'
+  import Dropdown from 'primevue/dropdown'
   import GameCard from '../components/GameCard.vue'
   import api from '../services/api'
   
   export default {
     name: 'Account',
-    components: { Card, Button, DataTable, Column, Dialog, InputText, GameCard },
+    components: { Card, Button, DataTable, Column, Dialog, InputText, Dropdown, GameCard },
     data() {
       return {
         user: null,
         ownedGames: [],
         participatedEvents: [],
+        registeredEvents: [],
         lendingHistory: [],
         showAddGameDialog: false,
         newGame: { name: '', condition: '' },
+        isGameOwner: true, // Default to Game Owner view
+        boardGames: [], // List of available board games
       }
     },
     created() {
       this.loadUserData()
+      this.loadBoardGames()
     },
     methods: {
       async loadUserData() {
@@ -106,8 +175,21 @@
           this.lendingHistory = lendingRes.data
         }
   
-        const eventsRes = await api.get('/events') // Simplified; filter by user registrations in production
+        const [eventsRes, registrationsRes] = await Promise.all([
+          api.get('/events'),
+          api.get('/registrations')
+        ])
+        
+        // Filter events where user is the organizer
         this.participatedEvents = eventsRes.data.filter(e => e.organizerId === user.userAccountId)
+        
+        // Get registered events by filtering registrations for this user
+        const userRegistrations = registrationsRes.data.filter(r => r.userId === user.userAccountId)
+        // Map registration data to event data
+        this.registeredEvents = userRegistrations.map(reg => {
+          const event = eventsRes.data.find(e => e.eventId === reg.eventId)
+          return event
+        }).filter(Boolean) // Remove any undefined events
       },
       formatDate(date) {
         const str = date.toString()
@@ -119,11 +201,24 @@
       },
       async addGame() {
         try {
-          const boardGame = { name: this.newGame.name, description: 'User-added game' }
-          const boardGameRes = await api.post('/boardgames', boardGame)
+          let boardGameId
+          
+          // Check if the selected name exists in boardGames
+          const existingGame = this.boardGames.find(game => game.name === this.newGame.name)
+          
+          if (existingGame) {
+            // Use existing board game
+            boardGameId = existingGame.gameId
+          } else {
+            // Create new board game
+            const boardGame = { name: this.newGame.name, description: 'User-added game' }
+            const boardGameRes = await api.post('/boardgames', boardGame)
+            boardGameId = boardGameRes.data.gameId
+          }
+
           const instance = {
             condition: this.newGame.condition,
-            boardGameId: boardGameRes.data.gameId,
+            boardGameId: boardGameId,
             gameOwnerId: this.user.gameOwnerRoleId,
           }
           await api.post('/boardgameinstances', instance)
@@ -136,6 +231,7 @@
           this.showAddGameDialog = false
           this.newGame = { name: '', condition: '' }
           this.loadUserData() // Refresh owned games
+          this.loadBoardGames() // Refresh board games list
         } catch (error) {
           this.$toast.add({
             severity: 'error',
@@ -148,7 +244,18 @@
       },
       goToHistory() {
         this.$router.push('/history')
-      }
+      },
+      toggleView() {
+        this.isGameOwner = !this.isGameOwner
+      },
+      async loadBoardGames() {
+        try {
+          const response = await api.get('/boardgames')
+          this.boardGames = response.data
+        } catch (error) {
+          console.error('Failed to load board games:', error)
+        }
+      },
     },
   }
   </script>
