@@ -184,7 +184,18 @@ export default {
     },
     async registerForEvent() {
       try {
-        // Simulate registration action
+        const user = JSON.parse(localStorage.getItem('user') || '{}')
+        if (!user.userAccountId) {
+          this.$router.push('/login')
+          return
+        }
+
+        const registrationData = {
+          userId: user.userAccountId,
+          eventId: this.selectedEvent.eventId
+        }
+
+        await api.post('/registrations', registrationData)
         this.$toast.add({
           severity: 'success',
           summary: 'Registered',
@@ -195,7 +206,7 @@ export default {
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Registration failed.',
+          detail: error.response?.data?.message || 'Registration failed.',
           life: 3000,
         })
         console.error(error)
