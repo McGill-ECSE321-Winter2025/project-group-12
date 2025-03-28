@@ -102,7 +102,16 @@
         <div class="space-y-4">
           <div>
             <label for="gameName" class="block text-sm font-medium">Game Name</label>
-            <InputText id="gameName" v-model="newGame.name" class="w-full" />
+            <Dropdown
+              id="gameName"
+              v-model="newGame.name"
+              :options="boardGames"
+              optionLabel="name"
+              placeholder="Select or enter a game"
+              class="w-full"
+              :editable="true"
+              :filter="true"
+            />
           </div>
           <div>
             <label for="condition" class="block text-sm font-medium">Condition</label>
@@ -124,12 +133,13 @@
   import Column from 'primevue/column'
   import Dialog from 'primevue/dialog'
   import InputText from 'primevue/inputtext'
+  import Dropdown from 'primevue/dropdown'
   import GameCard from '../components/GameCard.vue'
   import api from '../services/api'
   
   export default {
     name: 'Account',
-    components: { Card, Button, DataTable, Column, Dialog, InputText, GameCard },
+    components: { Card, Button, DataTable, Column, Dialog, InputText, Dropdown, GameCard },
     data() {
       return {
         user: null,
@@ -140,10 +150,12 @@
         showAddGameDialog: false,
         newGame: { name: '', condition: '' },
         isGameOwner: true, // Default to Game Owner view
+        boardGames: [], // List of available board games
       }
     },
     created() {
       this.loadUserData()
+      this.loadBoardGames()
     },
     methods: {
       async loadUserData() {
@@ -189,11 +201,24 @@
       },
       async addGame() {
         try {
-          const boardGame = { name: this.newGame.name, description: 'User-added game' }
-          const boardGameRes = await api.post('/boardgames', boardGame)
+          let boardGameId
+          
+          // Check if the selected name exists in boardGames
+          const existingGame = this.boardGames.find(game => game.name === this.newGame.name)
+          
+          if (existingGame) {
+            // Use existing board game
+            boardGameId = existingGame.gameId
+          } else {
+            // Create new board game
+            const boardGame = { name: this.newGame.name, description: 'User-added game' }
+            const boardGameRes = await api.post('/boardgames', boardGame)
+            boardGameId = boardGameRes.data.gameId
+          }
+
           const instance = {
             condition: this.newGame.condition,
-            boardGameId: boardGameRes.data.gameId,
+            boardGameId: boardGameId,
             gameOwnerId: this.user.gameOwnerRoleId,
           }
           await api.post('/boardgameinstances', instance)
@@ -206,6 +231,7 @@
           this.showAddGameDialog = false
           this.newGame = { name: '', condition: '' }
           this.loadUserData() // Refresh owned games
+          this.loadBoardGames() // Refresh board games list
         } catch (error) {
           this.$toast.add({
             severity: 'error',
@@ -221,6 +247,14 @@
       },
       toggleView() {
         this.isGameOwner = !this.isGameOwner
+      },
+      async loadBoardGames() {
+        try {
+          const response = await api.get('/boardgames')
+          this.boardGames = response.data
+        } catch (error) {
+          console.error('Failed to load board games:', error)
+        }
       },
     },
   }
