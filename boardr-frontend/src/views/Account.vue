@@ -2,32 +2,34 @@
     <div class="py-6">
       <h1 class="text-3xl font-bold mb-6">My Account</h1>
       <table class="mb-4" style="width: auto; margin-left: auto;">
-        <tr>
-          <td style="padding-right: 24px;">
-            <Button
-              label="History"
-              icon="pi pi-history"
-              class="bg-blue-600 hover:bg-blue-700"
-              @click="goToHistory"
-            />
-          </td>
-          <td style="padding-right: 24px;">
-            <Button
-              label="Add Game"
-              icon="pi pi-plus"
-              class="bg-blue-600 hover:bg-blue-700"
-              @click="showAddGameDialog = true"
-            />
-          </td>
-          <td>
-            <Button
-              :label="isGameOwner ? 'Switch to Player' : 'Switch to Game Owner'"
-              :icon="isGameOwner ? 'pi pi-user' : 'pi pi-briefcase'"
-              class="bg-purple-600 hover:bg-purple-700"
-              @click="toggleView"
-            />
-          </td>
-        </tr>
+        <tbody>
+          <tr>
+            <td style="padding-right: 24px;">
+              <Button
+                label="History"
+                icon="pi pi-history"
+                class="bg-blue-600 hover:bg-blue-700"
+                @click="goToHistory"
+              />
+            </td>
+            <td style="padding-right: 24px;">
+              <Button
+                label="Add Game"
+                icon="pi pi-plus"
+                class="bg-blue-600 hover:bg-blue-700"
+                @click="showAddGameDialog = true"
+              />
+            </td>
+            <td>
+              <Button
+                :label="isGameOwner ? 'Switch to Player' : 'Switch to Game Owner'"
+                :icon="isGameOwner ? 'pi pi-user' : 'pi pi-briefcase'"
+                class="bg-purple-600 hover:bg-purple-700"
+                @click="toggleView"
+              />
+            </td>
+          </tr>
+        </tbody>
       </table>
       <Card v-if="user" class="mb-6">
         <template #title>
