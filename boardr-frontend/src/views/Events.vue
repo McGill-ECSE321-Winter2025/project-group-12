@@ -2,16 +2,23 @@
   <div class="py-6">
     <h1 class="text-3xl font-bold mb-6">Browse Available Events
       <Button
-      label="Create Event"
-      icon="pi pi-plus"
-      class="mb-6 bg-blue-600 hover:bg-blue-700"
-      @click="showCreateEventDialog = true"
+        label="Create Event"
+        icon="pi pi-plus"
+        class="mb-6 bg-blue-600 hover:bg-blue-700"
+        @click="showCreateEventDialog = true"
       />
     </h1>
 
+    <!-- Search Bar -->
+    <div class="mb-4 flex items-center">
+      <h2>
+        <InputText v-model="searchQuery" placeholder="Search events by name" class="w-3/4" />
+        <Button label="Search" class="ml-2" @click="searchEvents" />
+      </h2>
+    </div>
+
     <!-- DataTable for events -->
     <DataTable :value="events" class="p-datatable-sm" responsiveLayout="scroll">
-      <Column field="eventId" header="#" align="center" style="width: 5%"></Column>
       <Column field="description" header="Name" style="width: 20%"></Column>
       <!-- Format the eventDate -->
       <Column header="Date" style="width: 10%">
@@ -97,6 +104,8 @@ export default {
   data() {
     return {
       events: [],
+      originalEvents: [],   // Store the original events for filtering
+      searchQuery: '',    // Search query for filtering events
       showCreateEventDialog: false,
       showRegisterConfirmDialog: false,
       selectedEvent: null,
@@ -114,6 +123,7 @@ export default {
     try {
       const eventsResponse = await api.get('/events')
       this.events = eventsResponse.data
+      this.originalEvents = eventsResponse.data   // Store the original events for filtering
     } catch (error) {
       this.$toast.add({
         severity: 'error',
@@ -168,6 +178,7 @@ export default {
         }
         const response = await api.get('/events')
         this.events = response.data
+        this.originalEvents = response.data   // Update the original events for filtering
       } catch (error) {
         this.$toast.add({
           severity: 'error',
@@ -214,6 +225,17 @@ export default {
       }
       this.showRegisterConfirmDialog = false
       this.selectedEvent = null
+    },
+    // New method to filter events by searchQuery
+    searchEvents() {
+      if (!this.searchQuery.trim()) {
+        this.events = this.originalEvents
+      } else {
+        const query = this.searchQuery.toLowerCase();
+        this.events = this.originalEvents.filter(event =>
+          event.description.toLowerCase().includes(query)
+        );
+      }
     },
   },
 }
