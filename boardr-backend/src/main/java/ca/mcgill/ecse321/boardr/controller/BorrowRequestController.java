@@ -86,4 +86,17 @@ public class BorrowRequestController {
         BorrowRequest updatedBorrowRequest = borrowRequestService.updateBorrowRequestStatus(borrowRequestId, statusUpdateDTO.getRequestStatus());
         return new BorrowRequestResponseDTO(updatedBorrowRequest);
     }
+    
+    /**
+     * Get the borrowing history for a borrower (only accepted borrow requests).
+     *
+     * @param userId The user account ID of the borrower
+     * @return A list of accepted borrow requests for the given borrower
+     */
+    @GetMapping("/borrowRequests/{userId}/borrowing-history")
+    public List<BorrowRequestResponseDTO> getBorrowingHistory(@PathVariable int userId) {
+        return borrowRequestService.getAcceptedBorrowRequestsByBorrower(userId).stream()
+                .map(BorrowRequestResponseDTO::new)
+                .collect(Collectors.toList());
+    }
 }

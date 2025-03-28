@@ -81,4 +81,9 @@ public class BorrowRequestService {
 
         return borrowRequestRepo.save(borrowRequest);
     }
+
+    @Transactional(readOnly = true)
+    public List<BorrowRequest> getAcceptedBorrowRequestsByBorrower(int borrowerId) {
+        return borrowRequestRepo.findAcceptedBorrowRequestsByBorrower(borrowerId);
+    }
 }

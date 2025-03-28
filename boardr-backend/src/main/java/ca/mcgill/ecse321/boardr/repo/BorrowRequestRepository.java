@@ -23,5 +23,9 @@ public interface BorrowRequestRepository extends CrudRepository<BorrowRequest, I
            "WHERE br.boardGameInstance.gameOwner.id = :gameOwnerId")
     List<BorrowRequest> findAllBorrowRequestsByGameOwner(@Param("gameOwnerId") int gameOwnerId);
 
+    @Query("SELECT br " +
+       "FROM BorrowRequest br " +
+       "WHERE br.status = ca.mcgill.ecse321.boardr.model.BorrowRequest.RequestStatus.Accepted " +
+       "AND br.userAccount.userAccountId = :borrowerId")
+       List<BorrowRequest> findAcceptedBorrowRequestsByBorrower(@Param("borrowerId") int borrowerId);
 }
-
