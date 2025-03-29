@@ -3,7 +3,7 @@ Complete front-end setup
 >[!IMPORTANT]
 > ## Steps:
 >1. Download Node.js
->2. `cd .\boardr-backend\`
+>2. `cd .\boardr-frontend\`
 >3. `node -v`
 >4. `npm -v`
 >4.1 IF ERROR: run `Get-ExecutionPolicy`, check if **Restricted**, then run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
