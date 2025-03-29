@@ -66,10 +66,6 @@ export default {
         const user = JSON.parse(localStorage.getItem('user') || '{}')
         const formattedBorrowDate = new Date(formatDate(borrowDate.value))
         const formattedReturnDate = new Date(formatDate(returnDate.value))
-        console.log(user.userAccountId)
-        console.log(selectedGame.value.individualGameId)
-        console.log(formattedBorrowDate)
-        console.log(formattedReturnDate)
 
         const borrowRequest = {
           userAccountId: user.userAccountId, // Replace with actual user ID
