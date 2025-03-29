@@ -35,7 +35,7 @@
       <Column field="location" header="Location" style="width: 20%"></Column>
       <Column header="Organizer" style="width: 20%">
         <template #body="slotProps">
-          {{ slotProps.data.organizerId }}
+          {{ organizerNames[slotProps.data.organizerId] || slotProps.data.organizerId }}
         </template>
       </Column>
       <Column header="Participate" style="width: 15%">
@@ -104,11 +104,12 @@ export default {
   data() {
     return {
       events: [],
-      originalEvents: [],   // Store the original events for filtering
-      searchQuery: '',    // Search query for filtering events
+      originalEvents: [],
+      searchQuery: '',
       showCreateEventDialog: false,
       showRegisterConfirmDialog: false,
       selectedEvent: null,
+      organizerNames: {}, // Stores organizer names mapped by organizerId
       newEvent: {
         description: '',
         eventDate: '',
@@ -123,7 +124,8 @@ export default {
     try {
       const eventsResponse = await api.get('/events')
       this.events = eventsResponse.data
-      this.originalEvents = eventsResponse.data   // Store the original events for filtering
+      this.originalEvents = eventsResponse.data
+      this.fetchOrganizerNames() // Fetch organizer names once events are loaded
     } catch (error) {
       this.$toast.add({
         severity: 'error',
@@ -148,6 +150,20 @@ export default {
         return `${timeStr.slice(0, 2)}:${timeStr.slice(2, 4)}`;
       }
       return time;
+    },
+    async fetchOrganizerNames() {
+      // Extract unique organizerIds from the events array
+      const organizerIds = [...new Set(this.events.map(event => event.organizerId))];
+      try {
+        const promises = organizerIds.map(id => api.get(`/users/${id}`));
+        const responses = await Promise.all(promises);
+        responses.forEach(response => {
+          const user = response.data;
+          this.organizerNames[user.userAccountId] = user.name;
+        });
+      } catch (error) {
+        console.error('Error fetching organizer names:', error);
+      }
     },
     async createEvent() {
       const user = JSON.parse(localStorage.getItem('user') || '{}')
@@ -178,7 +194,8 @@ export default {
         }
         const response = await api.get('/events')
         this.events = response.data
-        this.originalEvents = response.data   // Update the original events for filtering
+        this.originalEvents = response.data
+        this.fetchOrganizerNames() // Refresh organizer names with updated events
       } catch (error) {
         this.$toast.add({
           severity: 'error',
@@ -200,12 +217,10 @@ export default {
           this.$router.push('/login')
           return
         }
-
         const registrationData = {
           userId: user.userAccountId,
           eventId: this.selectedEvent.eventId
         }
-
         await api.post('/registrations', registrationData)
         this.$toast.add({
           severity: 'success',
@@ -226,7 +241,7 @@ export default {
       this.showRegisterConfirmDialog = false
       this.selectedEvent = null
     },
-    // New method to filter events by searchQuery
+    // Filter events based on the search query
     searchEvents() {
       if (!this.searchQuery.trim()) {
         this.events = this.originalEvents
