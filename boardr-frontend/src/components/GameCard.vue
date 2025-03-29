@@ -9,6 +9,7 @@
       <template #content>
         <p><strong>Condition:</strong> {{ game.condition }}</p>
         <p><strong>Availability:</strong> {{ game.available ? 'Yes' : 'No' }}</p>
+        <Button label="Request" class="bg-blue-600 hover:bg-blue-700" @click="$emit('request', game)" />
       </template>
       <template #footer>
         <Button
