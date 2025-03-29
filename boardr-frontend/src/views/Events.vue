@@ -13,7 +13,10 @@
     <div class="mb-4 flex items-center">
       <h2>
         <InputText v-model="searchQuery" placeholder="Search events by name" class="w-3/4" />
+        <!-- Search button to filter event by name -->
         <Button label="Search" class="ml-2" @click="searchEvents" />
+        <!-- Reset button to clear the search query -->
+        <Button label="Reset" class="ml-2" @click="searchQuery = ''; searchEvents()" />
       </h2>
     </div>
 
