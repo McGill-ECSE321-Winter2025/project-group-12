@@ -33,9 +33,14 @@
         </template>
       </Column>
       <Column field="location" header="Location" style="width: 20%"></Column>
-      <Column header="Organizer" style="width: 20%">
+      <Column header="Organizer" style="width: 15%">
         <template #body="slotProps">
-          {{ organizerNames[slotProps.data.organizerId] || slotProps.data.organizerId }}
+          {{ organizerDetails[slotProps.data.organizerId]?.name || slotProps.data.organizerId }}
+        </template>
+      </Column>
+      <Column header="Organizer Email" style="width: 15%">
+        <template #body="slotProps">
+          {{ organizerDetails[slotProps.data.organizerId]?.email || 'N/A' }}
         </template>
       </Column>
       <Column header="Participate" style="width: 15%">
@@ -109,7 +114,7 @@ export default {
       showCreateEventDialog: false,
       showRegisterConfirmDialog: false,
       selectedEvent: null,
-      organizerNames: {}, // Stores organizer names mapped by organizerId
+      organizerDetails: {}, // Stores organizer details (name and email) mapped by organizerId
       newEvent: {
         description: '',
         eventDate: '',
@@ -125,7 +130,7 @@ export default {
       const eventsResponse = await api.get('/events')
       this.events = eventsResponse.data
       this.originalEvents = eventsResponse.data
-      this.fetchOrganizerNames() // Fetch organizer names once events are loaded
+      this.fetchOrganizerDetails() // Fetch organizer details once events are loaded
     } catch (error) {
       this.$toast.add({
         severity: 'error',
@@ -151,7 +156,7 @@ export default {
       }
       return time;
     },
-    async fetchOrganizerNames() {
+    async fetchOrganizerDetails() {
       // Extract unique organizerIds from the events array
       const organizerIds = [...new Set(this.events.map(event => event.organizerId))];
       try {
@@ -159,10 +164,14 @@ export default {
         const responses = await Promise.all(promises);
         responses.forEach(response => {
           const user = response.data;
-          this.organizerNames[user.userAccountId] = user.name;
+          // Store both name and email
+          this.organizerDetails[user.userAccountId] = {
+            name: user.name,
+            email: user.email,
+          };
         });
       } catch (error) {
-        console.error('Error fetching organizer names:', error);
+        console.error('Error fetching organizer details:', error);
       }
     },
     async createEvent() {
@@ -195,7 +204,7 @@ export default {
         const response = await api.get('/events')
         this.events = response.data
         this.originalEvents = response.data
-        this.fetchOrganizerNames() // Refresh organizer names with updated events
+        this.fetchOrganizerDetails() // Refresh organizer details with updated events
       } catch (error) {
         this.$toast.add({
           severity: 'error',
