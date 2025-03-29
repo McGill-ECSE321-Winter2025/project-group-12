@@ -40,7 +40,9 @@
       </Column>
       <Column header="Organizer Email" style="width: 15%">
         <template #body="slotProps">
-          {{ organizerDetails[slotProps.data.organizerId]?.email || 'N/A' }}
+          <a :href="'mailto:' + (organizerDetails[slotProps.data.organizerId]?.email || '') + '?subject=' + encodeURIComponent(slotProps.data.description)">
+            {{ organizerDetails[slotProps.data.organizerId]?.email || 'N/A' }}
+          </a>
         </template>
       </Column>
       <Column header="Participate" style="width: 15%">
