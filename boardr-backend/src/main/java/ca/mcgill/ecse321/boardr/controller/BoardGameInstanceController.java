@@ -49,4 +49,12 @@ public class BoardGameInstanceController {
     public void removeBoardGameInstance(@PathVariable int id) {
         boardGameInstanceService.removeBoardGameInstance(id);
     }
+
+    // 4.Get a board game instance by ID
+    @GetMapping("/boardgameinstances/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BoardGameInstanceResponseDTO getBoardGameInstanceById(@PathVariable int id) {
+        return boardGameInstanceService.getBoardGameInstanceById(id);
+    }
+    
 }

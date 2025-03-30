@@ -75,4 +75,13 @@ public class BoardGameInstanceService {
         }
         boardGameInstanceRepository.deleteById(instanceId);
     }
+
+    // 4.Get a board game instance by ID
+    @Transactional(readOnly = true)
+    public BoardGameInstanceResponseDTO getBoardGameInstanceById(int instanceId) {
+        BoardGameInstance instance = boardGameInstanceRepository.findById(instanceId)
+                .orElseThrow(() -> new BoardrException(HttpStatus.NOT_FOUND, "Board Game Instance not found for ID: " + instanceId));
+        return new BoardGameInstanceResponseDTO(instance);
+    }
+
 }
