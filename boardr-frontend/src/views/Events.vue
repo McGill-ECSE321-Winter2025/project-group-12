@@ -13,7 +13,7 @@
     <!-- Search Bar -->
     <div class="mb-4 flex items-center">
       <h2>
-        <InputText v-model="searchQuery" placeholder="Search events by name" class="w-3/4" />
+        <InputText v-model="searchQuery" placeholder="Search by board game" class="w-3/4" />
         <Button label="Search" class="ml-2" @click="searchEvents" />
         <Button label="Reset" class="ml-2" @click="searchQuery = ''; searchEvents()" />
       </h2>
@@ -296,9 +296,10 @@ export default {
         this.events = this.originalEvents
       } else {
         const query = this.searchQuery.toLowerCase();
-        this.events = this.originalEvents.filter(event =>
-          event.description.toLowerCase().includes(query)
-        );
+        this.events = this.originalEvents.filter(event => {
+          const instance = this.boardGameInstanceDetails[event.boardGameInstanceId];
+          return instance && instance.boardGameName.toLowerCase().includes(query);
+        });
       }
     },
   },
