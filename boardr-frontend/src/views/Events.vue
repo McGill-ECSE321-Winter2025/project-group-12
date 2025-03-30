@@ -1,6 +1,7 @@
 <template>
   <div class="py-6">
-    <h1 class="text-3xl font-bold mb-6">Browse Available Events
+    <h1 class="text-3xl font-bold mb-6">
+      Browse Available Events
       <Button
         label="Create Event"
         icon="pi pi-plus"
@@ -13,42 +14,59 @@
     <div class="mb-4 flex items-center">
       <h2>
         <InputText v-model="searchQuery" placeholder="Search events by name" class="w-3/4" />
-        <!-- Search button to filter event by name -->
         <Button label="Search" class="ml-2" @click="searchEvents" />
-        <!-- Reset button to clear the search query -->
         <Button label="Reset" class="ml-2" @click="searchQuery = ''; searchEvents()" />
       </h2>
     </div>
 
-    <!-- DataTable for events -->
+    <!-- DataTable for events with adjusted column widths -->
     <DataTable :value="events" class="p-datatable-sm" responsiveLayout="scroll">
-      <Column field="description" header="Name" style="width: 20%"></Column>
-      <!-- Format the eventDate -->
+      <!-- Game Name Column -->
+      <Column header="Game Name" style="width: 15%">
+        <template #body="slotProps">
+          {{ boardGameInstanceDetails[slotProps.data.boardGameInstanceId]?.boardGameName || slotProps.data.boardGameInstanceId }}
+        </template>
+      </Column>
+
+      <!-- Description Column -->
+      <Column field="description" header="Description" style="width: 20%"></Column>
+
+      <!-- Date Column -->
       <Column header="Date" style="width: 10%">
         <template #body="slotProps">
           {{ formatDate(slotProps.data.eventDate) }}
         </template>
       </Column>
-      <!-- Format the eventTime -->
-      <Column header="Time" style="width: 10%">
+
+      <!-- Time Column -->
+      <Column header="Time" style="width: 5%">
         <template #body="slotProps">
           {{ formatTime(slotProps.data.eventTime) }}
         </template>
       </Column>
-      <Column field="location" header="Location" style="width: 20%"></Column>
-      <Column header="Organizer" style="width: 15%">
+
+      <!-- Location Column -->
+      <Column field="location" header="Location" style="width: 15%"></Column>
+
+      <!-- Organizer Column -->
+      <Column header="Organizer" style="width: 10%">
         <template #body="slotProps">
           {{ organizerDetails[slotProps.data.organizerId]?.name || slotProps.data.organizerId }}
         </template>
       </Column>
+
+      <!-- Organizer Email Column -->
       <Column header="Organizer Email" style="width: 15%">
         <template #body="slotProps">
-          <a :href="'mailto:' + (organizerDetails[slotProps.data.organizerId]?.email || '') + '?subject=' + encodeURIComponent(slotProps.data.description)">
+          <a :href="'mailto:' + (organizerDetails[slotProps.data.organizerId]?.email || '') +
+                    '?subject=' + encodeURIComponent(slotProps.data.description)">
             {{ organizerDetails[slotProps.data.organizerId]?.email || 'N/A' }}
           </a>
         </template>
       </Column>
-      <Column header="Participate" style="width: 15%">
+
+      <!-- Participate Column -->
+      <Column header="Participate" style="width: 10%">
         <template #body="slotProps">
           <Button label="Register" @click="openRegisterDialog(slotProps.data)" class="bg-green-500 hover:bg-green-600 text-white" />
         </template>
@@ -119,7 +137,8 @@ export default {
       showCreateEventDialog: false,
       showRegisterConfirmDialog: false,
       selectedEvent: null,
-      organizerDetails: {}, // Stores organizer details (name and email) mapped by organizerId
+      organizerDetails: {}, // Organizer info mapped by organizerId
+      boardGameInstanceDetails: {}, // New: mapped by boardGameInstanceId
       newEvent: {
         description: '',
         eventDate: '',
@@ -135,7 +154,8 @@ export default {
       const eventsResponse = await api.get('/events')
       this.events = eventsResponse.data
       this.originalEvents = eventsResponse.data
-      this.fetchOrganizerDetails() // Fetch organizer details once events are loaded
+      this.fetchOrganizerDetails()
+      this.fetchBoardGameInstanceDetails() // Fetch game instance details for events
     } catch (error) {
       this.$toast.add({
         severity: 'error',
@@ -162,14 +182,12 @@ export default {
       return time;
     },
     async fetchOrganizerDetails() {
-      // Extract unique organizerIds from the events array
       const organizerIds = [...new Set(this.events.map(event => event.organizerId))];
       try {
         const promises = organizerIds.map(id => api.get(`/users/${id}`));
         const responses = await Promise.all(promises);
         responses.forEach(response => {
           const user = response.data;
-          // Store both name and email
           this.organizerDetails[user.userAccountId] = {
             name: user.name,
             email: user.email,
@@ -177,6 +195,23 @@ export default {
         });
       } catch (error) {
         console.error('Error fetching organizer details:', error);
+      }
+    },
+    async fetchBoardGameInstanceDetails() {
+      // Extract unique boardGameInstanceIds from events
+      const instanceIds = [...new Set(this.events
+                                        .map(event => event.boardGameInstanceId)
+                                        .filter(id => id !== null))];
+      try {
+        const promises = instanceIds.map(id => api.get(`/boardgameinstances/${id}`));
+        const responses = await Promise.all(promises);
+        responses.forEach(response => {
+          const instanceData = response.data;
+          // Map using the boardGameInstanceId or individualGameId as provided by the API
+          this.boardGameInstanceDetails[instanceData.individualGameId] = instanceData;
+        });
+      } catch (error) {
+        console.error("Error fetching board game instance details:", error);
       }
     },
     async createEvent() {
@@ -209,7 +244,8 @@ export default {
         const response = await api.get('/events')
         this.events = response.data
         this.originalEvents = response.data
-        this.fetchOrganizerDetails() // Refresh organizer details with updated events
+        this.fetchOrganizerDetails()
+        this.fetchBoardGameInstanceDetails() // Refresh game instance details as well
       } catch (error) {
         this.$toast.add({
           severity: 'error',
@@ -240,7 +276,7 @@ export default {
           severity: 'success',
           summary: 'Registered',
           detail: 'You have been registered for the event!',
-          life: 3000,
+          life:3000,
         })
       } catch (error) {
         console.error('Registration error:', error.response?.data)
@@ -255,7 +291,6 @@ export default {
       this.showRegisterConfirmDialog = false
       this.selectedEvent = null
     },
-    // Filter events based on the search query
     searchEvents() {
       if (!this.searchQuery.trim()) {
         this.events = this.originalEvents
