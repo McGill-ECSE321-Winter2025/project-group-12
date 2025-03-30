@@ -5,9 +5,12 @@ import ca.mcgill.ecse321.boardr.exceptions.BoardrException;
 import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
 import ca.mcgill.ecse321.boardr.model.GameOwner;
+import ca.mcgill.ecse321.boardr.model.UserAccount;
+
 import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
 import ca.mcgill.ecse321.boardr.repo.BoardGameRepository;
 import ca.mcgill.ecse321.boardr.repo.GameOwnerRepository;
+import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,6 +45,10 @@ public class BoardGameInstanceService {
     @Autowired
     private GameOwnerRepository gameOwnerRepository;
 
+    @Autowired
+    private UserAccountRepository userAccountRepository;
+
+
     // 1.Retrieve all board game instances - ResponseDTO for getters
     public List<BoardGameInstanceResponseDTO> getAllBoardGameInstances() {
         return StreamSupport.stream(boardGameInstanceRepository.findAll().spliterator(), false)
@@ -75,8 +82,29 @@ public class BoardGameInstanceService {
         }
         boardGameInstanceRepository.deleteById(instanceId);
     }
+    
+    @Transactional
+public List<BoardGameInstanceDTO> getBoardGameInstancesByBoardGameId(int boardGameId) {
+    List<BoardGameInstance> instances = boardGameInstanceRepository.findAllByBoardGameId(boardGameId);
 
-    // 4.Get a board game instance by ID
+    if (instances.isEmpty()) {
+        throw new BoardrException(HttpStatus.NOT_FOUND, "No instances found for Board Game ID " + boardGameId);
+    }
+
+    return instances.stream()
+        .map(instance -> {
+            // Retrieve the gameOwner role id from the instance
+            int gameOwnerRoleId = instance.getGameOwner().getId();
+            // Use the UserAccountRepository to find the associated UserAccount name
+            String gameOwnerName = userAccountRepository.findByGameOwnerId(gameOwnerRoleId)
+                                        .map(UserAccount::getName)
+                                        .orElse("Unknown");
+            return new BoardGameInstanceDTO(instance, gameOwnerName);
+        })
+        .collect(Collectors.toList());
+}
+
+
     @Transactional(readOnly = true)
     public BoardGameInstanceResponseDTO getBoardGameInstanceById(int instanceId) {
         BoardGameInstance instance = boardGameInstanceRepository.findById(instanceId)

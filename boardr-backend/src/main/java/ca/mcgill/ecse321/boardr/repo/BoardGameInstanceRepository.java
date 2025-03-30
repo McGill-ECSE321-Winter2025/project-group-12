@@ -16,6 +16,10 @@ public interface BoardGameInstanceRepository extends CrudRepository<BoardGameIns
        "WHERE b.gameOwner.id = :gameOwnerId")
 List<BoardGameInstance> findAllByGameOwnerId(@Param("gameOwnerId") int gameOwnerId);
 
+    @Query("SELECT b FROM BoardGameInstance b WHERE b.boardGame.id = :boardGameId")
+List<BoardGameInstance> findAllByBoardGameId(@Param("boardGameId") int boardGameId);
+
+
 }
 
 

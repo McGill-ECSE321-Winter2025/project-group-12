@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import ca.mcgill.ecse321.boardr.dto.Event.EventCreationDTO;
 import ca.mcgill.ecse321.boardr.dto.Event.EventResponseDTO;
+import ca.mcgill.ecse321.boardr.dto.Event.EventDTO;
 import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
 import ca.mcgill.ecse321.boardr.model.BorrowRequest;
 import ca.mcgill.ecse321.boardr.model.Event;
@@ -14,6 +15,8 @@ import ca.mcgill.ecse321.boardr.model.UserAccount;
 import ca.mcgill.ecse321.boardr.repo.BoardGameInstanceRepository;
 import ca.mcgill.ecse321.boardr.repo.EventRepository;
 import ca.mcgill.ecse321.boardr.repo.UserAccountRepository;
+import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * Service class for managing events in the Boardr application.
@@ -182,4 +185,18 @@ public class EventService {
                 .orElseThrow(() -> new IllegalArgumentException("Event not found."));
         return new EventResponseDTO(event);
     }
+
+
+    
+public List<EventDTO> getEventsByBoardGameId(int boardGameId) {
+    List<Event> events = eventRepository.findByboardGameInstance_BoardGame_GameId(boardGameId);
+    if (events.isEmpty()) {
+        throw new IllegalArgumentException("No events found for board game id: " + boardGameId);
+    }
+    return events.stream()
+                 .map(EventDTO::new)
+                 .collect(Collectors.toList());
+}
+
+
 }

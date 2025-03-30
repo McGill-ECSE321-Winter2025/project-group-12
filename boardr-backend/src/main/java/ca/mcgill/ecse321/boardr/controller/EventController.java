@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.mcgill.ecse321.boardr.dto.ErrorDTO;
 import ca.mcgill.ecse321.boardr.dto.Event.EventCreationDTO;
 import ca.mcgill.ecse321.boardr.dto.Event.EventResponseDTO;
+import ca.mcgill.ecse321.boardr.dto.Event.EventDTO;
+
 import ca.mcgill.ecse321.boardr.model.Event;
 import ca.mcgill.ecse321.boardr.service.EventService;
 
@@ -102,5 +104,11 @@ public class EventController {
     public ResponseEntity<ErrorDTO> handleGeneralException(Exception ex) {
         ErrorDTO errorDTO = new ErrorDTO("An unexpected error occurred: " + ex.getMessage());
         return new ResponseEntity<>(errorDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/boardgame/{gameId}")
+    public ResponseEntity<List<EventDTO>> getEventsByBoardGameId(@PathVariable int gameId) {
+        List<EventDTO> eventDTOs = eventService.getEventsByBoardGameId(gameId);
+        return ResponseEntity.ok(eventDTOs);
     }
 }

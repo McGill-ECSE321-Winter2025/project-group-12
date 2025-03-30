@@ -6,8 +6,8 @@ import Events from '../views/Events.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import History from '../views/History.vue'
+import BoardGameInstance from '../views/BoardGameInstance.vue'  // <-- Import here
 
-//might need to add auth here ex: meta: { requiresAuth: true },
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/login', name: 'Login', component: Login },
@@ -16,6 +16,12 @@ const routes = [
   { path: '/games', name: 'Games', component: Games },
   { path: '/events', name: 'Events', component: Events },
   { path: '/history', name: 'History', component: History },
+  { 
+    path: '/boardgameinstances/:boardGameId', 
+    name: 'BoardGameInstance', 
+    component: BoardGameInstance,
+    props: true,
+  },  // <-- New route with parameter
 ]
 
 const router = createRouter({
@@ -23,16 +29,7 @@ const router = createRouter({
   routes,
 })
 
-//auth?
-// router.beforeEach((to, from, next) => {
-//   const isAuthenticated = !!localStorage.getItem('userId')
-
-//   if (to.meta.requiresAuth && !isAuthenticated) {
-//     window.dispatchEvent(new CustomEvent('show-login-modal'))
-//     next(false)
-//   } else {
-//     next()
-//   }
-// })
+// Optional authentication guard here...
 
 export default router
+
