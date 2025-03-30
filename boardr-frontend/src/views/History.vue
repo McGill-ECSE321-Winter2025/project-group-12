@@ -15,7 +15,7 @@
         </Column>
   
         <!-- BORROWER NAME COLUMN -->
-        <Column header="Borrower" style="width: 15%;">
+        <Column header="Borrower Name" style="width: 15%;">
           <template #body="slotProps">
             {{ lendingDetails[slotProps.data.userAccountId]?.name || slotProps.data.userAccountId }}
           </template>
@@ -36,9 +36,9 @@
         </Column>
   
         <!-- REQUEST DATE COLUMN -->
-        <Column field="requestDate" header="Request Date" style="width: 15%;" />
+        <Column field="requestDate" header="Request Date" style="width: 15%;" sortable />
         <!-- RETURN DATE COLUMN -->
-        <Column field="returnDate" header="Return Date" style="width: 15%;" />
+        <Column field="returnDate" header="Return Date" style="width: 15%;" sortable />
       </DataTable>
     </div>
   
@@ -76,9 +76,9 @@
         </Column>
   
         <!-- REQUEST DATE COLUMN -->
-        <Column field="requestDate" header="Request Date" style="width: 15%;" />
+        <Column field="requestDate" header="Request Date" style="width: 15%;" sortable />
         <!-- RETURN DATE COLUMN -->
-        <Column field="returnDate" header="Return Date" style="width: 15%;" />
+        <Column field="returnDate" header="Return Date" style="width: 15%;" sortable />
       </DataTable>
     </div>
   </div>
