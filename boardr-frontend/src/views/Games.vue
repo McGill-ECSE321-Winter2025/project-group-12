@@ -1,120 +1,159 @@
 <template>
-    <div class="py-6">
-      <h1 class="text-3xl font-bold mb-6">Browse Games</h1>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <GameCard v-for="game in games" :key="game.individualGameId" :game="game" @request="openRequestForm" />
-      </div>
+  <div class="py-6">
+    <h1 class="text-3xl font-bold mb-6">
+      Browse Available
+      <span style="color: #10B981;"> Board Games</span>
+    </h1>
+    <!-- Outer container with rounded edges -->
+    <div class="rounded-3xl overflow-hidden border border-gray-300">
+      <DataTable
+        :value="boardGames"
+        class="p-datatable-sm"
+        responsiveLayout="scroll"
+      >
+        <!-- Row Numbering -->
+        <Column header="#" style="width: 5%">
+          <template #body="slotProps">
+            {{ slotProps.index + 1 }}
+          </template>
+        </Column>
 
-    <!-- Request Form Dialog -->
-    <Dialog v-model:visible="showRequestFormDialog" header="Request Game" :style="{ width: '30rem' }">
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium">Board Game: </label>
-          <label ><strong> {{ selectedGame.boardGameName }}</strong> </label>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Borrow Date*</label>
-          <InputText v-model="borrowDate" placeholder="Enter date: (YYYYMMDD)" class="w-full" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Return Date*</label>
-          <InputText v-model="returnDate" placeholder="Enter Date: (YYYYMMDD)" class="w-full" />
-        </div>
-      </div>
-      <template #footer>
-        <Button label="Cancel" class="p-button-text" @click="showRequestFormDialog = false" />
-        <Button label="Confirm" class="bg-green-600 hover:bg-green-700" @click="createBorrowRequest" />
-      </template>
-    </Dialog>
+        <!-- Name -->
+        <Column field="name" header="Name" style="width: 15%"></Column>
 
+        <!-- Description Column with a "View" Button that navigates -->
+        <Column header="Description" style="width: 10%">
+          <template #body="slotProps">
+            <Button
+              label="View"
+              class="bg-blue-500 hover:bg-blue-600 text-white"
+              @click="viewInstances(slotProps.data)"
+            />
+          </template>
+        </Column>
+
+        <!-- Join Event Column with "View" Button that filters Events by board game name -->
+        <Column header="Join Event" style="width: 10%">
+          <template #body="slotProps">
+            <Button
+              label="View"
+              class="bg-green-500 hover:bg-green-600 text-white"
+              @click="joinEvent(slotProps.data)"
+            />
+          </template>
+        </Column>
+
+        <!-- Read Review -->
+        <Column header="Read Review" style="width: 10%">
+          <template #body="slotProps">
+            <Button
+              label="Read"
+              class="bg-blue-500 hover:bg-blue-600 text-white"
+              @click="readReview(slotProps.data)"
+            />
+          </template>
+        </Column>
+
+        <!-- Leave a Review -->
+        <Column header="Leave a Review" style="width: 10%">
+          <template #body="slotProps">
+            <Button
+              label="Review"
+              class="bg-yellow-500 hover:bg-yellow-600 text-white"
+              @click="leaveReview(slotProps.data)"
+            />
+          </template>
+        </Column>
+
+        <!-- Borrow a Game -->
+        <Column header="Borrow a Game" style="width: 10%">
+          <template #body="slotProps">
+            <Button
+              label="Borrow"
+              class="bg-purple-500 hover:bg-purple-600 text-white"
+              @click="borrowGame(slotProps.data)"
+            />
+          </template>
+        </Column>
+      </DataTable>
     </div>
-  </template>
-  
-  <script>
-import { ref, onMounted } from 'vue'
-import GameCard from '../components/GameCard.vue'
-import api from '../services/api'
-import Dialog from 'primevue/dialog'
-import InputText from 'primevue/inputtext'
+  </div>
+</template>
+
+<script>
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 import Button from 'primevue/button'
-import { useToast } from 'primevue/usetoast'
+import api from '../services/api'
 
 export default {
-  name: 'Games',
-  components: { GameCard, Dialog, InputText, Button },
-  setup() {
-    const toast = useToast()
-    const games = ref([])
-    const showRequestFormDialog = ref(false)
-    const selectedGame = ref({})
-    const borrowDate = ref('')
-    const returnDate = ref('')
-
-    const openRequestForm = (game) => {
-      selectedGame.value = game
-      showRequestFormDialog.value = true
-    }
-
-    const formatDate = (date) => {
-      const str = date.toString()
-      return `${str.slice(0, 4)}-${str.slice(4, 6)}-${str.slice(6, 8)}`
-    }
-
-    const createBorrowRequest = async () => {
-
-      try {
-        const user = JSON.parse(localStorage.getItem('user') || '{}')
-        const formattedBorrowDate = new Date(formatDate(borrowDate.value))
-        const formattedReturnDate = new Date(formatDate(returnDate.value))
-
-        const borrowRequest = {
-          userAccountId: user.userAccountId, // Replace with actual user ID
-          boardGameInstanceId: selectedGame.value.individualGameId,
-          requestDate: formattedBorrowDate,
-          returnDate: formattedReturnDate,
-        }
-
-        const response = await api.post('/borrowRequests', borrowRequest)
-        console.log('Borrow request created:', response.data)
-
-        // Show success message
-        toast.add({
-          severity: 'success',
-          summary: 'Request Created',
-          detail: 'Your borrow request has been submitted!',
-          life: 3000,
-        })
-
-        showRequestFormDialog.value = false
-      } catch (error) {
-        console.error('Failed to create borrow request:', error)
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to create borrow request.',
-          life: 3000,
-        })
-      }
-    }
-
-    onMounted(async () => {
-      try {
-        const response = await api.get('/boardgameinstances')
-        games.value = response.data
-      } catch (error) {
-        console.error('Failed to load games:', error)
-      }
-    })
-
+  name: 'BoardGames',
+  components: { DataTable, Column, Button },
+  data() {
     return {
-      games,
-      showRequestFormDialog,
-      selectedGame,
-      borrowDate,
-      returnDate,
-      openRequestForm,
-      createBorrowRequest,
+      boardGames: [],
     }
+  },
+  async created() {
+    try {
+      const response = await api.get('/boardgames')
+      this.boardGames = response.data
+    } catch (error) {
+      this.$toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to load board games.',
+        life: 3000,
+      })
+      console.error(error)
+    }
+  },
+  methods: {
+    // Navigates to the BoardGameInstances page (for the selected board game)
+    viewInstances(boardGame) {
+      this.$router.push({ name: 'BoardGameInstances', params: { boardGameId: boardGame.gameId } })
+    },
+    // Navigates to the Events page filtered by the board game's name
+    joinEvent(boardGame) {
+      // Passing the board game's name as a query parameter for filtering on the Events page.
+      this.$router.push({ name: 'Events', query: { boardGameName: boardGame.name } })
+    },
+    readReview(boardGame) {
+      alert(`Reading review for board game: ${boardGame.name}`)
+    },
+    leaveReview(boardGame) {
+      alert(`Leaving a review for board game: ${boardGame.name}`)
+    },
+    borrowGame(boardGame) {
+      this.$router.push({ name: 'BoardGameInstance', params: { boardGameId: boardGame.gameId } })
+    },
   },
 }
 </script>
+
+<style scoped>
+:deep(.p-datatable) {
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+}
+
+/* Style the header cells */
+:deep(.p-datatable-sm thead > tr > th) {
+  background-color: #10B981; /* Green matching bg-green-500 */
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem !important;
+}
+
+/* Style the body cells to match header text size */
+:deep(.p-datatable-sm tbody > tr > td) {
+  font-size: 0.75rem !important;
+}
+
+/* Make all PrimeVue buttons smaller */
+:deep(.p-button) {
+  font-size: 0.75rem !important;
+}
+
+</style>
