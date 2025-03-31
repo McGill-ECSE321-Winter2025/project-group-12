@@ -19,17 +19,18 @@
       </h2>
     </div>
 
-    <!-- DataTable for events with adjusted column widths -->
+    <!-- DataTable for events -->
     <DataTable :value="events" class="p-datatable-sm" responsiveLayout="scroll">
-      <!-- Game Name Column -->
-      <Column header="Game Name" style="width: 15%">
+      <!-- Game Name Column with Eye Icon -->
+      <Column header="Game Name" style="width: 20%">
         <template #body="slotProps">
           {{ boardGameInstanceDetails[slotProps.data.boardGameInstanceId]?.boardGameName || slotProps.data.boardGameInstanceId }}
+          <Button 
+            icon="pi pi-eye" 
+            class="p-button-icon-only p-button-text ml-2" 
+            @click="openEventDetails(slotProps.data)" />
         </template>
       </Column>
-
-      <!-- Description Column -->
-      <Column field="description" header="Description" style="width: 20%"></Column>
 
       <!-- Date Column -->
       <Column header="Date" style="width: 10%">
@@ -61,7 +62,7 @@
           <a :href="'mailto:' + (organizerDetails[slotProps.data.organizerId]?.email || '') +
                     '?subject=' + encodeURIComponent(
                       ('[Boardr Event] ' +
-                      boardGameInstanceDetails[slotProps.data.boardGameInstanceId]?.boardGameName || slotProps.data.boardGameInstanceId)
+                      (boardGameInstanceDetails[slotProps.data.boardGameInstanceId]?.boardGameName || slotProps.data.boardGameInstanceId))
                       + ' @ ' +
                       slotProps.data.location +
                       ' ' +
@@ -124,6 +125,14 @@
         <Button label="Confirm" class="bg-green-600 hover:bg-green-700" @click="registerForEvent" />
       </template>
     </Dialog>
+
+    <!-- New: Event Details Dialog -->
+    <Dialog v-model:visible="showEventDetailsDialog" header="Event Details" :style="{ width: '30rem' }">
+      <div class="p-4">
+        <h3 class="text-xl font-bold mb-2">{{ selectedEventDetails?.gameName }}</h3>
+        <p>{{ selectedEventDetails?.description }}</p>
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -145,7 +154,9 @@ export default {
       searchQuery: '',
       showCreateEventDialog: false,
       showRegisterConfirmDialog: false,
+      showEventDetailsDialog: false,   // New property for dialog visibility
       selectedEvent: null,
+      selectedEventDetails: null,      // New property for holding selected event details
       organizerDetails: {}, // Organizer info mapped by organizerId
       boardGameInstanceDetails: {}, // Mapped by boardGameInstanceId
       newEvent: {
@@ -326,6 +337,13 @@ export default {
           return instance && instance.boardGameName.toLowerCase().includes(query);
         });
       }
+    },
+    openEventDetails(eventData) {
+      this.selectedEventDetails = {
+        gameName: this.boardGameInstanceDetails[eventData.boardGameInstanceId]?.boardGameName || eventData.boardGameInstanceId,
+        description: eventData.description,
+      };
+      this.showEventDetailsDialog = true;
     },
   },
 }
