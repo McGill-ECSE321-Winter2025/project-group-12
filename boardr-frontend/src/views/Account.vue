@@ -69,8 +69,21 @@
         <DataTable :value="participatedEvents" class="p-datatable-sm">
           <Column field="eventId" header="Event ID" />
           <Column field="description" header="Description" />
-          <Column field="eventDate" header="Date" :body="row => formatDate(row.eventDate)" />
-          <Column field="eventTime" header="Time" :body="row => formatTime(row.eventTime)" />
+          <Column field="eventDate" header="Date">
+            <template #body="slotProps">
+              {{ formatDate(slotProps.data.eventDate) }}
+            </template>
+          </Column>
+          <Column header="Date" style="width: 15%">
+            <template #body="slotProps">
+              {{ formatDate(slotProps.data.eventDate) }}
+            </template>
+          </Column>
+          <Column header="Time" style="width: 10%">
+            <template #body="slotProps">
+              {{ formatTime(slotProps.data.eventTime) }}
+            </template>
+          </Column>
           <Column field="location" header="Location" />
           <Column header="View Details">
             <template #body>
@@ -86,8 +99,21 @@
         <DataTable :value="registeredEvents" class="p-datatable-sm">
           <Column field="eventId" header="Event ID" />
           <Column field="description" header="Description" />
-          <Column field="eventDate" header="Date" :body="row => formatDate(row.eventDate)" />
-          <Column field="eventTime" header="Time" :body="row => formatTime(row.eventTime)" />
+          <Column field="eventDate" header="Date">
+            <template #body="slotProps">
+              {{ formatDate(slotProps.data.eventDate) }}
+            </template>
+          </Column>
+          <Column header="Date" style="width: 15%">
+            <template #body="slotProps">
+              {{ formatDate(slotProps.data.eventDate) }}
+            </template>
+          </Column>
+          <Column header="Time" style="width: 10%">
+            <template #body="slotProps">
+              {{ formatTime(slotProps.data.eventTime) }}
+            </template>
+          </Column>
           <Column field="location" header="Location" />
           <Column header="View Details">
             <template #body>
@@ -192,12 +218,18 @@
         }).filter(Boolean) // Remove any undefined events
       },
       formatDate(date) {
-        const str = date.toString()
-        return `${str.slice(0, 4)}-${str.slice(4, 6)}-${str.slice(6, 8)}`
+        const dateStr = String(date);
+        if (dateStr.length === 8) {
+          return `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`;
+        }
+        return date;
       },
       formatTime(time) {
-        const str = time.toString().padStart(4, '0')
-        return `${str.slice(0, 2)}:${str.slice(2)}`
+        const timeStr = String(time).padStart(4, '0');
+        if (timeStr.length === 4) {
+          return `${timeStr.slice(0, 2)}:${timeStr.slice(2, 4)}`;
+        }
+        return time;
       },
       async addGame() {
         try {
