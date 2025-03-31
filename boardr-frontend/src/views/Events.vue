@@ -59,7 +59,16 @@
       <Column header="Organizer Email" style="width: 15%">
         <template #body="slotProps">
           <a :href="'mailto:' + (organizerDetails[slotProps.data.organizerId]?.email || '') +
-                    '?subject=' + encodeURIComponent(slotProps.data.description)">
+                    '?subject=' + encodeURIComponent(
+                      ('[Boardr Event] ' +
+                      boardGameInstanceDetails[slotProps.data.boardGameInstanceId]?.boardGameName || slotProps.data.boardGameInstanceId)
+                      + ' @ ' +
+                      slotProps.data.location +
+                      ' ' +
+                      formatDate(slotProps.data.eventDate) +
+                      ' ' +
+                      formatTime(slotProps.data.eventTime)
+                    )">
             {{ organizerDetails[slotProps.data.organizerId]?.email || 'N/A' }}
           </a>
         </template>
