@@ -147,7 +147,7 @@ export default {
       showRegisterConfirmDialog: false,
       selectedEvent: null,
       organizerDetails: {}, // Organizer info mapped by organizerId
-      boardGameInstanceDetails: {}, // New: mapped by boardGameInstanceId
+      boardGameInstanceDetails: {}, // Mapped by boardGameInstanceId
       newEvent: {
         description: '',
         eventDate: '',
@@ -160,19 +160,23 @@ export default {
   },
   async created() {
     try {
-      const eventsResponse = await api.get('/events')
-      this.events = eventsResponse.data
-      this.originalEvents = eventsResponse.data
-      this.fetchOrganizerDetails()
-      this.fetchBoardGameInstanceDetails() // Fetch game instance details for events
+      // Fetch events from the backend
+      const eventsResponse = await api.get('/events');
+      // Filter out past events without deleting them from the system
+      const allEvents = eventsResponse.data;
+      const futureEvents = this.filterFutureEvents(allEvents);
+      this.events = futureEvents;
+      this.originalEvents = futureEvents;
+      this.fetchOrganizerDetails();
+      this.fetchBoardGameInstanceDetails();
     } catch (error) {
       this.$toast.add({
         severity: 'error',
         summary: 'Error',
         detail: 'Failed to load events.',
         life: 3000,
-      })
-      console.error(error)
+      });
+      console.error(error);
     }
   },
   methods: {
@@ -189,6 +193,18 @@ export default {
         return `${timeStr.slice(0, 2)}:${timeStr.slice(2, 4)}`;
       }
       return time;
+    },
+    // Filters events so that only events with a date/time not in the past are kept
+    filterFutureEvents(events) {
+      const now = new Date();
+      return events.filter(event => {
+        const dateStr = String(event.eventDate).padStart(8, '0');
+        const timeStr = String(event.eventTime).padStart(4, '0');
+        const dateFormatted = `${dateStr.slice(0, 4)}-${dateStr.slice(4,6)}-${dateStr.slice(6,8)}`;
+        const timeFormatted = `${timeStr.slice(0, 2)}:${timeStr.slice(2,4)}:00`;
+        const eventDateTime = new Date(`${dateFormatted}T${timeFormatted}`);
+        return eventDateTime >= now;
+      });
     },
     async fetchOrganizerDetails() {
       const organizerIds = [...new Set(this.events.map(event => event.organizerId))];
@@ -207,7 +223,6 @@ export default {
       }
     },
     async fetchBoardGameInstanceDetails() {
-      // Extract unique boardGameInstanceIds from events
       const instanceIds = [...new Set(this.events
                                         .map(event => event.boardGameInstanceId)
                                         .filter(id => id !== null))];
@@ -216,7 +231,6 @@ export default {
         const responses = await Promise.all(promises);
         responses.forEach(response => {
           const instanceData = response.data;
-          // Map using the boardGameInstanceId or individualGameId as provided by the API
           this.boardGameInstanceDetails[instanceData.individualGameId] = instanceData;
         });
       } catch (error) {
@@ -250,19 +264,21 @@ export default {
           maxParticipants: 1,
           boardGameInstanceId: null,
         }
-        const response = await api.get('/events')
-        this.events = response.data
-        this.originalEvents = response.data
-        this.fetchOrganizerDetails()
-        this.fetchBoardGameInstanceDetails() // Refresh game instance details as well
+        const response = await api.get('/events');
+        // After fetching, filter out past events again
+        const futureEvents = this.filterFutureEvents(response.data);
+        this.events = futureEvents;
+        this.originalEvents = futureEvents;
+        this.fetchOrganizerDetails();
+        this.fetchBoardGameInstanceDetails();
       } catch (error) {
         this.$toast.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Failed to create event.',
           life: 3000,
-        })
-        console.error(error)
+        });
+        console.error(error);
       }
     },
     openRegisterDialog(event) {
@@ -285,7 +301,7 @@ export default {
           severity: 'success',
           summary: 'Registered',
           detail: 'You have been registered for the event!',
-          life:3000,
+          life: 3000,
         })
       } catch (error) {
         console.error('Registration error:', error.response?.data)
@@ -302,10 +318,10 @@ export default {
     },
     searchEvents() {
       if (!this.searchQuery.trim()) {
-        this.events = this.originalEvents
+        this.events = this.filterFutureEvents(this.originalEvents)
       } else {
         const query = this.searchQuery.toLowerCase();
-        this.events = this.originalEvents.filter(event => {
+        this.events = this.filterFutureEvents(this.originalEvents).filter(event => {
           const instance = this.boardGameInstanceDetails[event.boardGameInstanceId];
           return instance && instance.boardGameName.toLowerCase().includes(query);
         });
