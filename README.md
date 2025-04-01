@@ -16,22 +16,47 @@ The app supports two types of accounts:
 - **Event Registration**: Users can register for events if slots are available.
 - **Game Browsing**: All users can browse a list of available board games, see reviews, and check ownership details.
 
+## Requirements and Dependencies
+1. Java version 17 (or the version your project uses)
+2. Gradle
+3. PostgreSQL
+4. Node.js
+
 ## Running the Application Locally
-1. Ensure you have Java 17 (or the version your project uses) and Gradle installed.
+1. Ensure that the above requirements are met and installed properly on your system.
 2. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/McGill-ECSE321-Winter2025/project-group-12.git
    cd boardr-backend
+3. Create a file named `.env` under `/boardr-backend`
+4. Paste the following:
+   ```bash
+   DB_USERNAME=postgres
+   DB_PASSWORD=boardr
+
 3. Build the project:
    ```bash
    ./gradlew build
-4. Run the project
+4. Run the project:
    ```bash
-   ./gradlew bootrun
-5. The application will be deployed to http://localhost:8080/
+   ./gradlew bootRun
+5. The backend application will be deployed to http://localhost:8080/
 6. If you wish to only run integration tests, use the following:
    ```bash
    ./gradlew integrationTest
+7. Go to the frontend directory:
+   ```bash
+    cd ../boardr-frontend/
+8. Start the frontend locally:
+   ```bash
+   npm install
+   npm run dev
+
+9. The frontend application will be deployed to http://localhost:5173/
+
+> [!WARNING]
+> Boardr uses ports 5432 (Postgres), 8080 (Backend) and 5173 (Frontend). Other ports will be used if several instances of the project exist. Make sure to kill these instances beforehand to avoid conflicting ports. 
+  
 
 ## Database Configuration
 
