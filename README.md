@@ -77,13 +77,13 @@ spring.datasource.password = <your-password>
 
 | Name                                              | Role                           | Deliverable 1 Effort (hours) | Deliverable 2 Effort (hours) | Deliverable 3 Effort (hours) | Total Effort (hours) |
 |---------------------------------------------------|--------------------------------|------------------------------|------------------------------|------------------------------|----------------------|
-| Kyujin [@3MinCurry](https://github.com/3MinCurry) | QA Tester                      | 8                          | 12                           | TBD                          | TBD                  |
-| Jun Ho [@Junho332](https://github.com/Junho322)   | QA Tester                      | 8                          | 12                           | TBD                          | TBD                  |
-| David Vo [@Kasamix](https://github.com/Kasamix)   | Project Manager                | 8                          | 12                           | TBD                          | TBD                  |
-| David Zhou [@Rampex1](https://github.com/Rampex1) | Software Developer             | 8                          | 12                           | TBD                          | TBD                  |
-| Eric [@Lawnless1](https://github.com/Lawnless1)   | Software Developer             | 8                          | 12                           | TBD                          | TBD                  |
-| Jione [@Ji-One1](https://github.com/Ji-One1)      | Software Architect             | 8                          | 12                           | TBD                          | TBD                  |
-| Yoon [@Yoonicornn](https://github.com/Yoonicornn) | QA Developer                   | 8                          | 12                           | TBD                          | TBD                  |
+| Kyujin Chu [@3MinCurry](https://github.com/3MinCurry) | QA Tester                      | 8                          | 12                           | 8                          | 28                  |
+| Jun Ho Oh [@Junho332](https://github.com/Junho322)   | QA Tester                      | 8                          | 12                           | 8                          | 28                  |
+| David Vo [@Kasamix](https://github.com/Kasamix)   | Project Manager                | 8                          | 12                           | 8                          | 28                  |
+| David Zhou [@Rampex1](https://github.com/Rampex1) | Software Developer             | 8                          | 12                           | 8                          | 28                  |
+| Eric Deng [@Lawnless1](https://github.com/Lawnless1)   | Software Developer             | 8                          | 12                           | 8                          | 28                  |
+| Jione Ban [@Ji-One1](https://github.com/Ji-One1)      | Software Architect             | 8                          | 12                           | 8                          | 28                  |
+| Yoonjung Choi [@Yoonicornn](https://github.com/Yoonicornn) | QA Developer                   | 8                          | 12                           | 8                          | 28                  |
 
 ## Deliverables
 
@@ -116,13 +116,35 @@ spring.datasource.password = <your-password>
 - **Project Management**:
   - REST APIs: David Vo
   - Software QA Plan and Report: Yoon, Kyujin
-  - ReadMe: David Vo, David Zhou
+  - README.md: David Vo, David Zhou
   - Javadoc: Eric, Jione
   - Meeting Minutes: Jun Ho
   - Project Report: Kyujin
 
-### Deliverable 3: TBD
-- **Scope**: TBD
-- **Effort**: TBD
-
-
+### Deliverable 3: Web Frontend Implementation, Integration with Backend Services, Build System and CI Specification, and Project Management
+- **[Project Deliverable 3: Report](https://github.com/McGill-ECSE321-Winter2025/project-group-12/wiki/Deliverable-3-Report)**
+- **Web Frontend Implementation**: Yoon, Kyujin, David Zhou, David Vo
+  - Frontend UI/UX Design: David Zhou
+  - Initial Setup of Frontend Implementation: David Vo
+  - Browse Available Board Games Page: Kyujin
+  - Borrow a Board Game Page: Kyujin
+  - Browse Available Events Page: Yoon
+  - Personal Profile Page: David Zhou
+  - Borrowing History Page: Yoon
+- **Integration with Backend Services**: David Zhou, David Vo, Eric, Jione, Jun Ho
+  - Reviews Modal: Jione
+  - Write a Review Modal: Jione
+  - Request Form Modal: Eric
+  - Add Event Modal: Eric
+  - Requests Modal: Jun Ho
+  - Event Details Modal: Jun Ho
+  - Login/ Sign Up Modal: David Vo
+  - Registration Modal: David Zhou
+  - Add Board Game Modal: David Zhou
+- **Build System and CI Specification**: David Vo
+  - Backend & Frontend Build Documentation: David Vo
+- **Project Management**: Yoon, David Vo, David Zhou
+  - README.md: Yoon, David Vo
+  - Meeting Minutes: Yoon
+  - Project Report: Yoon
+  - Project Board Management: David Zhou, Yoon
