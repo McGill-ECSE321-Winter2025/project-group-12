@@ -183,7 +183,7 @@ export default {
           this.$toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Failed to add game.',
+            detail: 'Failed to add review.',
             life: 3000,
           })
           console.error(error)
