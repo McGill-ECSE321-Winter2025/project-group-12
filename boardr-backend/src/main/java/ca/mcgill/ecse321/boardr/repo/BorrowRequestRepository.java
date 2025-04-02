@@ -30,9 +30,7 @@ public interface BorrowRequestRepository extends CrudRepository<BorrowRequest, I
        "AND br.userAccount.userAccountId = :borrowerId")
        List<BorrowRequest> findAcceptedBorrowRequestsByBorrower(@Param("borrowerId") int borrowerId);
        
-
-    // New method to find borrow requests by BoardGameInstance ID
-    //List<BorrowRequest> findByBoardGameInstanceId(int boardGameInstanceId);
-
+       @Query("SELECT br FROM BorrowRequest br WHERE br.boardGameInstance.individualGameId = :boardGameInstanceId")
+       List<BorrowRequest> findByBoardGameInstanceId(@Param("boardGameInstanceId") int boardGameInstanceId);
 
 }

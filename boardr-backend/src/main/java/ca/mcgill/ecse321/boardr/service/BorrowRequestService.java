@@ -87,8 +87,8 @@ public class BorrowRequestService {
         return borrowRequestRepo.findAcceptedBorrowRequestsByBorrower(borrowerId);
     }
 
-    // @Transactional(readOnly = true)
-    // public List<BorrowRequest> getBorrowRequestsByBoardGameInstance(int boardGameInstanceId) {
-    //     return borrowRequestRepo.findByBoardGameInstanceId(boardGameInstanceId);
-    // }
+    @Transactional(readOnly = true)
+    public List<BorrowRequest> getBorrowRequestsByBoardGameInstance(int boardGameInstanceId) {
+        return borrowRequestRepo.findByBoardGameInstanceId(boardGameInstanceId);
+    }
 }
