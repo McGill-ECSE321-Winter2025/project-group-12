@@ -130,12 +130,11 @@
             <label for="gameName" class="block text-sm font-medium">Game Name</label>
             <Dropdown
               id="gameName"
-              v-model="newGame.name"
+              v-model="selectedGame"
               :options="boardGames"
               optionLabel="name"
-              placeholder="Select or enter a game"
+              placeholder="Select a game"
               class="w-full"
-              :editable="true"
               :filter="true"
             />
           </div>
@@ -231,39 +230,38 @@
         }
         return time;
       },
+      
       async addGame() {
         try {
-          let boardGameId
-          
-          // Check if the selected name exists in boardGames
-          const existingGame = this.boardGames.find(game => game.name === this.newGame.name)
-          
-          if (existingGame) {
-            // Use existing board game
-            boardGameId = existingGame.gameId
-          } else {
-            // Create new board game
-            const boardGame = { name: this.newGame.name, description: 'User-added game' }
-            const boardGameRes = await api.post('/boardgames', boardGame)
-            boardGameId = boardGameRes.data.gameId
+          // Check if a game is selected
+          if (!this.selectedGame) {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Please select a game from the dropdown.',
+              life: 3000,
+            })
+            return
           }
 
           const instance = {
             condition: this.newGame.condition,
-            boardGameId: boardGameId,
+            boardGameId: this.selectedGame.gameId, // Use the ID directly from the selected object
             gameOwnerId: this.user.gameOwnerRoleId,
           }
+          
           await api.post('/boardgameinstances', instance)
+          
           this.$toast.add({
             severity: 'success',
             summary: 'Game Added',
             detail: `${this.newGame.name} added to your collection!`,
             life: 3000,
           })
+          
           this.showAddGameDialog = false
           this.newGame = { name: '', condition: '' }
           this.loadUserData() // Refresh owned games
-          this.loadBoardGames() // Refresh board games list
         } catch (error) {
           this.$toast.add({
             severity: 'error',
