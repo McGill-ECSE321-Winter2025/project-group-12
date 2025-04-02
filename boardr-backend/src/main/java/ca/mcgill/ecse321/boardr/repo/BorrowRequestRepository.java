@@ -14,9 +14,6 @@ public interface BorrowRequestRepository extends CrudRepository<BorrowRequest, I
     public BorrowRequest findByBorrowRequestId(int id);
 
 
-    // New method to find borrow requests by BoardGameInstance ID
-    List<BorrowRequest> findByBoardGameInstanceId(int boardGameInstanceId);
-
     @Query("SELECT br.boardGameInstance " +
            "FROM BorrowRequest br " +
            "WHERE br.status = ca.mcgill.ecse321.boardr.model.BorrowRequest.RequestStatus.Accepted " +
@@ -32,6 +29,10 @@ public interface BorrowRequestRepository extends CrudRepository<BorrowRequest, I
        "WHERE br.status = ca.mcgill.ecse321.boardr.model.BorrowRequest.RequestStatus.Accepted " +
        "AND br.userAccount.userAccountId = :borrowerId")
        List<BorrowRequest> findAcceptedBorrowRequestsByBorrower(@Param("borrowerId") int borrowerId);
+       
+
+    // New method to find borrow requests by BoardGameInstance ID
+    //List<BorrowRequest> findByBoardGameInstanceId(int boardGameInstanceId);
 
 
 }
