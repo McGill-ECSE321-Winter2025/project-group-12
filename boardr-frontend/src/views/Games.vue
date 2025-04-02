@@ -85,6 +85,31 @@
           </template>
         </Column>
       </DataTable>
+      
+       <!-- Create Review Dialog -->
+      <Dialog v-model:visible="showCreateReviewDialog" header="Add a Review" :style="{ width: '30rem' }">
+        <div class="space-y-4">
+          <div>
+            <label for="rating" class="block text-sm font-medium">Rating</label>
+            <Dropdown
+              id="rating"
+              v-model="newReview.rating"
+              :options="ratingOptions"
+              placeholder="Select a rating"
+              class="w-full"
+            />
+          </div>
+          <div>
+            <label for="comments" class="block text-sm font-medium">Comments</label>
+            <InputText id="comments" v-model="newReview.comments" class="w-full" />
+          </div>
+        </div>
+        <template #footer>
+          <Button label="Cancel" class="p-button-text" @click="showCreateReviewDialog = false" />
+          <Button label="Add" class="bg-blue-600 hover:bg-blue-700" @click="createReview" />
+        </template>
+      </Dialog>
+
     </div>
 
     <!-- Create Game Dialog -->
@@ -113,18 +138,22 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
+import Dialog from 'primevue/dialog';
+import Dropdown from 'primevue/dropdown';
+import InputText from 'primevue/inputtext';
 import api from '../services/api'
-import Dialog from 'primevue/dialog'
-import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 
 export default {
   name: 'BoardGames',
-  components: { DataTable, Column, Button, Dialog, InputText, Textarea },
+  components: { DataTable, Column, Button, Dialog, InputText, Textarea, Dropdown },
   data() {
     return {
       boardGames: [],
       showCreateGameDialog: false,
+      ratingOptions: [1, 2, 3, 4, 5],
+      newReview: {userId: null, boardGameId: null, name: "", rating: null, comments: '' },
+      showCreateReviewDialog: false,
       newGame: {
         name: '',
         description: ''
@@ -159,8 +188,43 @@ export default {
       alert(`Reading review for board game: ${boardGame.name}`)
     },
     leaveReview(boardGame) {
-      alert(`Leaving a review for board game: ${boardGame.name}`)
+      this.newReview.boardGameId = boardGame.gameId
+      this.newReview.name = boardGame.name
+      this.showCreateReviewDialog = true
     },
+    async createReview() {
+      const user = JSON.parse(localStorage.getItem('user') || '{}')
+      if (!user.userAccountId) {
+        this.$router.push('/login')
+        return
+      }
+      try {
+          const instance = {
+            boardGameId: this.newReview.boardGameId,
+            userAccountId: user.userAccountId,
+            rating: this.newReview.rating,
+            comment: this.newReview.comments,
+          }
+          await api.post('/reviews', instance)
+          this.$toast.add({
+            severity: 'success',
+            summary: 'Review Created',
+            detail: `Your review of ${this.newReview.name} has been added!`,
+            life: 3000,
+          })
+          this.showCreateReviewDialog = false
+          this.newReview = {userId: null, boardGameId: null, name: "", rating: null, comments: '' }
+        } catch (error) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to add game.',
+            life: 3000,
+          })
+          console.error(error)
+
+        }
+      },
     borrowGame(boardGame) {
       this.$router.push({ name: 'BoardGameInstance', params: { boardGameId: boardGame.gameId } })
     },
