@@ -14,7 +14,7 @@
             </td>
             <td style="padding-right: 24px;">
               <Button
-                label="Add Game"
+                label="Add Game Instance"
                 icon="pi pi-plus"
                 class="bg-blue-600 hover:bg-blue-700"
                 @click="showAddGameDialog = true"
@@ -45,10 +45,10 @@
   
       <!-- Owned Games (Game Owners Only) -->
       <div v-if="isGameOwner && user?.gameOwnerRoleId" class="mb-6">
-        <h2 class="text-2xl font-semibold mb-4">My Games</h2>
+        <h2 class="text-2xl font-semibold mb-4">My Game Instances</h2>
         <DataTable :value="ownedGames" class="p-datatable-sm">
-          <Column field="individualGameId" header="Game ID" />
-          <Column field="boardGameName" header="Name" />
+          <Column field="individualGameId" header="Game Instance ID" />
+          <Column field="boardGameName" header="Title" />
           <Column field="condition" header="Condition" />
           <Column field="available" header="Status">
             <template #body="slotProps">
@@ -124,16 +124,16 @@
       </div>
   
       <!-- Add Game Dialog -->
-      <Dialog v-model:visible="showAddGameDialog" header="Add a Game" :style="{ width: '30rem' }">
+      <Dialog v-model:visible="showAddGameDialog" header="Add a Game Instance" :style="{ width: '30rem' }">
         <div class="space-y-4">
           <div>
-            <label for="gameName" class="block text-sm font-medium">Game Name</label>
+            <label for="gameName" class="block text-sm font-medium">Game Title</label>
             <Dropdown
               id="gameName"
               v-model="selectedGame"
               :options="boardGames"
               optionLabel="name"
-              placeholder="Select a game"
+              placeholder="Select a title"
               class="w-full"
               :filter="true"
             />
