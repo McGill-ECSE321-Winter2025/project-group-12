@@ -208,7 +208,7 @@ export default {
       newGame: {
         name: '',
         description: ''
-      }
+      }, 
       showReviewDialog: false,
       reviews: [],
       loadingReviews: false,
