@@ -146,6 +146,7 @@ import Textarea from 'primevue/textarea'
 
 export default {
   name: 'BoardGames',
+
   components: { DataTable, Column, Button, Dialog, InputText, Textarea, Dropdown },
   data() {
     return {
