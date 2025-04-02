@@ -13,7 +13,7 @@
     <!-- Search Bar -->
     <div class="mb-4 flex items-center">
       <h2>
-        <InputText v-model="searchQuery" placeholder="Search by board game" class="w-3/4" />
+        <InputText v-model="searchQuery" placeholder="Search by board game" />
         <Button label="Search" class="ml-2" @click="searchEvents" />
         <Button label="Reset" class="ml-2" @click="searchQuery = ''; searchEvents()" />
       </h2>
@@ -21,12 +21,12 @@
 
     <!-- DataTable for events -->
     <DataTable :value="events" class="p-datatable-sm" responsiveLayout="scroll">
-      <!-- Game Name Column with Eye Icon -->
+      <!-- Game Name Column with Information Icon -->
       <Column header="Game Name" style="width: 20%">
         <template #body="slotProps">
           {{ boardGameInstanceDetails[slotProps.data.boardGameInstanceId]?.boardGameName || slotProps.data.boardGameInstanceId }}
           <Button 
-            icon="pi pi-eye" 
+            icon="pi pi-info-circle"
             class="p-button-icon-only p-button-text ml-2" 
             @click="openEventDetails(slotProps.data)" />
         </template>
