@@ -73,7 +73,7 @@ public class RegistrationServiceTest {
         mockEvent = mock(Event.class);
         when(mockEvent.getEventId()).thenReturn(1);
         when(mockEvent.getmaxParticipants()).thenReturn(8);
-        when(mockEvent.getEventDate()).thenReturn(20250325); // Future date: 2025-03-25
+        when(mockEvent.getEventDate()).thenReturn(20300325); // Future date: 2030-03-25
 
         // Set up registration key
         mockRegistrationKey = mock(Registration.RegistrationKey.class);
@@ -330,7 +330,7 @@ public class RegistrationServiceTest {
     @Test
     public void testUpdateRegistration_Success() {
         // Updating registration success
-        Date newDate = Date.valueOf(LocalDate.of(2025, 3, 20));
+        Date newDate = Date.valueOf(LocalDate.of(2030, 3, 20));
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));
@@ -371,7 +371,7 @@ public class RegistrationServiceTest {
     @Test
     public void testUpdateRegistration_DateAfterEvent() {
         // Cannot update registration if event is passed
-        Date newDate = Date.valueOf(LocalDate.of(2025, 3, 26)); // After event date 2025-03-25
+        Date newDate = Date.valueOf(LocalDate.of(2030, 3, 26)); // After event date 2030-03-25
         when(userAccountRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(eventRepository.findById(1)).thenReturn(Optional.of(mockEvent));
         when(registrationRepository.findById(any(Registration.RegistrationKey.class))).thenReturn(Optional.of(mockRegistration));

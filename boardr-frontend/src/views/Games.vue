@@ -4,6 +4,15 @@
       Browse Available
       <span style="color: #10B981;"> Board Games</span>
     </h1>
+    <Button
+        label="Add Game"
+        icon="pi pi-plus"
+        class="mb-6 bg-blue-600 hover:bg-blue-700"
+        @click="showCreateGameDialog = true"
+    />
+    <div>
+      <br>
+    </div>
     <!-- Outer container with rounded edges -->
     <div class="rounded-3xl overflow-hidden border border-gray-300">
       <DataTable
@@ -102,6 +111,26 @@
       </Dialog>
 
     </div>
+
+    <!-- Create Game Dialog -->
+    <Dialog v-model:visible="showCreateGameDialog" header="Add New Board Game" :style="{ width: '30rem' }">
+      <div class="space-y-4">
+        <div>
+          <label for="name" class="block text-sm font-medium">Game Name</label>
+          <InputText id="name" v-model="newGame.name" class="w-full" />
+        </div>
+        <div>
+          <label for="description" class="block text-sm font-medium">Description</label>
+          <InputText id="description" v-model="newGame.description" class="w-full" />
+        </div>
+      </div>
+      <template #footer>
+        <Button label="Cancel" class="p-button-text" @click="showCreateGameDialog = false" />
+        <Button label="Add Game" class="bg-blue-600 hover:bg-blue-700" @click="createGame" />
+      </template>
+    </Dialog>
+    
+    
   </div>
 </template>
 
@@ -113,16 +142,23 @@ import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import api from '../services/api'
+import Textarea from 'primevue/textarea'
 
 export default {
   name: 'BoardGames',
-  components: { DataTable, Column, Button, Dialog, Dropdown, InputText},
+
+  components: { DataTable, Column, Button, Dialog, InputText, Textarea, Dropdown },
   data() {
     return {
       boardGames: [],
+      showCreateGameDialog: false,
       ratingOptions: [1, 2, 3, 4, 5],
       newReview: {userId: null, boardGameId: null, name: "", rating: null, comments: '' },
       showCreateReviewDialog: false,
+      newGame: {
+        name: '',
+        description: ''
+      }
     }
   },
   async created() {
@@ -193,6 +229,64 @@ export default {
     borrowGame(boardGame) {
       this.$router.push({ name: 'BoardGameInstance', params: { boardGameId: boardGame.gameId } })
     },
+
+    async createGame() {
+      // Check if user is logged in
+      const user = JSON.parse(localStorage.getItem('user') || '{}')
+      if (!user.userAccountId) {
+        this.$router.push('/login')
+        return
+      }
+
+      try {
+        // Validate input fields
+        if (!this.newGame.name || !this.newGame.description) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Validation Error',
+            detail: 'Name and description are required',
+            life: 3000,
+          })
+          return
+        }
+
+        // Create game data object matching the expected DTO
+        const gameData = {
+          name: this.newGame.name.trim(),
+          description: this.newGame.description.trim()
+        }
+
+        // POST request to create the board game
+        await api.post('/boardgames', gameData)
+        
+        // Success message
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Board game added successfully!',
+          life: 3000,
+        })
+        
+        // Reset form and close dialog
+        this.showCreateGameDialog = false
+        this.newGame = {
+          name: '',
+          description: ''
+        }
+        
+        // Refresh the board games list
+        const response = await api.get('/boardgames')
+        this.boardGames = response.data
+      } catch (error) {
+        console.error('Error creating board game:', error)
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.response?.data?.errors?.[0] || 'Failed to add board game.',
+          life: 3000,
+        })
+      }
+    }
   },
 }
 </script>
