@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -47,16 +48,23 @@ public class BoardGameService {
     // 3.Create a new board game - Creation DTO then response DTO for output
     @Transactional
     public BoardGameResponseDTO createBoardGame(@Valid BoardGameCreationDTO dto) {
-        // Additional manual validation (for empty or blank values)
+        // Additional manual validations
         if (dto.getName() == null || dto.getName().trim().isEmpty()) {
             throw new BoardrException(HttpStatus.BAD_REQUEST, "Board game name cannot be empty");
         }
-
         if (dto.getDescription() == null || dto.getDescription().trim().isEmpty()) {
             throw new BoardrException(HttpStatus.BAD_REQUEST, "Board game description cannot be empty");
         }
 
-        BoardGame boardGame = boardGameRepository.save(new BoardGame(dto.getName(), dto.getDescription()));
+        String trimmedName = dto.getName().trim();
+        Optional<BoardGame> optionalBoardGame = boardGameRepository.findByName(trimmedName);
+        if (optionalBoardGame.isPresent()) {
+            // Throwing an error causes the frontend to display a failed popup.
+            throw new BoardrException(HttpStatus.BAD_REQUEST, "A board game with the same name already exists");
+        }
+        
+        BoardGame boardGame = new BoardGame(trimmedName, dto.getDescription().trim());
+        boardGame = boardGameRepository.save(boardGame);
         return new BoardGameResponseDTO(boardGame);
     }
 
