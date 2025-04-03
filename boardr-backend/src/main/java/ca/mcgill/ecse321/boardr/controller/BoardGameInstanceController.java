@@ -61,4 +61,11 @@ public class BoardGameInstanceController {
     public List<BoardGameInstanceDTO> getInstancesByBoardGameId(@PathVariable int boardGameId) {
         return boardGameInstanceService.getBoardGameInstancesByBoardGameId(boardGameId);
     }
+
+    @PutMapping("/boardgameinstances/{id}/condition")
+@ResponseStatus(HttpStatus.OK)
+public BoardGameInstanceResponseDTO updateBoardGameInstanceCondition(@PathVariable int id, @RequestBody BoardGameInstanceUpdateDTO dto) {
+    return boardGameInstanceService.updateBoardGameInstanceCondition(id, dto);
+}
+
 }
