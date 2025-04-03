@@ -240,7 +240,10 @@ export default {
     // Navigates to the Events page filtered by the board game's name
     joinEvent(boardGame) {
       // Passing the board game's name as a query parameter for filtering on the Events page.
-      this.$router.push({ name: 'Events', query: { boardGameName: boardGame.name } })
+      this.$router.push({ 
+  name: 'Events', 
+  query: { boardGameName: boardGame.name } 
+});
     },
     readReview(boardGame) {
       this.fetchReviews(boardGame.gameId)
