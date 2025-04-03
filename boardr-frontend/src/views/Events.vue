@@ -179,7 +179,12 @@ export default {
       this.events = futureEvents;
       this.originalEvents = futureEvents;
       this.fetchOrganizerDetails();
-      this.fetchBoardGameInstanceDetails();
+      await this.fetchBoardGameInstanceDetails();
+
+        if (this.$route.query.boardGameName) {
+      this.searchQuery = this.$route.query.boardGameName;
+      this.searchEvents();
+    }
     } catch (error) {
       this.$toast.add({
         severity: 'error',
@@ -281,7 +286,13 @@ export default {
         this.events = futureEvents;
         this.originalEvents = futureEvents;
         this.fetchOrganizerDetails();
-        this.fetchBoardGameInstanceDetails();
+        //
+        await this.fetchBoardGameInstanceDetails();
+
+        if (this.$route.query.boardGameName) {
+      this.searchQuery = this.$route.query.boardGameName;
+      this.searchEvents();
+    }
       } catch (error) {
         this.$toast.add({
           severity: 'error',
