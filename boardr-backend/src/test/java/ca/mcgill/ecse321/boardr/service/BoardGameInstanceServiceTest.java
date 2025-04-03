@@ -69,7 +69,7 @@ public class BoardGameInstanceServiceTest {
         when(mockGameOwner.getId()).thenReturn(1); 
 
         mockInstance = mock(BoardGameInstance.class);
-        when(mockInstance.getindividualGameId()).thenReturn(1); 
+        when(mockInstance.getIndividualGameId()).thenReturn(1); 
         when(mockInstance.getBoardGame()).thenReturn(mockBoardGame); 
         when(mockInstance.getGameOwner()).thenReturn(mockGameOwner); 
         when(mockInstance.getCondition()).thenReturn("New"); 

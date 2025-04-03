@@ -25,6 +25,14 @@ public class BoardGameInstance {
     @JoinColumn(name = "board_game_id")
     private BoardGame boardGame; 
 
+    // @ManyToOne 
+    // @JoinColumn(name = "game_owner_id")  // Check actual column name in DB
+    // private GameOwner gameOwner;
+
+    // @ManyToOne
+    // @JoinColumn(name = "board_game_id")  // Verify this matches DB
+    // private BoardGame boardGame;
+
     BoardGameInstance() {}
 
     public BoardGameInstance(BoardGame boardGame, GameOwner gameOwner, String condition) {
@@ -34,7 +42,7 @@ public class BoardGameInstance {
         this.isAvailable = true;
     }
 
-    public int getindividualGameId() {
+    public int getIndividualGameId() {
         return individualGameId;
     }
 

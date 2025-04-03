@@ -143,7 +143,7 @@ public class BorrowRequestRepositoryTests {
         // Verify references to BoardGameInstance and UserAccount
         assertNotNull(retrieved.getBoardGameInstance(), "BoardGameInstance reference should not be null");
         assertNotNull(retrieved.getUserAccount(), "UserAccount (borrower) reference should not be null");
-        assertEquals(boardGameInstance.getindividualGameId(), retrieved.getBoardGameInstance().getindividualGameId(), "BoardGameInstance IDs should match");
+        assertEquals(boardGameInstance.getIndividualGameId(), retrieved.getBoardGameInstance().getIndividualGameId(), "BoardGameInstance IDs should match");
         assertEquals(borrower.getUserAccountId(), retrieved.getUserAccount().getUserAccountId(), "Borrower IDs should match");
     }
 

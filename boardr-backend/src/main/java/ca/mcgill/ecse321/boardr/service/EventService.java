@@ -54,7 +54,7 @@ public class EventService {
         Integer gameOwnerRoleId = user.getGameOwnerRoleId(); // Could be null if no GameOwner role
         boolean isGameOwner = gameOwnerRoleId != null && gameInstance.getGameOwner().getId() == gameOwnerRoleId;
         boolean isBorrower = borrowRequestService.getAllBorrowRequests().stream()
-                .anyMatch(br -> br.getBoardGameInstance().getindividualGameId() == gameInstance.getindividualGameId() &&
+                .anyMatch(br -> br.getBoardGameInstance().getIndividualGameId() == gameInstance.getIndividualGameId() &&
                                 br.getUserAccount().getUserAccountId() == userId &&
                                 br.getRequestStatus() == BorrowRequest.RequestStatus.Accepted);
 
@@ -65,7 +65,7 @@ public class EventService {
                 throw new IllegalArgumentException("Organizer must be the owner of the board game instance.");
             }
             if (borrowRequestService.getAllBorrowRequests().stream()
-                    .noneMatch(br -> br.getBoardGameInstance().getindividualGameId() == gameInstance.getindividualGameId())) {
+                    .noneMatch(br -> br.getBoardGameInstance().getIndividualGameId() == gameInstance.getIndividualGameId())) {
                 throw new IllegalArgumentException("No borrow requests exist for this board game instance.");
             }
             if (borrowRequestService.getAllBorrowRequests().stream()
@@ -154,7 +154,7 @@ public class EventService {
         event.setmaxParticipants(eventDTO.getMaxParticipants());
 
         // Update BoardGameInstance if changed
-        if (event.getboardGameInstance().getindividualGameId() != eventDTO.getBoardGameInstanceId()) {
+        if (event.getboardGameInstance().getIndividualGameId() != eventDTO.getBoardGameInstanceId()) {
             BoardGameInstance newGameInstance = boardGameInstanceRepository.findById(eventDTO.getBoardGameInstanceId())
                     .orElseThrow(() -> new IllegalArgumentException("Board game instance not found."));
             if (newGameInstance.getGameOwner() == null) {

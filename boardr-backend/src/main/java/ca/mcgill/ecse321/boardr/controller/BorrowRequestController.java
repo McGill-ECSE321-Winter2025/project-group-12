@@ -99,4 +99,11 @@ public class BorrowRequestController {
                 .map(BorrowRequestResponseDTO::new)
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/borrowRequests/boardgameinstance/{gameId}")
+    public List<BorrowRequestResponseDTO> getBorrowRequestsByBoardGameInstance(@PathVariable int gameId) {
+        return borrowRequestService.getBorrowRequestsByBoardGameInstance(gameId).stream()
+                .map(BorrowRequestResponseDTO::new)
+                .collect(Collectors.toList());
+    }
 }

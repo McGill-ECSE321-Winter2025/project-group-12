@@ -29,7 +29,7 @@ public class BoardGameInstanceDTO {
      * This constructor does NOT set the gameOwnerName.
      */
     public BoardGameInstanceDTO(BoardGameInstance boardGameInstance) {
-        this.individualGameId = boardGameInstance.getindividualGameId();
+        this.individualGameId = boardGameInstance.getIndividualGameId();
         this.boardGameName = boardGameInstance.getBoardGame().getName();
         this.condition = boardGameInstance.getCondition();
         this.isAvailable = boardGameInstance.isAvailable();

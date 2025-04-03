@@ -109,7 +109,7 @@ public class BoardGameInstanceRepositoryTests {
         boardGameInstance = boardGameInstanceRepo.save(boardGameInstance);
         
         //Retrieve board game instance from data base
-        Optional<BoardGameInstance> boardGameInstanceFromDb = boardGameInstanceRepo.findById(boardGameInstance.getindividualGameId());
+        Optional<BoardGameInstance> boardGameInstanceFromDb = boardGameInstanceRepo.findById(boardGameInstance.getIndividualGameId());
         assertTrue(boardGameInstanceFromDb.isPresent(), "Event should be present in the repository");
         BoardGameInstance retrievedBoardGameInstance = boardGameInstanceFromDb.get();
 

@@ -39,7 +39,7 @@ public class EventDTO {
         this.location = event.getLocation();
         this.description = event.getDescription();
         this.maxParticipants = event.getmaxParticipants();
-        this.boardGameInstanceId = event.getboardGameInstance().getindividualGameId();
+        this.boardGameInstanceId = event.getboardGameInstance().getIndividualGameId();
         this.organizerId = event.getOrganizer().getUserAccountId();
         // Retrieve the board game's name from the boardGameInstance's associated BoardGame
         this.gameName = event.getboardGameInstance().getBoardGame().getName();

@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 public interface BorrowRequestRepository extends CrudRepository<BorrowRequest, Integer> {
     public BorrowRequest findByBorrowRequestId(int id);
 
+
     @Query("SELECT br.boardGameInstance " +
            "FROM BorrowRequest br " +
            "WHERE br.status = ca.mcgill.ecse321.boardr.model.BorrowRequest.RequestStatus.Accepted " +
@@ -28,4 +29,8 @@ public interface BorrowRequestRepository extends CrudRepository<BorrowRequest, I
        "WHERE br.status = ca.mcgill.ecse321.boardr.model.BorrowRequest.RequestStatus.Accepted " +
        "AND br.userAccount.userAccountId = :borrowerId")
        List<BorrowRequest> findAcceptedBorrowRequestsByBorrower(@Param("borrowerId") int borrowerId);
+       
+       @Query("SELECT br FROM BorrowRequest br WHERE br.boardGameInstance.individualGameId = :boardGameInstanceId")
+       List<BorrowRequest> findByBoardGameInstanceId(@Param("boardGameInstanceId") int boardGameInstanceId);
+
 }

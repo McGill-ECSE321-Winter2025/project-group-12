@@ -67,10 +67,15 @@
           </template>
         </Column>
         <Column header="View Requests">
-          <template #body>
-            <Button icon="pi pi-eye" class="p-button-text" />
-          </template>
-        </Column>
+        <template #body="slotProps">
+          <Button
+            icon="pi pi-eye"
+            class="p-button-text"
+            @click="openRequestsModal(slotProps.data.individualGameId)"
+          />
+        </template>
+      </Column>
+ 
       </DataTable>
     </div>
 
@@ -173,6 +178,43 @@
         <Button label="Update" class="bg-blue-600 hover:bg-blue-700" @click="updateGameCondition" />
       </template>
     </Dialog>
+
+
+    <!-- Requests Modal -->
+    <Dialog
+      v-model:visible="showRequestsModal"
+      header="Requests"
+      :style="{ width: '30rem' }"
+      :modal="true"
+    >
+      <div v-if="borrowRequests.length === 0" class="p-4">
+        <p>No pending requests for this game.</p>
+      </div>
+      <div v-else class="p-4">
+        <p class="mb-4">The following users have made requests:</p>
+        <div v-for="request in borrowRequests" :key="request.id" class="flex justify-between items-center mb-2">
+          <div>
+            <p>{{ request.borrowerName }}</p>
+            <p>
+              {{ formatDate(request.requestDate) }} - {{ formatDate(request.returnDate) }}
+            </p>
+          </div>
+          <div>
+            <Button
+              label="Approve"
+              class="p-button-sm"
+              @click="approveRequest(request.id)"
+            />
+            <Button
+              label="Remove"
+              class="p-button-sm remove-button"
+              @click="removeRequest(request.id)"
+            />
+          </div>
+        </div>
+      </div>
+    </Dialog>
+
   </div>
 </template>
 
@@ -198,9 +240,13 @@ export default {
       registeredEvents: [],
       lendingHistory: [],
       showAddGameDialog: false,
+      showRequestsModal: false,
+      borrowRequests: [],
+      selectedGameId: null,
       newGame: { name: '', condition: '' },
       isGameOwner: true, // Default to Game Owner view
       boardGames: [], // List of available board games
+      borrowerDetails: {}, // to store borrower's details
       selectedGame: null,
       // For updating game instance condition
       showUpdateModal: false,
@@ -315,6 +361,93 @@ export default {
         console.error('Failed to load board games:', error)
       }
     },
+    async fetchBorrowerDetails(requests) {
+      const borrowerIds = [...new Set(requests.map(request => request.userAccountId))];
+      try {
+        const promises = borrowerIds.map(id => api.get(`/users/${id}`));
+        const responses = await Promise.all(promises);
+        responses.forEach(response => {
+          const user = response.data;
+          this.borrowerDetails[user.userAccountId] = {
+            name: user.name,
+          };
+        });
+      } catch (error) {
+        console.error('Error fetching borrower details:', error);
+      }
+    },
+    async openRequestsModal(gameId) {
+      try {
+        this.selectedGameId = gameId;
+        const response = await api.get(`/borrowRequests/boardgameinstance/${gameId}`);
+        console.log('Borrow Requests Response:', response.data);
+        
+        const pendingRequests = response.data.filter(request => request.requestStatus === 'Pending');
+
+        // Fetch borrower details using method above 
+        await this.fetchBorrowerDetails(pendingRequests);
+
+        // Map requests to include borrower names from borrowerDetails
+        this.borrowRequests = pendingRequests.map(request => ({
+          id: request.id,
+          borrowerName: this.borrowerDetails[request.userAccountId]?.name || 'Unknown',
+          requestDate: request.requestDate,
+          returnDate: request.returnDate,
+          userAccountId: request.userAccountId, // Keep this for reference
+        }));
+        console.log('Filtered Borrow Requests:', this.borrowRequests);
+        this.showRequestsModal = true;
+      } catch (error) {
+        console.error('Failed to load borrow requests:', error);
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load borrow requests.',
+          life: 3000,
+        });
+      }
+    },
+    async approveRequest(borrowRequestId) {
+      try {
+        await api.put(`/borrowRequests/${borrowRequestId}/status`, { requestStatus: 'Accepted' });
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Request Approved',
+          detail: 'Borrow request has been approved.',
+          life: 3000,
+        });
+        await this.openRequestsModal(this.selectedGameId);
+        await this.loadUserData();
+      } catch (error) {
+        console.error('Failed to approve request:', error);
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to approve request.',
+          life: 3000,
+        });
+      }
+    },
+    async removeRequest(borrowRequestId) {
+      try {
+        await api.delete(`/borrowRequests/${borrowRequestId}`);
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Request Removed',
+          detail: 'Borrow request has been removed.',
+          life: 3000,
+        });
+        await this.openRequestsModal(this.selectedGameId);
+      } catch (error) {
+        console.error('Failed to remove request:', error);
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to remove request.',
+          life: 3000,
+        });
+      }
+    },
     openUpdateModal(instance) {
       // Set the current instance's ID and current condition in the update modal
       this.updateInstanceId = instance.individualGameId
@@ -359,7 +492,21 @@ export default {
       this.updateCondition = ''
       this.updateInstanceId = null
     }
+
+
+    
   },
 }
 </script>
 
+<style scoped>
+.remove-button {
+  background-color: #dc2626;
+  border: none;
+  color: white;
+}
+
+.remove-button:hover {
+  background-color: #b91c1c;
+}
+</style>

@@ -72,7 +72,7 @@ public class EventServiceTest {
         when(mockGameOwner.getId()).thenReturn(1);
 
         mockGameInstance = mock(BoardGameInstance.class);
-        when(mockGameInstance.getindividualGameId()).thenReturn(1);
+        when(mockGameInstance.getIndividualGameId()).thenReturn(1);
         when(mockGameInstance.getGameOwner()).thenReturn(mockGameOwner);
 
         mockEvent = mock(Event.class);
@@ -517,7 +517,7 @@ public class EventServiceTest {
         int eventId = 1;
         int userId = 1;
         BoardGameInstance newGameInstance = mock(BoardGameInstance.class);
-        when(newGameInstance.getindividualGameId()).thenReturn(2);
+        when(newGameInstance.getIndividualGameId()).thenReturn(2);
         when(newGameInstance.getGameOwner()).thenReturn(mockGameOwner);
         EventCreationDTO newGameDTO = new EventCreationDTO(
             20250320, 1800, "Board Game Cafe", "Settlers of Catan Tournament", 8, 2, 1

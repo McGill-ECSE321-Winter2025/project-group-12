@@ -141,7 +141,7 @@ public class EventRepositoryTests {
         assertNotNull(retrievedEvent.getboardGameInstance(), "BoardGameInstance should not be null");
         assertNotNull(retrievedEvent.getOrganizer(), "Organizer should not be null");
         assertEquals("New", retrievedEvent.getboardGameInstance().getCondition());
-        assertEquals(retrievedEvent.getboardGameInstance().getindividualGameId(),boardGameInstance.getindividualGameId());
+        assertEquals(retrievedEvent.getboardGameInstance().getIndividualGameId(),boardGameInstance.getIndividualGameId());
         assertEquals(organizer.getUserAccountId(), retrievedEvent.getOrganizer().getUserAccountId());
 
     }

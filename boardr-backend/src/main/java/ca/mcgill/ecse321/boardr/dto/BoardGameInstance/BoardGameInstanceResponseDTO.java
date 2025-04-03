@@ -25,7 +25,7 @@ public class BoardGameInstanceResponseDTO {
     }
 
     public BoardGameInstanceResponseDTO(BoardGameInstance boardGameInstance) {
-        this.individualGameId = boardGameInstance.getindividualGameId();
+        this.individualGameId = boardGameInstance.getIndividualGameId();
         this.boardGameName = boardGameInstance.getBoardGame().getName();
         this.condition = boardGameInstance.getCondition();
         this.isAvailable = boardGameInstance.isAvailable();
