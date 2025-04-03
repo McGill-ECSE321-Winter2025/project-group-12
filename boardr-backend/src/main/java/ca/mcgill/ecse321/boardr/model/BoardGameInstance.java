@@ -18,7 +18,7 @@ public class BoardGameInstance {
     private boolean isAvailable;
 
     @ManyToOne 
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "game_owner_id")
     private GameOwner gameOwner;
 
     @ManyToOne
