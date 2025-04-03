@@ -102,8 +102,12 @@
         </Column>
         <Column field="location" header="Location" />
         <Column header="View Details">
-          <template #body>
-            <Button icon="pi pi-info-circle" class="p-button-text" />
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-info-circle"
+              class="p-button-text"
+              @click="openEventDetailsModal(slotProps.data)"
+            />
           </template>
         </Column>
       </DataTable>
@@ -132,8 +136,12 @@
         </Column>
         <Column field="location" header="Location" />
         <Column header="View Details">
-          <template #body>
-            <Button icon="pi pi-info-circle" class="p-button-text" />
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-info-circle"
+              class="p-button-text"
+              @click="openEventDetailsModal(slotProps.data)"
+            />
           </template>
         </Column>
       </DataTable>
@@ -179,7 +187,6 @@
       </template>
     </Dialog>
 
-
     <!-- Requests Modal -->
     <Dialog
       v-model:visible="showRequestsModal"
@@ -215,6 +222,63 @@
       </div>
     </Dialog>
 
+    <!-- Event Details Modal -->
+    <Dialog
+      v-model:visible="showEventDetailsModal"
+      header="Event Details"
+      :style="{ width: '30rem' }"
+      :modal="true"
+    >
+      <div v-if="selectedEvent" class="p-4">
+        <!-- Board Game -->
+        <div class="mb-4">
+          <label class="event-details-label">Board Game</label>
+          <div class="event-details-value">
+            {{ selectedEvent.gameName || 'N/A' }}
+          </div>
+        </div>
+
+        <!-- Date and Time (Side by Side) -->
+        <div class="flex justify-between mb-4">
+          <div class="w-1/2 mr-2">
+            <label class="event-details-label">Date</label>
+            <div class="event-details-value">
+              {{ formatEventDate(selectedEvent.eventDate) }}
+            </div>
+          </div>
+          <div class="w-1/2 ml-2">
+            <label class="event-details-label">Time</label>
+            <div class="event-details-value">
+              {{ formatEventTime(selectedEvent.eventTime) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Location and Max Participants (Side by Side) -->
+        <div class="flex justify-between mb-4">
+          <div class="w-1/2 mr-2">
+            <label class="event-details-label">Location</label>
+            <div class="event-details-value">
+              {{ selectedEvent.location || 'N/A' }}
+            </div>
+          </div>
+          <div class="w-1/2 ml-2">
+            <label class="event-details-label">Max Participants</label>
+            <div class="event-details-value">
+              {{ selectedEvent.maxParticipants || 'N/A' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <label class="event-details-label">Description*</label>
+          <div class="event-details-value event-details-description">
+            {{ selectedEvent.description || 'N/A' }}
+          </div>
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -251,7 +315,10 @@ export default {
       // For updating game instance condition
       showUpdateModal: false,
       updateCondition: '',
-      updateInstanceId: null
+      updateInstanceId: null,
+      // For event details modal
+      showEventDetailsModal: false,
+      selectedEvent: null,
     }
   },
   created() {
@@ -303,6 +370,31 @@ export default {
       const timeStr = String(time).padStart(4, '0');
       if (timeStr.length === 4) {
         return `${timeStr.slice(0, 2)}:${timeStr.slice(2, 4)}`;
+      }
+      return time;
+    },
+    formatEventDate(date) {
+      if (!date) return 'N/A';
+      const dateStr = String(date);
+      if (dateStr.length === 8) {
+        const monthNum = parseInt(dateStr.slice(4, 6), 10);
+        const day = parseInt(dateStr.slice(6, 8), 10);
+        const months = [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const monthName = months[monthNum - 1] || 'Unknown';
+        return `${monthName} ${day}`;
+      }
+      return dateStr;
+    },
+    formatEventTime(time) {
+      if (!time) return 'N/A';
+      const timeStr = String(time).padStart(4, '0');
+      if (timeStr.length === 4) {
+        const hour = parseInt(timeStr.slice(0, 2), 10);
+        const minute = timeStr.slice(2, 4);
+        return `${hour}:${minute}`;
       }
       return time;
     },
@@ -374,6 +466,22 @@ export default {
         });
       } catch (error) {
         console.error('Error fetching borrower details:', error);
+      }
+    },
+    // Method to fetch board game details
+    async fetchBoardGameDetails(boardGameInstanceId) {
+      try {
+        const response = await api.get(`/boardgameinstances/${boardGameInstanceId}`);
+        const boardGameInstance = response.data;
+        // Check if boardGameId is present and fetch the board game name
+        if (boardGameInstance.boardGameId) {
+          const boardGameResponse = await api.get(`/boardgames/${boardGameInstance.boardGameId}`);
+          return boardGameResponse.data.name || 'Unknown';
+        }
+        return 'Unknown'; // Fallback if boardGameId is missing
+      } catch (error) {
+        console.error('Error fetching board game details:', error);
+        return 'N/A';
       }
     },
     async openRequestsModal(gameId) {
@@ -491,10 +599,17 @@ export default {
       this.showUpdateModal = false
       this.updateCondition = ''
       this.updateInstanceId = null
-    }
-
-
-    
+    },
+    // Method to open the event details modal and fetch board game name
+    async openEventDetailsModal(event) {
+      this.selectedEvent = { ...event }; // Create a copy to avoid mutating original data
+      if (event.boardGameInstanceId) {
+        this.selectedEvent.gameName = await this.fetchBoardGameDetails(event.boardGameInstanceId);
+      } else {
+        this.selectedEvent.gameName = 'N/A';
+      }
+      this.showEventDetailsModal = true;
+    },
   },
 }
 </script>
@@ -508,5 +623,35 @@ export default {
 
 .remove-button:hover {
   background-color: #b91c1c;
+}
+
+/* Style for the modal content */
+.p-dialog .p-dialog-content {
+  padding: 1rem;
+}
+
+/* Style for labels */
+.event-details-label {
+  font-size: 0.75rem; /* Small font size */
+  font-weight: 600; /* Bold */
+  text-transform: uppercase; /* Uppercase */
+  color: #1f2937; /* Dark gray */
+  margin-bottom: 0.25rem; /* Space below label */
+}
+
+/* Style for values (input-like boxes) */
+.event-details-value {
+  background-color: #f9fafb; /* Light gray background */
+  border: 1px solid #e5e7eb; /* Light gray border */
+  border-radius: 0.375rem; /* Rounded corners */
+  padding: 0.5rem; /* Padding inside the box */
+  color: #6b7280; /* Gray text */
+  font-size: 0.875rem; /* Slightly smaller font */
+}
+
+/* Specific style for the description box (taller) */
+.event-details-description {
+  min-height: 4rem; /* Taller box for description */
+  line-height: 1.5; /* Better readability for longer text */
 }
 </style>
