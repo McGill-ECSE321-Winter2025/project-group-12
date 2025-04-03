@@ -112,4 +112,25 @@ public List<BoardGameInstanceDTO> getBoardGameInstancesByBoardGameId(int boardGa
         return new BoardGameInstanceResponseDTO(instance);
     }
 
+    @Transactional
+public BoardGameInstanceResponseDTO updateBoardGameInstanceCondition(int instanceId, @Valid BoardGameInstanceUpdateDTO dto) {
+    // Validate the new condition
+    if (dto.getCondition() == null || dto.getCondition().trim().isEmpty()) {
+        throw new BoardrException(HttpStatus.BAD_REQUEST, "Condition cannot be empty");
+    }
+    
+    // Retrieve the board game instance by its ID
+    BoardGameInstance instance = boardGameInstanceRepository.findById(instanceId)
+            .orElseThrow(() -> new BoardrException(HttpStatus.NOT_FOUND, "Board Game Instance not found for id: " + instanceId));
+    
+    // Update the condition (ensure your model has a setter for condition)
+    instance.setCondition(dto.getCondition());
+    
+    // Save the updated instance
+    boardGameInstanceRepository.save(instance);
+    
+    // Return the updated instance as a response DTO
+    return new BoardGameInstanceResponseDTO(instance);
+}
+
 }

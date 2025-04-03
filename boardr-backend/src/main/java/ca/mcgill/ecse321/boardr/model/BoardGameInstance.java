@@ -65,4 +65,9 @@ public class BoardGameInstance {
     public void setAvailable(Boolean bool) {
         this.isAvailable = bool;
     }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+    
 }
