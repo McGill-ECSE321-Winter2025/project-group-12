@@ -17,13 +17,21 @@ public class BoardGameInstance {
     private String condition;  //Should we have condition? idr
     private boolean isAvailable;
 
+    // @ManyToOne 
+    // @JoinColumn(name = "user_id")
+    // private GameOwner gameOwner;
+
+    // @ManyToOne
+    // @JoinColumn(name = "board_game_id")
+    // private BoardGame boardGame; 
+
     @ManyToOne 
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "game_owner_id")  // Check actual column name in DB
     private GameOwner gameOwner;
 
     @ManyToOne
-    @JoinColumn(name = "board_game_id")
-    private BoardGame boardGame; 
+    @JoinColumn(name = "board_game_id")  // Verify this matches DB
+    private BoardGame boardGame;
 
     BoardGameInstance() {}
 
@@ -34,7 +42,7 @@ public class BoardGameInstance {
         this.isAvailable = true;
     }
 
-    public int getindividualGameId() {
+    public int getIndividualGameId() {
         return individualGameId;
     }
 

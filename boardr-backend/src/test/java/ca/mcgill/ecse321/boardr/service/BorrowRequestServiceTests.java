@@ -67,7 +67,7 @@ public class BorrowRequestServiceTests {
         when(mockUser.getUserAccountId()).thenReturn(1);
 
         mockGameInstance = mock(BoardGameInstance.class);
-        when(mockGameInstance.getindividualGameId()).thenReturn(10);
+        when(mockGameInstance.getIndividualGameId()).thenReturn(10);
 
         mockBorrowRequest = mock(BorrowRequest.class);
         when(mockBorrowRequest.getBorrowRequestId()).thenReturn(100);

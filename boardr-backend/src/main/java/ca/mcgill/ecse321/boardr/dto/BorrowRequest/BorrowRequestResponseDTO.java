@@ -20,7 +20,7 @@ public class BorrowRequestResponseDTO {
     public BorrowRequestResponseDTO(BorrowRequest borrowRequest) {
         this.id = borrowRequest.getBorrowRequestId();
         this.userAccountId = borrowRequest.getUserAccount().getUserAccountId();
-        this.boardGameInstanceId = borrowRequest.getBoardGameInstance().getindividualGameId();
+        this.boardGameInstanceId = borrowRequest.getBoardGameInstance().getIndividualGameId();
         this.requestDate = borrowRequest.getRequestDate();
         this.returnDate = borrowRequest.getReturnDate();
         this.requestStatus = borrowRequest.getRequestStatus();
