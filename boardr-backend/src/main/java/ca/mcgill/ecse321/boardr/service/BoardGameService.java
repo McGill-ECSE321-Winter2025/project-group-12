@@ -1,9 +1,12 @@
 package ca.mcgill.ecse321.boardr.service;
 
 import ca.mcgill.ecse321.boardr.dto.BoardGame.*;
+import ca.mcgill.ecse321.boardr.dto.Review.ReviewResponseDTO;
 import ca.mcgill.ecse321.boardr.exceptions.BoardrException;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
+import ca.mcgill.ecse321.boardr.model.Review;
 import ca.mcgill.ecse321.boardr.repo.BoardGameRepository;
+import ca.mcgill.ecse321.boardr.repo.ReviewRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,9 @@ import java.util.stream.StreamSupport;
 public class BoardGameService {
     @Autowired
     private BoardGameRepository boardGameRepository;
+
+    @Autowired
+    ReviewRepository reviewRepository;
 
     // 1.Retrieve all board games - Response DTO
     public List<BoardGameResponseDTO> getAllBoardGames() {
@@ -76,4 +82,16 @@ public class BoardGameService {
         }
         boardGameRepository.deleteById(id);
     }
+
+    @Transactional
+    public List<ReviewResponseDTO> getReviewsByBoardGameId(int id) {
+        if (!boardGameRepository.existsById(id)) {
+            throw new BoardrException(HttpStatus.NOT_FOUND, "Board Game not found");
+        }
+
+        return reviewRepository.findByBoardGameGameId(id).stream()
+                .map(ReviewResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
 }

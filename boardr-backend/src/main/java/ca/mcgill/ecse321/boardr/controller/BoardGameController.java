@@ -1,11 +1,15 @@
 package ca.mcgill.ecse321.boardr.controller;
 
 import ca.mcgill.ecse321.boardr.dto.BoardGame.*;
+import ca.mcgill.ecse321.boardr.dto.Review.ReviewResponseDTO;
 import ca.mcgill.ecse321.boardr.service.BoardGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * REST controller class for managing Board Game in the Boardr application.
@@ -55,4 +59,14 @@ import org.springframework.http.HttpStatus;
          boardGameService.removeBoardGame(id);
          return ResponseEntity.ok().body("Board game has been deleted successfully");
      }
+
+    /**
+     * Get all reviews by boardgame.
+     *
+     * @return A list of reviews by board game
+     */
+    @GetMapping("/boardgame/{boardGameId}/reviews")
+    public ResponseEntity<?> getAllReviews(@PathVariable int boardGameId) {
+        return ResponseEntity.ok().body(boardGameService.getReviewsByBoardGameId(boardGameId));
+    }
  }

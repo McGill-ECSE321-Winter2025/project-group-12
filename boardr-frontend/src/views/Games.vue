@@ -54,7 +54,7 @@
         </Column>
 
         <!-- Read Review -->
-        <Column header="Read Review" style="width: 10%">
+        <Column header="Read Reviews" style="width: 10%">
           <template #body="slotProps">
             <Button
               label="Read"
@@ -86,6 +86,57 @@
           </template>
         </Column>
       </DataTable>
+
+      <!-- Read Reviews Dialog -->
+      <Dialog
+        v-model:visible="showReviewDialog"
+        :header="`${selectedGame} Reviews`"
+        :style="{ width: '40rem' }"
+      >
+        <div v-if="loadingReviews" class="text-center p-4">
+          Loading reviews...
+        </div>
+        <div v-else-if="error" class="text-red-500 p-4">
+          {{ error }}
+        </div>
+        <div v-else-if="reviews.length === 0" class="p-4">
+          No reviews yet.
+        </div>
+        <div v-else class="max-h-[70vh] overflow-y-auto p-2">
+          <div
+            v-for="(review, index) in reviews"
+            :key="review.id"
+          >
+            <div class="mb-4 bg-white rounded-lg border-2 border-gray-300 shadow-sm">
+              <div class="bg-gray-100 p-3 border-b-2 border-gray-300 flex justify-between items-center">
+                <div class="font-medium text-gray-600">
+                  User #{{ review.userAccountId }}
+                </div>
+                <div class="flex text-yellow-500">
+                  <span v-for="i in 5" :key="i" class="text-lg">
+                    <span v-if="i <= review.rating">★</span>
+                    <span v-else>☆</span>
+                  </span>
+                </div>
+              </div>
+              
+              <div class="p-4">
+                <p class="text-gray-700">{{ review.comment }}</p>
+              </div>
+              
+              <div class="px-4 py-2 bg-gray-50 border-t border-gray-300 text-right">
+                <span class="text-sm text-gray-500">{{ review.reviewDate }}</span>
+              </div>
+            </div>
+            
+            <hr v-if="index < reviews.length - 1" class="border-t border-gray-200 my-4">
+          </div>
+        </div>
+        
+        <template #footer>
+          <Button label="Close" @click="showReviewDialog = false" />
+        </template>
+      </Dialog>
       
        <!-- Create Review Dialog -->
       <Dialog v-model:visible="showCreateReviewDialog" header="Add a Review" :style="{ width: '30rem' }">
@@ -159,7 +210,12 @@ export default {
       newGame: {
         name: '',
         description: ''
-      }
+      }, 
+      showReviewDialog: false,
+      reviews: [],
+      loadingReviews: false,
+      error: null,
+      selectedGame: "",
     }
   },
   async created() {
@@ -187,7 +243,8 @@ export default {
       this.$router.push({ name: 'Events', query: { boardGameName: boardGame.name } })
     },
     readReview(boardGame) {
-      alert(`Reading review for board game: ${boardGame.name}`)
+      this.fetchReviews(boardGame.gameId)
+      this.selectedGame = boardGame.name
     },
     leaveReview(boardGame) {
       this.newReview.boardGameId = boardGame.gameId
@@ -224,9 +281,22 @@ export default {
             life: 3000,
           })
           console.error(error)
-
         }
-      },
+    },
+    async fetchReviews(gameId) {
+      this.currentBoardGameId = gameId;
+      try {
+        this.loadingReviews = true;
+        this.error = null;
+        const response = await api.get(`/boardgame/${gameId}/reviews`);
+        this.reviews = response.data;
+        this.showReviewDialog = true;
+      } catch (error) {
+        this.error = 'Failed to load reviews. Please try again later.';
+      } finally {
+        this.loadingReviews = false;
+      }
+    },
     borrowGame(boardGame) {
       this.$router.push({ name: 'BoardGameInstance', params: { boardGameId: boardGame.gameId } })
     },
