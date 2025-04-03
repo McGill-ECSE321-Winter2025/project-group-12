@@ -32,13 +32,6 @@
         />
         <Button
           v-if="isLoggedIn"
-          icon="pi pi-cog"
-          class="p-button-text end-action-button"
-          @click="goToSettings"
-          aria-label="Settings"
-        />
-        <Button
-          v-if="isLoggedIn"
           label="Logout"
           icon="pi pi-sign-out"
           class="p-button-text end-action-button"
@@ -100,9 +93,6 @@ export default {
     },
   },
   methods: {
-    goToSettings() {
-      this.$router.push('/settings')
-    },
     handleLogout() {
       this.$emit('logout')
     },
