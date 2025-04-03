@@ -2,10 +2,11 @@
   <div class="py-6">
     <h1 class="text-3xl font-bold mb-6">
       Browse Available
-      <span style="color: #10B981;"> Board Games</span>
+      <span style="color: #10B981;"> Board Game</span>
+      Titles
     </h1>
     <Button
-        label="Add Game"
+        label="Add Board Game Title"
         icon="pi pi-plus"
         class="mb-6 bg-blue-600 hover:bg-blue-700"
         @click="showCreateGameDialog = true"
@@ -113,10 +114,10 @@
     </div>
 
     <!-- Create Game Dialog -->
-    <Dialog v-model:visible="showCreateGameDialog" header="Add New Board Game" :style="{ width: '30rem' }">
+    <Dialog v-model:visible="showCreateGameDialog" header="Add New Board Game Title" :style="{ width: '30rem' }">
       <div class="space-y-4">
         <div>
-          <label for="name" class="block text-sm font-medium">Game Name</label>
+          <label for="name" class="block text-sm font-medium">Game Title</label>
           <InputText id="name" v-model="newGame.name" class="w-full" />
         </div>
         <div>
@@ -126,7 +127,7 @@
       </div>
       <template #footer>
         <Button label="Cancel" class="p-button-text" @click="showCreateGameDialog = false" />
-        <Button label="Add Game" class="bg-blue-600 hover:bg-blue-700" @click="createGame" />
+        <Button label="Add Board Game Genre" class="bg-blue-600 hover:bg-blue-700" @click="createGame" />
       </template>
     </Dialog>
     
