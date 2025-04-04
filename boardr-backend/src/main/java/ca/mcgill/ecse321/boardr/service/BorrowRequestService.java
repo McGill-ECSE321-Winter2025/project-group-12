@@ -46,7 +46,10 @@ public class BorrowRequestService {
                 .orElseThrow(() -> new BoardrException(HttpStatus.NOT_FOUND, "Invalid user account ID"));
         BoardGameInstance boardGameInstance = boardGameInstanceRepo.findById(borrowRequestToCreate.getBoardGameInstanceId())
                 .orElseThrow(() -> new BoardrException(HttpStatus.NOT_FOUND, "No available board game instances"));
-
+        if (!boardGameInstance.isAvailable()) {
+                    throw new BoardrException(HttpStatus.BAD_REQUEST, "BoardGame is not available.");
+                }
+                
         BorrowRequest borrowRequest = new BorrowRequest(boardGameInstance, userAccount, borrowRequestToCreate.getRequestDate(), borrowRequestToCreate.getReturnDate());
         return borrowRequestRepo.save(borrowRequest);
     }
