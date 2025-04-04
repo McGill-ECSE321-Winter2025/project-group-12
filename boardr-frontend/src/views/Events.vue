@@ -10,14 +10,28 @@
       />
     </h1>
 
-    <!-- Search Bar -->
-    <div class="mb-4 flex items-center">
-      <h2>
-        <InputText v-model="searchQuery" placeholder="Search by board game" />
-        <Button label="Search" class="ml-2" @click="searchEvents" />
-        <Button label="Reset" class="ml-2" @click="searchQuery = ''; searchEvents()" />
-      </h2>
-    </div>
+    <!-- Search bar -->
+    <h2>
+      <table class="mb-4" style="width: auto; margin-right: auto;">
+        <tbody>
+          <tr>
+            <td style="padding-right: 12px;">
+              <InputText
+                v-model="searchQuery"
+                placeholder="Search event by game name..."
+                style="width: 310px;"
+              />
+            </td>
+            <td style="padding-right: 12px;">
+              <Button label="Search" class="ml-2" @click="searchEvents" />
+            </td>
+            <td>
+              <Button label="Reset" class="ml-2" @click="searchQuery = ''; searchEvents()" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </h2>
 
     <!-- DataTable for events -->
     <DataTable :value="events" class="p-datatable-sm" responsiveLayout="scroll">
