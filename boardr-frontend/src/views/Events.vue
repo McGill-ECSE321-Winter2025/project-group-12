@@ -34,7 +34,12 @@
     </h2>
 
     <!-- DataTable for events -->
-    <DataTable :value="events" class="p-datatable-sm" responsiveLayout="scroll">
+    <DataTable 
+      :value="events" 
+      class="p-datatable-sm" 
+      responsiveLayout="scroll" 
+      sortField="eventDate" 
+      sortOrder="1">
       <!-- Game Name Column with Information Icon -->
       <Column header="Game Name" style="width: 20%">
         <template #body="slotProps">
@@ -46,8 +51,8 @@
         </template>
       </Column>
 
-      <!-- Date Column -->
-      <Column header="Date" style="width: 10%">
+      <!-- Date Column with Sorting -->
+      <Column header="Date" style="width: 10%" sortable sortField="eventDate">
         <template #body="slotProps">
           {{ formatDate(slotProps.data.eventDate) }}
         </template>
