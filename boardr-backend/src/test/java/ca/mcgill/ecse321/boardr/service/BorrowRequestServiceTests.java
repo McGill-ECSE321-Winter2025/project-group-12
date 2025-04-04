@@ -105,6 +105,7 @@ public class BorrowRequestServiceTests {
         when(userAccountRepo.findById(1)).thenReturn(Optional.of(mockUser));
         when(boardGameInstanceRepo.findById(10)).thenReturn(Optional.of(mockGameInstance));
         when(borrowRequestRepo.save(any(BorrowRequest.class))).thenReturn(mockBorrowRequest);
+        when(mockGameInstance.isAvailable()).thenReturn(true);
         BorrowRequest created = borrowRequestService.createBorrowRequest(dto);
         assertNotNull(created);
         assertEquals(mockBorrowRequest, created);

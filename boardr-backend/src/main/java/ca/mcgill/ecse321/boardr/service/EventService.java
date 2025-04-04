@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ca.mcgill.ecse321.boardr.dto.Event.EventCreationDTO;
 import ca.mcgill.ecse321.boardr.dto.Event.EventResponseDTO;
 import ca.mcgill.ecse321.boardr.dto.Event.EventDTO;
+import ca.mcgill.ecse321.boardr.dto.Event.EventUpdateDTO;
 import ca.mcgill.ecse321.boardr.model.BoardGameInstance;
 import ca.mcgill.ecse321.boardr.model.BorrowRequest;
 import ca.mcgill.ecse321.boardr.model.Event;
@@ -197,6 +198,26 @@ public List<EventDTO> getEventsByBoardGameId(int boardGameId) {
                  .map(EventDTO::new)
                  .collect(Collectors.toList());
 }
-
+public EventResponseDTO updateEventDetails(int eventId, EventUpdateDTO eventUpdateDTO) {
+    Event event = eventRepository.findById(eventId)
+            .orElseThrow(() -> new IllegalArgumentException("Event not found."));
+    
+    // Validate that the input strings are not empty
+    if(eventUpdateDTO.getLocation() == null || eventUpdateDTO.getLocation().trim().isEmpty()) {
+        throw new IllegalArgumentException("Location cannot be empty.");
+    }
+    if(eventUpdateDTO.getDescription() == null || eventUpdateDTO.getDescription().trim().isEmpty()) {
+        throw new IllegalArgumentException("Description cannot be empty.");
+    }
+    
+    // Update only the specified fields from the DTO
+    event.setEventDate(eventUpdateDTO.getEventDate());
+    event.setEventTime(eventUpdateDTO.getEventTime());
+    event.setLocation(eventUpdateDTO.getLocation());
+    event.setDescription(eventUpdateDTO.getDescription());
+    
+    Event updatedEvent = eventRepository.save(event);
+    return new EventResponseDTO(updatedEvent);
+}
 
 }

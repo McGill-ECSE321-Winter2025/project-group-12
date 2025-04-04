@@ -67,14 +67,14 @@
           </template>
         </Column>
         <Column header="View Requests">
-        <template #body="slotProps">
-          <Button
-            icon="pi pi-eye"
-            class="p-button-text"
-            @click="openRequestsModal(slotProps.data.individualGameId)"
-          />
-        </template>
-      </Column>
+          <template #body="slotProps">
+            <Button
+              icon="pi pi-eye"
+              class="p-button-text"
+              @click="openRequestsModal(slotProps.data.individualGameId)"
+            />
+          </template>
+        </Column>
  
       </DataTable>
     </div>
@@ -107,6 +107,17 @@
               icon="pi pi-info-circle"
               class="p-button-text"
               @click="openEventDetailsModal(slotProps.data)"
+            />
+          </template>
+        </Column>
+        <!-- NEW: Update Event Column -->
+        <Column header="Update" style="width: 10%">
+          <template #body="slotProps">
+            <Button
+              label="Update"
+              icon="pi pi-pencil"
+              class="p-button-sm"
+              @click="openEventUpdateModal(slotProps.data)"
             />
           </template>
         </Column>
@@ -279,6 +290,32 @@
         </div>
       </div>
     </Dialog>
+
+    <!-- NEW: Event Update Dialog -->
+    <Dialog v-model:visible="showEventUpdateDialog" header="Update Event Details" :style="{ width: '30rem' }">
+      <div class="space-y-4">
+        <div>
+          <label for="updateDate" class="block text-sm font-medium">Date (YYYYMMDD)</label>
+          <InputText id="updateDate" v-model="eventUpdate.eventDate" class="w-full" />
+        </div>
+        <div>
+          <label for="updateTime" class="block text-sm font-medium">Time (HHMM)</label>
+          <InputText id="updateTime" v-model="eventUpdate.eventTime" class="w-full" />
+        </div>
+        <div>
+          <label for="updateLocation" class="block text-sm font-medium">Location</label>
+          <InputText id="updateLocation" v-model="eventUpdate.location" class="w-full" />
+        </div>
+        <div>
+          <label for="updateDescription" class="block text-sm font-medium">Description</label>
+          <InputText id="updateDescription" v-model="eventUpdate.description" class="w-full" />
+        </div>
+      </div>
+      <template #footer>
+        <Button label="Cancel" class="p-button-text" @click="closeEventUpdateDialog" />
+        <Button label="Update" class="bg-blue-600 hover:bg-blue-700" @click="updateEventDetails" />
+      </template>
+    </Dialog>
   </div>
 </template>
 
@@ -319,6 +356,22 @@ export default {
       // For event details modal
       showEventDetailsModal: false,
       selectedEvent: null,
+      // NEW: For event update dialog
+      showEventUpdateDialog: false,
+      eventUpdate: {
+        eventDate: '',
+        eventTime: '',
+        location: '',
+        description: ''
+      },
+      // For event registration dialog
+      showRegisterConfirmDialog: false,
+      selectedEventDetails: null,
+      organizerDetails: {},
+      boardGameInstanceDetails: {},
+      searchQuery: '',
+      events: [],
+      originalEvents: []
     }
   },
   created() {
@@ -609,6 +662,144 @@ export default {
         this.selectedEvent.gameName = 'N/A';
       }
       this.showEventDetailsModal = true;
+    },
+    // NEW: Open the event update dialog and pre-fill fields
+    openEventUpdateModal(event) {
+      this.selectedEvent = event;
+      this.eventUpdate.eventDate = event.eventDate;
+      this.eventUpdate.eventTime = event.eventTime;
+      this.eventUpdate.location = event.location;
+      this.eventUpdate.description = event.description;
+      this.showEventUpdateDialog = true;
+    },
+    // NEW: Call the API to update event details using EventUpdateDTO
+    async updateEventDetails() {
+      try {
+        const response = await api.put(`/events/${this.selectedEvent.eventId}/details`, this.eventUpdate);
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Event Updated',
+          detail: 'Event details updated successfully.',
+          life: 3000,
+        });
+        // Instant update: update the local participatedEvents array for the modified event
+        const index = this.participatedEvents.findIndex(e => e.eventId === this.selectedEvent.eventId);
+        if (index !== -1) {
+          this.participatedEvents[index].eventDate = this.eventUpdate.eventDate;
+          this.participatedEvents[index].eventTime = this.eventUpdate.eventTime;
+          this.participatedEvents[index].location = this.eventUpdate.location;
+          this.participatedEvents[index].description = this.eventUpdate.description;
+        }
+        this.showEventUpdateDialog = false;
+      } catch (error) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Update Failed',
+          detail: 'Failed to update event details.',
+          life: 3000,
+        });
+        console.error(error);
+      }
+    },
+    closeEventUpdateDialog() {
+      this.showEventUpdateDialog = false;
+    },
+    openRegisterDialog(event) {
+      this.selectedEvent = event;
+      this.showRegisterConfirmDialog = true;
+    },
+    async registerForEvent() {
+      try {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.userAccountId) {
+          this.$router.push('/login');
+          return;
+        }
+        const registrationData = {
+          userId: user.userAccountId,
+          eventId: this.selectedEvent.eventId
+        };
+        await api.post('/registrations', registrationData);
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Registered',
+          detail: 'You have been registered for the event!',
+          life: 3000,
+        });
+      } catch (error) {
+        console.error('Registration error:', error.response?.data);
+        const errorMessage = error.response?.data?.errors?.[0] || 'Failed to register for the event. Please try again.';
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Registration Failed',
+          detail: errorMessage,
+          life: 5000,
+        });
+      }
+      this.showRegisterConfirmDialog = false;
+      this.selectedEvent = null;
+    },
+    async createEvent() {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.userAccountId) {
+        this.$router.push('/login');
+        return;
+      }
+      try {
+        const eventData = {
+          ...this.newEvent,
+          organizerId: user.userAccountId,
+        };
+        await api.post('/events', eventData);
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Event Created',
+          detail: 'Your event has been created!',
+          life: 3000,
+        });
+        this.showCreateEventDialog = false;
+        this.newEvent = {
+          description: '',
+          eventDate: '',
+          eventTime: '',
+          location: '',
+          maxParticipants: 1,
+          boardGameInstanceId: null,
+        };
+        const response = await api.get('/events');
+        const futureEvents = this.filterFutureEvents(response.data);
+        this.events = futureEvents;
+        this.originalEvents = futureEvents;
+        this.fetchOrganizerDetails();
+        await this.fetchBoardGameInstanceDetails();
+        if (this.$route.query.boardGameName) {
+          this.searchQuery = this.$route.query.boardGameName;
+          this.searchEvents();
+        }
+      } catch (error) {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to create event.',
+          life: 3000,
+        });
+        console.error(error);
+      }
+    },
+    searchEvents() {
+      if (!this.searchQuery.trim()) {
+        this.events = this.filterFutureEvents(this.originalEvents);
+      } else {
+        const query = this.searchQuery.toLowerCase();
+        this.events = this.filterFutureEvents(this.originalEvents).filter(event => {
+          const instance = this.boardGameInstanceDetails[event.boardGameInstanceId];
+          return instance && instance.boardGameName.toLowerCase().includes(query);
+        });
+      }
+    },
+    resetSearch() {
+      this.searchQuery = '';
+      this.events = this.filterFutureEvents(this.originalEvents);
     },
   },
 }

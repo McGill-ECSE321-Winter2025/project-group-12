@@ -23,6 +23,7 @@ import ca.mcgill.ecse321.boardr.dto.ErrorDTO;
 import ca.mcgill.ecse321.boardr.dto.Event.EventCreationDTO;
 import ca.mcgill.ecse321.boardr.dto.Event.EventResponseDTO;
 import ca.mcgill.ecse321.boardr.dto.Event.EventDTO;
+import ca.mcgill.ecse321.boardr.dto.Event.EventUpdateDTO;
 
 import ca.mcgill.ecse321.boardr.model.Event;
 import ca.mcgill.ecse321.boardr.service.EventService;
@@ -111,4 +112,15 @@ public class EventController {
         List<EventDTO> eventDTOs = eventService.getEventsByBoardGameId(gameId);
         return ResponseEntity.ok(eventDTOs);
     }
+
+
+    // Use Case: Update Event Details (only date, time, location, description)
+    @PutMapping("/{eventId}/details")
+    public ResponseEntity<EventResponseDTO> updateEventDetails(
+        @PathVariable int eventId,
+        @RequestBody EventUpdateDTO eventUpdateDTO) {
+    EventResponseDTO updatedEvent = eventService.updateEventDetails(eventId, eventUpdateDTO);
+    return ResponseEntity.ok(updatedEvent);
+}
+
 }
