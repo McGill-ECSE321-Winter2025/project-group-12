@@ -37,7 +37,7 @@
             <Button
               label="View"
               class="bg-blue-500 hover:bg-blue-600 text-white"
-              @click="viewInstances(slotProps.data)"
+              @click="openBoardGameDetails(slotProps.data)"
             />
           </template>
         </Column>
@@ -161,7 +161,19 @@
           <Button label="Add" class="bg-blue-600 hover:bg-blue-700" @click="createReview" />
         </template>
       </Dialog>
-
+      <!-- Board Game Details Dialog -->
+      <Dialog
+        v-model:visible="showBoardGameDetailsDialog"
+        :header="`View Description of ${selectedBoardGame?.name} `"
+        :style="{ width: '40rem' }"
+      >
+        <div class="p-4">
+          <p v-if="selectedBoardGame?.description">
+            <span style="font-weight: bold;">Description :</span> {{ selectedBoardGame.description }}
+          </p>
+          <p style="font-weight: bold;" v-else class="text-gray-500">No description available.</p>
+        </div>
+      </Dialog>
     </div>
 
     <!-- Create Game Dialog -->
@@ -216,6 +228,8 @@ export default {
       loadingReviews: false,
       error: null,
       selectedGame: "",
+      showBoardGameDetailsDialog: false, 
+      selectedBoardGame: null
     }
   },
   async created() {
@@ -241,9 +255,9 @@ export default {
     joinEvent(boardGame) {
       // Passing the board game's name as a query parameter for filtering on the Events page.
       this.$router.push({ 
-  name: 'Events', 
-  query: { boardGameName: boardGame.name } 
-});
+      name: 'Events', 
+      query: { boardGameName: boardGame.name } 
+    });
     },
     readReview(boardGame) {
       this.fetchReviews(boardGame.gameId)
@@ -302,6 +316,10 @@ export default {
     },
     borrowGame(boardGame) {
       this.$router.push({ name: 'BoardGameInstance', params: { boardGameId: boardGame.gameId } })
+    },
+    openBoardGameDetails(boardGame) { // Added method to open details dialog
+      this.selectedBoardGame = boardGame
+      this.showBoardGameDetailsDialog = true
     },
 
     async createGame() {
