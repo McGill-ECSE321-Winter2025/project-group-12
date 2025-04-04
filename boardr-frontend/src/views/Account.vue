@@ -75,7 +75,18 @@
             />
           </template>
         </Column>
- 
+        <!-- New column for delete action -->
+        <Column header="Delete">
+          <template #body="slotProps">
+            <Button
+              label="Delete"
+              icon="pi pi-trash"
+              class="p-button-sm p-button-danger"
+              @click="deleteGameInstance(slotProps.data)"
+            />
+          </template>
+        </Column>
+
       </DataTable>
     </div>
 
@@ -801,6 +812,54 @@ export default {
       this.searchQuery = '';
       this.events = this.filterFutureEvents(this.originalEvents);
     },
+    async deleteGameInstance(instance) {
+      try {
+        // Check if the instance is available
+        if (!instance.available) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Cannot Delete',
+            detail: 'Cannot delete a game instance that is currently borrowed.',
+            life: 3000,
+          });
+          return;
+        }
+
+        // Check if the instance is used in any events
+        const eventsResponse = await api.get(`/events`);
+        const instanceEvents = eventsResponse.data.filter(event => 
+          event.boardGameInstanceId === instance.individualGameId
+        );
+        if (instanceEvents.length > 0) {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Cannot Delete',
+            detail: 'Cannot delete a game instance that is used in an event.',
+            life: 3000,
+          });
+          return;
+        }
+
+        // Proceed with deletion
+        await api.delete(`/boardgameinstances/${instance.individualGameId}`);
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Deleted',
+          detail: 'Game instance deleted successfully.',
+          life: 3000,
+        });
+        await this.loadUserData(); // Refresh owned games
+      } catch (error) {
+        console.error('Failed to delete game instance:', error);
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete game instance.',
+          life: 3000,
+        });
+      }
+    }
+
   },
 }
 </script>
