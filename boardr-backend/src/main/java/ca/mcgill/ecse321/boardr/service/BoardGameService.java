@@ -4,7 +4,6 @@ import ca.mcgill.ecse321.boardr.dto.BoardGame.*;
 import ca.mcgill.ecse321.boardr.dto.Review.ReviewResponseDTO;
 import ca.mcgill.ecse321.boardr.exceptions.BoardrException;
 import ca.mcgill.ecse321.boardr.model.BoardGame;
-import ca.mcgill.ecse321.boardr.model.Review;
 import ca.mcgill.ecse321.boardr.repo.BoardGameRepository;
 import ca.mcgill.ecse321.boardr.repo.ReviewRepository;
 import jakarta.validation.Valid;
@@ -89,8 +88,12 @@ public class BoardGameService {
             throw new BoardrException(HttpStatus.NOT_FOUND, "Board Game not found");
         }
 
-        return reviewRepository.findByBoardGameGameId(id).stream()
-                .map(ReviewResponseDTO::new)
+        return reviewRepository.findByBoardGameGameIdOrderByReviewDateDesc(id).stream()
+                .map(review -> {
+                    ReviewResponseDTO dto = new ReviewResponseDTO(review);
+                    dto.setAuthor(review.getUserAccount().getName());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 

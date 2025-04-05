@@ -109,8 +109,8 @@
           >
             <div class="mb-4 bg-white rounded-lg border-2 border-gray-300 shadow-sm">
               <div class="bg-gray-100 p-3 border-b-2 border-gray-300 flex justify-between items-center">
-                <div class="font-medium text-gray-600">
-                  User #{{ review.userAccountId }}
+                <div class="font-medium text-gray-600" style="font-weight: bold;">
+                  {{ review.author }}
                 </div>
                 <div class="flex text-yellow-500">
                   <span v-for="i in 5" :key="i" class="text-lg">

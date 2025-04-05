@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends CrudRepository<Review, Integer> {
     public Review findByReviewId(int id);
-    List<Review> findByBoardGameGameId(int gameId); // Custom query method
+    List<Review> findByBoardGameGameIdOrderByReviewDateDesc(int gameId);
 
 
 }
