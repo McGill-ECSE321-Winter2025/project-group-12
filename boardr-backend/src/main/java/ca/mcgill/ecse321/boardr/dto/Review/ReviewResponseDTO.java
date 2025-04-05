@@ -12,6 +12,8 @@ public class ReviewResponseDTO {
     private Date reviewDate;
     private int userAccountId;
     private int boardGameId;
+    private String author;
+
 
     @SuppressWarnings("unused")
     private ReviewResponseDTO() {
@@ -49,4 +51,8 @@ public class ReviewResponseDTO {
     public int getBoardGameId() {
         return boardGameId;
     }
+
+    public String getAuthor() {return author;}
+
+    public void setAuthor(String author) {this.author = author;}
 }
