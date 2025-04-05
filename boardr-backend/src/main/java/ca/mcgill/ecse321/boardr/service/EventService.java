@@ -91,19 +91,30 @@ public class EventService {
         if (gameInstance == null) {
             throw new IllegalArgumentException("A board game instance must be provided.");
         }
-
+        
+        // Check if the board game instance is available
+        if (!gameInstance.isAvailable()) {
+            throw new IllegalArgumentException("Board game instance is not available.");
+        }
+        
+        // Set the board game instance to unavailable
+        gameInstance.setAvailable(false);
+        boardGameInstanceRepository.save(gameInstance);
+        
         if (gameInstance.getGameOwner() == null) {
             throw new IllegalArgumentException("Board game instance must have an owner.");
         }
-
+        
         // Check permissions for creating a new event (event is null)
         checkUserEventPermission(organizer.getUserAccountId(), gameInstance, null);
-
+        
         if (event.getDescription() == null || event.getLocation() == null || event.getmaxParticipants() <= 0) {
             throw new IllegalArgumentException("All event fields must be provided and valid.");
         }
+        
         return eventRepository.save(event);
     }
+    
 
     // Helper method to create an Event from a DTO
     public EventResponseDTO createEventFromDTO(EventCreationDTO eventDTO) {

@@ -200,17 +200,17 @@ export default {
       this.fetchOrganizerDetails();
       await this.fetchBoardGameInstanceDetails();
 
-        if (this.$route.query.boardGameName) {
+      if (this.$route.query.boardGameName) {
       this.searchQuery = this.$route.query.boardGameName;
       this.searchEvents();
     }
     } catch (error) {
-      this.$toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to load events.',
-        life: 3000,
-      });
+      //this.$toast.add({
+        //severity: 'error',
+        //summary: 'Error',
+        //detail: 'Failed to load events.',
+        //life: 3000,
+      //});
       console.error(error);
     }
   },
