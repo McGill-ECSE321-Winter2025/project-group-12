@@ -22,7 +22,11 @@
           <DataTable :value="games" :rows="5" paginator class="h-full">
             <Column field="boardGameName" header="Game Name" />
             <Column field="condition" header="Condition" />
-            <Column field="available" header="Available" :body="slot => slot.data.available ? 'Yes' : 'No'" />
+            <Column header="Available">
+  <template #body="slot">
+    {{ slot.data.available ? 'Yes' : 'No' }}
+  </template>
+</Column>
           </DataTable>
         </template>
       </Card>

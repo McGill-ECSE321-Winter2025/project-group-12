@@ -237,12 +237,7 @@ export default {
       const response = await api.get('/boardgames')
       this.boardGames = response.data
     } catch (error) {
-      this.$toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to load board games.',
-        life: 3000,
-      })
+      
       console.error(error)
     }
   },
@@ -383,29 +378,3 @@ export default {
 }
 </script>
 
-<style scoped>
-:deep(.p-datatable) {
-  border-radius: 1rem !important;
-  overflow: hidden !important;
-}
-
-/* Style the header cells */
-:deep(.p-datatable-sm thead > tr > th) {
-  background-color: #10B981; /* Green matching bg-green-500 */
-  color: #fff;
-  font-family: 'Arial', sans-serif;
-  font-weight: 600;
-  font-size: 0.75rem !important;
-}
-
-/* Style the body cells to match header text size */
-:deep(.p-datatable-sm tbody > tr > td) {
-  font-size: 0.75rem !important;
-}
-
-/* Make all PrimeVue buttons smaller */
-:deep(.p-button) {
-  font-size: 0.75rem !important;
-}
-
-</style>
