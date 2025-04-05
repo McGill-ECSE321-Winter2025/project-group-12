@@ -146,5 +146,5 @@ spring.datasource.password = <your-password>
 - **Project Management**: Yoon, David Vo, David Zhou
   - README.md: Yoon, David Vo
   - Meeting Minutes: Yoon
-  - Project Report: Yoon
+  - Project Report: Yoon, Jione
   - Project Board Management: David Zhou, Yoon
