@@ -101,11 +101,6 @@
             {{ formatDate(slotProps.data.eventDate) }}
           </template>
         </Column>
-        <Column header="Date" style="width: 15%">
-          <template #body="slotProps">
-            {{ formatDate(slotProps.data.eventDate) }}
-          </template>
-        </Column>
         <Column header="Time" style="width: 10%">
           <template #body="slotProps">
             {{ formatTime(slotProps.data.eventTime) }}
@@ -142,11 +137,6 @@
         <Column field="eventId" header="Event ID" />
         <Column field="description" header="Description" />
         <Column field="eventDate" header="Date">
-          <template #body="slotProps">
-            {{ formatDate(slotProps.data.eventDate) }}
-          </template>
-        </Column>
-        <Column header="Date" style="width: 15%">
           <template #body="slotProps">
             {{ formatDate(slotProps.data.eventDate) }}
           </template>
