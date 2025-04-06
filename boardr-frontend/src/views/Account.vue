@@ -127,6 +127,16 @@
             />
           </template>
         </Column>
+        <Column header="Delete">
+          <template #body="slotProps">
+            <Button
+              label="Delete"
+              icon="pi pi-trash"
+              class="p-button-sm p-button-danger"
+              @click="deleteEvent(slotProps.data)"
+            />
+          </template>
+        </Column>
       </DataTable>
     </div>
 
@@ -848,7 +858,44 @@ export default {
           life: 3000,
         });
       }
+    },
+    async deleteEvent(instance) {
+  try {
+    console.log(instance);
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user.userAccountId; // Ensure userId is correctly assigned
+    console.log(user);
+
+    // Check if the eventId is provided
+    if (!instance.eventId) {
+      this.$toast.add({
+        severity: 'error',
+        summary: 'Cannot Delete',
+        detail: 'Event ID must be provided.',
+        life: 3000,
+      });
+      return;
     }
+
+    // Proceed with deletion
+    await api.delete(`/events/${instance.eventId}`, { params: { userId } });
+    this.$toast.add({
+      severity: 'success',
+      summary: 'Deleted',
+      detail: 'Event deleted successfully.',
+      life: 3000,
+    });
+    await this.loadUserData(); // Refresh user data or events list
+  } catch (error) {
+    console.error('Failed to delete event:', error);
+    this.$toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to delete event.',
+      life: 3000,
+    });
+  }
+}
 
   },
 }

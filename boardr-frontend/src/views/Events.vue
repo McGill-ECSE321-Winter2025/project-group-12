@@ -39,7 +39,7 @@
       class="p-datatable-sm" 
       responsiveLayout="scroll" 
       sortField="eventDate" 
-      sortOrder="1">
+      :sortOrder="1">
       <!-- Game Name Column with Information Icon -->
       <Column header="Game Name" style="width: 20%">
         <template #body="slotProps">
@@ -97,7 +97,18 @@
       <!-- Participate Column -->
       <Column header="Participate" style="width: 10%">
         <template #body="slotProps">
-          <Button label="Register" @click="openRegisterDialog(slotProps.data)" class="bg-green-500 hover:bg-green-600 text-white" />
+          <Button 
+          :label="'Register'"
+          :class="'bg-green-500 hover:bg-green-600 text-white'"
+          @click="openRegisterDialog(slotProps.data, true)" />
+        </template>
+      </Column>
+      <Column header="Opt out" style="width: 10%">
+        <template #body="slotProps">
+          <Button 
+          :label="'Unregister'"
+          :class="'p-button-sm p-button-danger text-white'"
+          @click="openRegisterDialog(slotProps.data, false)" />
         </template>
       </Column>
     </DataTable>
@@ -140,9 +151,26 @@
     <Dialog v-model:visible="showRegisterConfirmDialog" header="Confirm Registration" :style="{ width: '20rem' }">
       <p class="mb-4">Are you sure?</p>
       <template #footer>
-        <Button label="Cancel" class="p-button-text" @click="showRegisterConfirmDialog = false" />
-        <Button label="Confirm" class="bg-green-600 hover:bg-green-700" @click="registerForEvent" />
-      </template>
+  <Button label="Cancel" class="p-button-text" @click="showRegisterConfirmDialog = false" />
+  <Button
+    :label="'Register'"
+    :class="'bg-green-500 hover:bg-green-600'"
+    @click="registerForEvent()"
+  />
+</template>
+    </Dialog>
+
+        <!-- Registration Confirmation Dialog -->
+      <Dialog v-model:visible="showUnRegisterConfirmDialog" header="Confirm Opt-Out" :style="{ width: '20rem' }">
+      <p class="mb-4">Are you sure?</p>
+      <template #footer>
+  <Button label="Cancel" class="p-button-text" @click="showUnRegisterConfirmDialog = false" />
+  <Button
+    :label="'Unregister'"
+    :class="'p-button-sm p-button-danger'"
+    @click="unregisterForEvent()"
+  />
+</template>
     </Dialog>
 
     <!-- New: Event Details Dialog -->
@@ -173,6 +201,7 @@ export default {
       searchQuery: '',
       showCreateEventDialog: false,
       showRegisterConfirmDialog: false,
+      showUnRegisterConfirmDialog: false,
       showEventDetailsDialog: false,   // New property for dialog visibility
       selectedEvent: null,
       selectedEventDetails: null,      // New property for holding selected event details
@@ -322,9 +351,13 @@ export default {
         console.error(error);
       }
     },
-    openRegisterDialog(event) {
+    openRegisterDialog(event, isRegister) {
       this.selectedEvent = event
+      if (isRegister){
       this.showRegisterConfirmDialog = true
+      }else{
+        this.showUnRegisterConfirmDialog = true
+      }
     },
     async registerForEvent() {
       try {
@@ -357,6 +390,35 @@ export default {
       this.showRegisterConfirmDialog = false
       this.selectedEvent = null
     },
+    async unregisterForEvent() {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.userAccountId) {
+        this.$router.push('/login');
+        return;
+      }
+      // Construct the URL with userId and eventId for the cancel endpoint
+      const url = `/registrations/${user.userAccountId}/${this.selectedEvent.eventId}/cancel`;
+      await api.post(url); // Make the POST request to cancel the registration
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Unregistered',
+        detail: 'You have successfully unregistered for the event!',
+        life: 3000,
+      });
+    } catch (error) {
+      console.error('Unregistration error:', error.response?.data);
+      const errorMessage = error.response?.data?.errors?.[0] || 'Failed to unregister for the event. Please try again.';
+      this.$toast.add({
+        severity: 'error',
+        summary: 'Unregistration Failed',
+        detail: errorMessage,
+        life: 5000,
+      });
+    }
+    this.showUnRegisterConfirmDialog = false;
+    this.selectedEvent = null;
+  },
     searchEvents() {
       if (!this.searchQuery.trim()) {
         this.events = this.filterFutureEvents(this.originalEvents)
